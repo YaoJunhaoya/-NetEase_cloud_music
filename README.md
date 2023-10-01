@@ -1,7 +1,7 @@
-# Vue 3 + Vite
+# 仿网易云音乐 Vue 3 + Vite
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+仿网易云音乐 前端 Vue3+Vite 
 
-## Recommended IDE Setup
+后端使用https://neteasecloudmusicapi.js.org/#/
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+网易云音乐 NodeJS 版 API 后端代码来自: https://github.com/Binaryify/NeteaseCloudMusicApi
