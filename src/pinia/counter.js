@@ -2,13 +2,16 @@ import { defineStore } from 'pinia'
 
 const useCounterStore = defineStore('counterStore', {
     state: () => ({
-        count: 10,
-        sum: 100
+        // 最后一次浏览的歌单
+        lastSongList: JSON.parse(localStorage.getItem('SongList'))||{} ,
+        // 最后一次浏览的歌曲
+        lastSong: {},
     }),
     actions: {
-        increment() {
-            this.count++
-        },
+        // 把歌单信息存储在本地
+        SongListToLocal(item = {}) {
+            localStorage.setItem('SongList', JSON.stringify(item))
+        }
     },
     getters: {
 
