@@ -13,9 +13,6 @@
     <div class="lanmu">
       <div>发现音乐</div>
       <div>我的音乐</div>
-      <div>关注</div>
-      <div>排行榜</div>
-      <div>音乐人</div>
     </div>
 
     <!-- 手机的栏目 -->
@@ -36,27 +33,26 @@
     </div>
 
     <!-- 未登录 -->
-    <div @click="userLog" v-if="true" class="noneLog">未登录</div>
+    <div @click="userLog" v-if="!userStore.token" class="noneLog">未登录</div>
     <!-- 我的 -->
     <div class="my" v-else>
       <img
         src="https://img0.baidu.com/it/u=4275172878,2244226890&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
         alt=""
       />
-      <div class="my-list" v-show="false">
-        <ul>
-          <li>个人中心</li>
-          <li>消息</li>
-          <li>退出</li>
-        </ul>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
+import { reqUserLogState, reqUserLogOut, reqNewLogState } from "../axios/user";
+import useUserStore from "../pinia/user";
+
 const router = useRouter();
+
+// Pinia仓库
+const userStore = useUserStore();
 
 function toHome() {
   router.push("/home");

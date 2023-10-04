@@ -13,7 +13,7 @@
         <div class="logInput">
           <!-- 账号 -->
           <div>
-            <el-form-item label="账号：">
+            <el-form-item label="邮箱：">
               <el-input
                 v-model="zhanghaoInput"
                 placeholder="请输入手机号或邮箱"
@@ -49,9 +49,15 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { reqPhoneLog } from "../axios/user";
-const zhanghaoInput = ref("");
-const passwordInput = ref("");
+import { reqPhoneLog, reqEmailLog } from "../axios/user";
+import useUserStore from "../pinia/user";
+
+// 账号密码
+const zhanghaoInput = ref("yjh3342859687@163.com");
+const passwordInput = ref("Yjh15888673903");
+
+// Pinia仓库
+const userStore = useUserStore();
 
 let pdButton = computed({
   get() {
@@ -59,9 +65,14 @@ let pdButton = computed({
   },
 });
 
+// 登录
 async function toLog() {
-  const req = await reqPhoneLog(zhanghaoInput.value, passwordInput.value);
-  console.log(req);
+  const req = await reqEmailLog(zhanghaoInput.value, passwordInput.value);
+  userStore.usetTokenToLocal(req.data.token);
+  userStore.userUserUidToLocal(req.data.account.id);
+  userStore.userLogState(req.data);
+  document.cookie = `username=${req.data.cookie}`;
+  console.log(req.data.cookie);
 }
 </script>
 

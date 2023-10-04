@@ -36,6 +36,7 @@
             <!-- 标签 -->
             <div>
               标签：<span
+                class="biaoqian"
                 v-for="(item, index) in SongListDetails.data.tags"
                 :key="index"
                 >{{ item }}</span
@@ -47,7 +48,10 @@
       <!-- 介绍 -->
       <div class="jieshao">
         <div class="jieshaodata">
-          介绍：<span>{{ SongListDetails.data.description }}</span>
+          <span style="color: rgba(206, 31, 31, 0.76); font-weight: 600">
+            介绍：</span
+          >
+          <span>{{ SongListDetails.data.description }}</span>
         </div>
       </div>
       <!-- 歌单中歌单列表 -->
@@ -59,10 +63,55 @@
           <div
             v-for="(item, index) in SongListDetails.showDataSong"
             :key="index"
+            class="songListToSongData-song-item"
+            @click="toSongDetails(item)"
           >
-            {{ index }}+{{ item.id }}+歌曲：{{item.name}}+作者：{{item.ar[0].name}}+专辑：{{item.al.name}}
+            <div class="songListToSongData-song-item-1">{{ index + 1 }}</div>
+            <div class="songListToSongData-song-item-2">
+              <svg class="icon item-icon" aria-hidden="true">
+                <use xlink:href="#icon-a-021_shipin"></use>
+              </svg>
+            </div>
+            <div class="songListToSongData-song-item-3">
+              <span> 歌曲：</span>{{ item.name }}
+            </div>
+            <div class="songListToSongData-song-item-4">
+              <span>作者：</span>{{ item.ar[0].name }}
+            </div>
+            <div class="songListToSongData-song-item-5">
+              <span>专辑：</span>{{ item.al.name }}
+            </div>
           </div>
-          <el-button type="danger" @click="addSongs(1)">加载更多</el-button>
+          <el-button
+            class="songListToSongData-song-button"
+            type="danger"
+            @click="addSongs(1)"
+            >加载更多</el-button
+          >
+        </div>
+      </div>
+      <!-- 评论 -->
+      <div class="comment">
+        <div
+          class="comment-item"
+          v-for="(item, i) in SongListDetails.SongListComments"
+          :key="i"
+        >
+          <!-- 评论的用户信息 -->
+          <div>用户:{{ item.ipLocation.userId }}</div>
+          <!-- 评论 -->
+          <div>
+            <span>{{ item.content }}</span>
+          </div>
+          <!-- 评论信息 -->
+          <div>
+            <!-- 时间 -->
+            <div>
+              {{ getTime(item.time) }}
+            </div>
+            <!-- 地址 -->
+            <div>IP:{{ item.ipLocation.location }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -71,11 +120,16 @@
 
 <script setup>
 import { reactive, onMounted, computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import useCounterStore from "../pinia/counter";
-import { reqSongListDetail, reqSongDetail } from "../axios/user";
+import {
+  reqSongListDetail,
+  reqSongDetail,
+  reqSongListComment,
+} from "../axios/songListOrSong";
 
 const route = useRoute();
+const router = useRouter();
 
 // Pinia仓库
 const counterStore = useCounterStore();
@@ -87,6 +141,10 @@ let SongListDetails = reactive({
   dataSong: [],
   // 限制歌曲个数，用来显示 用户看见的歌曲列表
   showDataSong: [],
+  // 歌单评论信息
+  SongListComments: [],
+  // 歌单的id
+  songlistId: "",
 });
 
 let gequliebiao = reactive({
@@ -98,17 +156,34 @@ let gequliebiao = reactive({
   allNumber: SongListDetails.dataSong.length,
 });
 
-// 歌曲详情
-async function songData(id) {
-  let data = await reqSongDetail(id);
-  console.log(data);
-  return "123";
+// 歌单评论
+async function SongListComment() {
+  const songListId = SongListDetails.songlistId;
+  // 可选参数 : limit: 取出评论数量 , 默认为 20 ,offset: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)*20, 其中 20 为 limit 的值
+  let data = await reqSongListComment(songListId);
+  SongListDetails.SongListComments = data.data.comments;
+  // console.log(SongListDetails.SongListComments);
 }
 
 // 页码数增加
 function addSongs(index) {
   gequliebiao.page += index;
   songs();
+}
+
+// 转化时间
+function getTime(item) {
+  const date = new Date(item);
+
+  // 从 Date 对象中提取年、月、日、时、分、秒
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1; // 注意：月份从0开始，所以要加1
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+
+  return ` ${year}年  ${month}月   ${day}日   ${hours}: ${minutes}: ${seconds}`;
 }
 
 // 用户看见的歌曲列表
@@ -121,38 +196,52 @@ async function songs() {
     concat * (page - 1),
     concat * (page - 1) + concat
   );
-  // // 把id转成歌曲详情
-  // arr.forEach(async (item, index) => {
-  //   let xx = await reqSongDetail(item.id);
-  //   arr[index]=xx.data.songs[0]
-  // });
 
-  await Promise.all(arr.map(async (item, index) => {
-  let xx = await reqSongDetail(item.id);
-  arr[index] = xx.data.songs[0];
-}));
+  await Promise.all(
+    arr.map(async (item, index) => {
+      let xx = await reqSongDetail(item.id);
+      arr[index] = xx.data.songs[0];
+    })
+  );
 
   SongListDetails.showDataSong = [...SongListDetails.showDataSong, ...arr];
-  console.log(SongListDetails.showDataSong);
+  // console.log(SongListDetails.showDataSong);
+}
 
+// 跳转到歌曲详情页面
+function toSongDetails(item) {
+  console.log(item);
+  router.push({
+    name: "SongDetails",
+    params: {
+      songId: item.id,
+    },
+  });
 }
 
 onMounted(async () => {
-  SongListDetails.data = route.params.SongListDetails
-    ? JSON.parse(route.params.SongListDetails)
-    : counterStore.lastSongList;
+  // 传入歌单id
+  let songlistId = route.params.songListId || counterStore.songlistId;
+  SongListDetails.songlistId = songlistId;
+  // console.log(songlistId);
 
-  // 仓库中 把歌单存在本地
-  counterStore.SongListToLocal(SongListDetails.data);
+  // 仓库中 把歌单id存在本地
+  counterStore.SongListIdToLocal(songlistId);
 
+  // 通过传入的歌单id  在线获取歌单信息
+  const xx = await reqSongListDetail(songlistId);
+  // 赋值拿到歌单数据
+  SongListDetails.data = xx.data.playlist;
   // console.log(SongListDetails.data);
 
-  const xx = await reqSongListDetail(SongListDetails.data.id);
+  // 歌单里的歌曲们
   SongListDetails.dataSong = xx.data.playlist.trackIds;
-  // console.log(SongListDetails.dataSong);
 
   //设置给用户看见的歌曲列表
   songs();
+
+  // 获取歌单评论
+  SongListComment();
 });
 </script>
 
@@ -191,11 +280,14 @@ onMounted(async () => {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        .biaoqian {
+          margin: 0 10px;
+        }
       }
     }
     .jieshao {
       width: 100%;
-      max-height: 100px;
+      min-height: 100px;
       border-bottom: 1px dashed #999;
       color: #222;
       .jieshaodata {
@@ -212,6 +304,60 @@ onMounted(async () => {
         border-bottom: 3px solid rgb(214, 52, 52);
       }
       .songListToSongData-song {
+        margin: 10px 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .songListToSongData-song-item {
+          width: 100%;
+          height: 50px;
+          background-color: #dddddd;
+          margin: 10px 0;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          border-radius: 25px;
+          box-shadow: 6px 3px 6px #999;
+          div {
+            margin: 0 20px;
+            display: flex;
+            span {
+              color: rgba(206, 31, 31, 0.76);
+              font-weight: 600;
+            }
+          }
+          .songListToSongData-song-item-1 {
+            width: 50px;
+          }
+          .songListToSongData-song-item-2 {
+            width: 50px;
+            .item-icon {
+              font-size: 30px;
+            }
+          }
+          .songListToSongData-song-item-3 {
+            width: 300px;
+          }
+          .songListToSongData-song-item-4 {
+            width: 300px;
+          }
+          .songListToSongData-song-item-5 {
+            width: 300px;
+          }
+        }
+        .songListToSongData-song-button {
+          width: 200px;
+          height: 40px;
+        }
+      }
+    }
+
+    .comment {
+      .comment-item {
+        margin: 10px 50px;
+        min-height: 60px;
+        background-color: aqua;
       }
     }
   }
