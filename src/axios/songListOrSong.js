@@ -10,3 +10,11 @@ export const reqSongListDetail = (id) => requests({ url: `/playlist/detail?id=${
 export const reqSongDetail = (id) => requests({ url: `/song/detail?ids=${id}`, method: 'get' });
 // 歌单评论  可选参数 : limit: 取出评论数量 , 默认为 20 ,offset: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)*20, 其中 20 为 limit 的值
 export const reqSongListComment = (id, limit = 20, offset = 1) => requests({ url: `/comment/playlist?id=${id}&limit=${limit}&offset=${offset}`, method: 'get' });
+// 获取音乐 url
+export const reqSongUrl = (id) => requests({ url: `/song/url?id=${id}`, method: 'get' });
+
+
+
+
+
+

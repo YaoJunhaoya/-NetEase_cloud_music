@@ -19,7 +19,13 @@
           </div>
           <!-- 按钮 -->
           <div>
-            <el-button type="primary" round>Primary</el-button>
+            <el-button type="primary" round @click="playSong">
+              <div>
+                <svg class="icon bofnag-icon" aria-hidden="true">
+                  <use xlink:href="#icon-a-021_shipin"></use>
+                </svg>
+              </div>
+            </el-button>
             <el-button type="success" round>Success</el-button>
             <el-button type="info" round>Info</el-button>
             <el-button type="warning" round>Warning</el-button>
@@ -56,6 +62,12 @@ const songParticulars = reactive({
   ar: {},
 });
 
+// 切换播放器音乐id
+function playSong() {
+  // console.log(songParticulars.songId);
+  counterStore.PlayerSongIdToLocal(songParticulars.songId);
+}
+
 onMounted(async () => {
   // 赋值歌曲id 没有传参来就去本地拿
   songParticulars.songId = route.params.songId || counterStore.lastSongId;
@@ -74,10 +86,11 @@ onMounted(async () => {
 
 <style lang="less" scoped>
 .bg {
-  width: 100%;
+  width: 1900px;
   background-color: #ffffff;
   display: flex;
   justify-content: center;
+  margin: 0 auto;
   .xiangqing {
     width: 80%;
     min-height: 500px;
@@ -102,6 +115,9 @@ onMounted(async () => {
         display: flex;
         flex-direction: column;
         margin: 0 auto;
+        .bofnag-icon {
+          font-size: 35px;
+        }
       }
     }
     .qita {

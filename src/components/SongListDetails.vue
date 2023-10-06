@@ -64,15 +64,17 @@
             v-for="(item, index) in SongListDetails.showDataSong"
             :key="index"
             class="songListToSongData-song-item"
-            @click="toSongDetails(item)"
           >
             <div class="songListToSongData-song-item-1">{{ index + 1 }}</div>
-            <div class="songListToSongData-song-item-2">
+            <div class="songListToSongData-song-item-2" @click="playSong(item)">
               <svg class="icon item-icon" aria-hidden="true">
                 <use xlink:href="#icon-a-021_shipin"></use>
               </svg>
             </div>
-            <div class="songListToSongData-song-item-3">
+            <div
+              class="songListToSongData-song-item-3"
+              @click="toSongDetails(item)"
+            >
               <span> 歌曲：</span>{{ item.name }}
             </div>
             <div class="songListToSongData-song-item-4">
@@ -156,6 +158,12 @@ let gequliebiao = reactive({
   allNumber: SongListDetails.dataSong.length,
 });
 
+// 切换播放器音乐id
+function playSong(id) {
+  // console.log("11111",id);
+  counterStore.PlayerSongIdToLocal(id);
+}
+
 // 歌单评论
 async function SongListComment() {
   const songListId = SongListDetails.songlistId;
@@ -210,7 +218,7 @@ async function songs() {
 
 // 跳转到歌曲详情页面
 function toSongDetails(item) {
-  console.log(item);
+  // console.log(item);
   router.push({
     name: "SongDetails",
     params: {
