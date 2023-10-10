@@ -106,7 +106,7 @@ function toSongListDetails(item) {
 
 // 跳转到歌曲详情页面
 function toSongDetails(item) {
-  console.log(item);
+  // console.log(item);
   router.push({
     name: "SongDetails",
     params: {

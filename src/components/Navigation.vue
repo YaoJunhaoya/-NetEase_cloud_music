@@ -36,10 +36,15 @@
     <div @click="userLog" v-if="!userStore.token" class="noneLog">未登录</div>
     <!-- 我的 -->
     <div class="my" v-else>
-      <img
-        src="https://img0.baidu.com/it/u=4275172878,2244226890&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
-        alt=""
-      />
+      <div @click="drawer = true">
+        <img
+          src="https://img0.baidu.com/it/u=4275172878,2244226890&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
+        />
+      </div>
+
+      <el-drawer v-model="drawer" title="I am the title" :with-header="false">
+        <el-button @click="drawer = false">关闭</el-button>
+      </el-drawer>
     </div>
   </div>
 </template>
@@ -48,11 +53,14 @@
 import { useRouter } from "vue-router";
 import { reqUserLogState, reqUserLogOut, reqNewLogState } from "../axios/user";
 import useUserStore from "../pinia/user";
+import { ref } from "vue";
 
 const router = useRouter();
 
 // Pinia仓库
 const userStore = useUserStore();
+
+let drawer = ref(false);
 
 function toHome() {
   router.push("/home");

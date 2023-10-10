@@ -3,20 +3,74 @@
   <div class="myBofnagqi" :class="shengjiang ? 'sheng' : 'jiang'">
     <!-- 隐藏和显示 -->
     <div class="show" @click="changeShengjiang"></div>
-
     <!-- 播放器 -->
     <audio controls :src="mp3" class="my-audio" style="display: none"></audio>
 
     <!-- 播放按钮 -->
-    <div>
-      <el-button type="primary" round @click="bofangSong">播放</el-button>
-      <el-button type="primary" round @click="zantingSong">暂停</el-button>
+    <div class="myBofnagqi-bofangqianniu">
+      <div class="myBofnagqi-bofangqianniu-wai">
+        <!-- 循环，随机 -->
+        <el-button type="primary" circle>
+          <svg class="icon" aria-hidden="true" style="font-size: 18px">
+            <use xlink:href="#icon-shunxubofang"></use>
+          </svg>
+        </el-button>
+        <div class="myBofnagqi-bofangqianniu-nei">
+          <!-- 上一首 -->
+          <el-button type="primary" plain>
+            <svg class="icon" aria-hidden="true" style="font-size: 18px">
+              <use xlink:href="#icon-jichu_xiangzuo"></use>
+            </svg>
+          </el-button>
+          <!-- 播放或者暂停 -->
+          <el-button
+            type="primary"
+            round
+            @click="BofangOrZantingSong"
+            class="bofangorzanting"
+          >
+            {{ pd ? "播放" : "暂停" }}
+            <svg class="icon" aria-hidden="true" style="font-size: 18px">
+              <use xlink:href="#icon-bofang"></use>
+            </svg>
+          </el-button>
+          <!-- 下一首 -->
+          <el-button type="primary" plain>
+            <svg class="icon" aria-hidden="true" style="font-size: 18px">
+              <use xlink:href="#icon-jichu_xiangyou"></use>
+            </svg>
+          </el-button>
+        </div>
+        <!-- 是否添加到我喜欢 -->
+        <el-button type="primary" circle>
+          <svg class="icon" aria-hidden="true" style="font-size: 18px">
+            <use xlink:href="#icon-aixin"></use>
+          </svg>
+        </el-button>
+        <!-- 音量大小 -->
+        <el-button type="primary" circle>
+          <svg class="icon" aria-hidden="true" style="font-size: 18px">
+            <use xlink:href="#icon-shengyin"></use>
+          </svg>
+        </el-button>
+      </div>
+      <!-- 查看播放列表 -->
+      <div>
+        <svg class="icon" aria-hidden="true" style="font-size: 30px">
+          <use xlink:href="#icon-jichu_gengduo"></use>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 进度条 -->
+    <div class="myBofnagqi-jdt">
+      <el-progress class="jdt" :text-inside="true" :stroke-width="15"  :percentage="100" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from "vue";
+import { ref, reactive, onMounted, watch, watchEffect } from "vue";
 import useCounterStore from "../pinia/counter";
 import { reqSongUrl } from "../axios/songListOrSong";
 // Pinia仓库
@@ -26,8 +80,9 @@ let musicPlayer = reactive({});
 
 let mp3 = ref("");
 let shengjiang = ref(true);
+let pd = ref(true);
 
-let myAudio = "";
+let myAudio = ref("");
 
 function changeShengjiang() {
   shengjiang.value = !shengjiang.value;
@@ -41,28 +96,34 @@ async function changeSong() {
   mp3.value = songUrl.data.data[0].url;
 }
 
-// 播放音乐
-function bofangSong() {
-  myAudio.play();
+// 播放或暂停音乐
+function BofangOrZantingSong() {
+  // 未播放：true
+  if (myAudio.value.paused) {
+    myAudio.value.play();
+    pd.value = myAudio.value.paused;
+  } else {
+    myAudio.value.pause();
+    pd.value = myAudio.value.paused;
+  }
 }
 
-// 暂停音乐
-function zantingSong(){
-  myAudio.pause();
-
-}
-
+// counterStore.lastPlayerSongId 必须是新值才能触发 （不能是同一首歌） 切换下一首歌 需要手动点击播放
 watch(
   () => counterStore.lastPlayerSongId,
   (newValue, oldValue) => {
+    myAudio.value.pause();
+    pd.value = myAudio.value.paused;
+
+    // 本地播放器id修改
     changeSong();
-    bofangSong()
+
   }
 );
 
 onMounted(async () => {
   changeSong();
-  myAudio = document.querySelector(".my-audio");
+  myAudio.value = document.querySelector(".my-audio");
 });
 </script>
 
@@ -80,17 +141,51 @@ onMounted(async () => {
 }
 
 .myBofnagqi {
-  width: 100%;
+  width: calc(100vw - 40px);
+  left: 20px;
   height: 100px;
-  background-color: rgba(51, 51, 51, 0.39);
+  background-color: rgb(214, 211, 211);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 20px;
+  box-shadow: 0px 0px 8px black;
   /* 其他样式 */
   .show {
     position: absolute;
     width: 40px;
     height: 30px;
     background-color: black;
-    right: 0;
+    right: 20px;
     top: -30px;
+  }
+  .myBofnagqi-bofangqianniu {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    width: 800px;
+    margin-left: 400px;
+    .myBofnagqi-bofangqianniu-wai {
+      width: 500px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .myBofnagqi-bofangqianniu-nei {
+        display: flex;
+      }
+    }
+  }
+  .myBofnagqi-jdt {
+    width: 70%;
+    height: 30px;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+
+    .jdt{
+      margin: 0 10px;
+    }
   }
 }
 </style>

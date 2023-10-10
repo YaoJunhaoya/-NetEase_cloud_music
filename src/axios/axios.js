@@ -6,7 +6,8 @@ import nprogress from 'nprogress'
 import "nprogress/nprogress.css"
 
 const requests = axios.create({
-    baseURL: 'http://localhost:3000', // 设置根路径
+    // baseURL: 'https://wang-yiyun-music-api.vercel.app', // 设置根路径 http://localhost:3000
+    baseURL: 'http://localhost:3000', // 设置根路径 http://localhost:3000
     timeout: 5000,
     //这告诉服务器请求正文将发送为JSON格式。
     headers: {

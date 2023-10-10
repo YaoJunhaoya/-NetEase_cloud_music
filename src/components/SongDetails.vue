@@ -66,6 +66,7 @@ const songParticulars = reactive({
 function playSong() {
   // console.log(songParticulars.songId);
   counterStore.PlayerSongIdToLocal(songParticulars.songId);
+  console.log("歌曲详情id:"+songParticulars.songId);
 }
 
 onMounted(async () => {
@@ -80,7 +81,7 @@ onMounted(async () => {
   songParticulars.img = songParticulars.songMessage.al.picUrl;
   songParticulars.al = songParticulars.songMessage.al;
   songParticulars.ar = songParticulars.songMessage.ar[0];
-  console.log(songParticulars.songMessage);
+  // console.log(songParticulars.songMessage);
 });
 </script>
 

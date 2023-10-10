@@ -14,6 +14,6 @@ import NavigationVue from "./components/Navigation.vue";
 
 <style lang="less" >
 .router-view-app{
-  margin-bottom: 100px;
+  padding-bottom: 100px;
 }
 </style>

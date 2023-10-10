@@ -64,17 +64,18 @@
             v-for="(item, index) in SongListDetails.showDataSong"
             :key="index"
             class="songListToSongData-song-item"
+            @click="toSongDetails(item)"
           >
             <div class="songListToSongData-song-item-1">{{ index + 1 }}</div>
-            <div class="songListToSongData-song-item-2" @click="playSong(item)">
+            <div
+              class="songListToSongData-song-item-2"
+              @click.stop="playSong(item.id)"
+            >
               <svg class="icon item-icon" aria-hidden="true">
                 <use xlink:href="#icon-a-021_shipin"></use>
               </svg>
             </div>
-            <div
-              class="songListToSongData-song-item-3"
-              @click="toSongDetails(item)"
-            >
+            <div class="songListToSongData-song-item-3">
               <span> 歌曲：</span>{{ item.name }}
             </div>
             <div class="songListToSongData-song-item-4">
@@ -99,20 +100,28 @@
           v-for="(item, i) in SongListDetails.SongListComments"
           :key="i"
         >
-          <!-- 评论的用户信息 -->
-          <div>用户:{{ item.ipLocation.userId }}</div>
-          <!-- 评论 -->
-          <div>
-            <span>{{ item.content }}</span>
-          </div>
-          <!-- 评论信息 -->
-          <div>
-            <!-- 时间 -->
-            <div>
-              {{ getTime(item.time) }}
+          <div class="comment-item-user">
+            <!-- 评论的用户头像 -->
+            <div class="comment-item-user-img">
+              <img :src="item.avatarUrl" alt="" />
             </div>
-            <!-- 地址 -->
-            <div>IP:{{ item.ipLocation.location }}</div>
+            <!-- 评论的用户名字 -->
+            <div class="comment-item-user-name">{{ item.nickname }}</div>
+          </div>
+          <div class="comment-item-pinglun">
+            <!-- 评论 -->
+            <div class="comment-item-pinglun-text">
+              <span>{{ item.content }}</span>
+            </div>
+            <!-- 评论信息 -->
+            <div class="comment-item-pinglun-xx">
+              <!-- 时间 -->
+              <div>
+                {{ getTime(item.time) }}
+              </div>
+              <!-- 地址 -->
+              <div>IP:{{ item.ipLocation.location }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -129,6 +138,7 @@ import {
   reqSongDetail,
   reqSongListComment,
 } from "../axios/songListOrSong";
+import { reqUserDetails } from "../axios/user";
 
 const route = useRoute();
 const router = useRouter();
@@ -160,7 +170,7 @@ let gequliebiao = reactive({
 
 // 切换播放器音乐id
 function playSong(id) {
-  // console.log("11111",id);
+  console.log("歌单详情歌曲id:", id);
   counterStore.PlayerSongIdToLocal(id);
 }
 
@@ -170,6 +180,13 @@ async function SongListComment() {
   // 可选参数 : limit: 取出评论数量 , 默认为 20 ,offset: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)*20, 其中 20 为 limit 的值
   let data = await reqSongListComment(songListId);
   SongListDetails.SongListComments = data.data.comments;
+
+  SongListDetails.SongListComments.forEach(async (element) => {
+    const axx = await reqUserDetails(element.ipLocation.userId);
+    element.nickname = axx.data.profile.nickname;
+    element.avatarUrl = axx.data.profile.avatarUrl;
+  });
+
   // console.log(SongListDetails.SongListComments);
 }
 
@@ -205,14 +222,22 @@ async function songs() {
     concat * (page - 1) + concat
   );
 
-  await Promise.all(
+  const ids = await Promise.all(
     arr.map(async (item, index) => {
-      let xx = await reqSongDetail(item.id);
-      arr[index] = xx.data.songs[0];
+      // console.log(item.id);
+      return item.id;
     })
   );
+  const combinedIds = [...ids].join(", ");
+  // console.log(combinedIds);
 
-  SongListDetails.showDataSong = [...SongListDetails.showDataSong, ...arr];
+  let xx = await reqSongDetail(combinedIds);
+  // console.log(xx.data.songs);
+
+  SongListDetails.showDataSong = [
+    ...SongListDetails.showDataSong,
+    ...xx.data.songs,
+  ];
   // console.log(SongListDetails.showDataSong);
 }
 
@@ -362,10 +387,55 @@ onMounted(async () => {
     }
 
     .comment {
+      border-top: 1px dashed #999;
       .comment-item {
         margin: 10px 50px;
         min-height: 60px;
-        background-color: aqua;
+        background-color: rgb(233, 235, 230);
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        border-radius: 10px;
+        .comment-item-user {
+          margin: 10px 10px;
+          width: 100px;
+          .comment-item-user-img {
+            width: 60px;
+            height: 60px;
+            img {
+              width: 100%;
+              border-radius: 30px;
+            }
+          }
+          .comment-item-user-name {
+            font-size: 10px;
+          }
+        }
+        .comment-item-pinglun {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: flex-start;
+          min-height: 70px;
+          width: 900px;
+          margin: 0px 10px;
+          .comment-item-pinglun-text {
+            font-size: 20px;
+            margin: 10px 10px;
+            span {
+              white-space: normal; /* 允许文字自动换行 */
+              word-break: break-all; /* 在单词内换行 */
+            }
+          }
+          .comment-item-pinglun-xx {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #999;
+            width: 95%;
+            margin: 10px 0;
+          }
+        }
       }
     }
   }
