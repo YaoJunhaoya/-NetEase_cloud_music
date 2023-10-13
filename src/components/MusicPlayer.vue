@@ -6,65 +6,103 @@
     <!-- 播放器 -->
     <audio controls :src="mp3" class="my-audio" style="display: none"></audio>
 
-    <!-- 播放按钮 -->
+    <!-- 播放器显示页面 -->
     <div class="myBofnagqi-bofangqianniu">
-      <div class="myBofnagqi-bofangqianniu-wai">
-        <!-- 循环，随机 -->
-        <el-button type="primary" circle>
-          <svg class="icon" aria-hidden="true" style="font-size: 18px">
-            <use xlink:href="#icon-shunxubofang"></use>
-          </svg>
-        </el-button>
-        <div class="myBofnagqi-bofangqianniu-nei">
-          <!-- 上一首 -->
-          <el-button type="primary" plain>
-            <svg class="icon" aria-hidden="true" style="font-size: 18px">
-              <use xlink:href="#icon-jichu_xiangzuo"></use>
-            </svg>
-          </el-button>
-          <!-- 播放或者暂停 -->
-          <el-button
-            type="primary"
-            round
-            @click="BofangOrZantingSong"
-            class="bofangorzanting"
-          >
-            {{ pd ? "播放" : "暂停" }}
-            <svg class="icon" aria-hidden="true" style="font-size: 18px">
-              <use xlink:href="#icon-bofang"></use>
-            </svg>
-          </el-button>
-          <!-- 下一首 -->
-          <el-button type="primary" plain>
-            <svg class="icon" aria-hidden="true" style="font-size: 18px">
-              <use xlink:href="#icon-jichu_xiangyou"></use>
-            </svg>
-          </el-button>
-        </div>
-        <!-- 是否添加到我喜欢 -->
-        <el-button type="primary" circle>
-          <svg class="icon" aria-hidden="true" style="font-size: 18px">
-            <use xlink:href="#icon-aixin"></use>
-          </svg>
-        </el-button>
-        <!-- 音量大小 -->
-        <el-button type="primary" circle>
-          <svg class="icon" aria-hidden="true" style="font-size: 18px">
-            <use xlink:href="#icon-shengyin"></use>
-          </svg>
-        </el-button>
+      <!-- 歌曲名称和图片 -->
+      <div class="myBofnagqi-bofangqianniu-gequ">
+        <img :src="musicParticulars.songImg" />
+        <span>{{ musicParticulars.songName }}</span>
       </div>
-      <!-- 查看播放列表 -->
-      <div>
-        <svg class="icon" aria-hidden="true" style="font-size: 30px">
-          <use xlink:href="#icon-jichu_gengduo"></use>
-        </svg>
-      </div>
-    </div>
+      <div class="myBofnagqi-bofangqianniu-you">
+        <div class="aax">
+          <!-- 播放按钮 -->
+          <div class="myBofnagqi-bofangqianniu-wai">
+            <!-- 循环，随机 -->
+            <el-button type="primary" circle>
+              <svg class="icon" aria-hidden="true" style="font-size: 18px">
+                <use xlink:href="#icon-shunxubofang"></use>
+              </svg>
+            </el-button>
+            <div class="myBofnagqi-bofangqianniu-nei">
+              <!-- 上一首 -->
+              <el-button type="primary" plain>
+                <svg class="icon" aria-hidden="true" style="font-size: 18px">
+                  <use xlink:href="#icon-jichu_xiangzuo"></use>
+                </svg>
+              </el-button>
+              <!-- 播放或者暂停 -->
+              <el-button
+                type="primary"
+                round
+                @click="BofangOrZantingSong"
+                class="bofangorzanting"
+              >
+                {{ pd ? "播放" : "暂停" }}
+                <svg class="icon" aria-hidden="true" style="font-size: 18px">
+                  <use xlink:href="#icon-bofang"></use>
+                </svg>
+              </el-button>
+              <!-- 下一首 -->
+              <el-button type="primary" plain>
+                <svg class="icon" aria-hidden="true" style="font-size: 18px">
+                  <use xlink:href="#icon-jichu_xiangyou"></use>
+                </svg>
+              </el-button>
+            </div>
+            <!-- 是否添加到我喜欢 -->
+            <el-button type="primary" circle>
+              <svg class="icon" aria-hidden="true" style="font-size: 18px">
+                <use xlink:href="#icon-aixin"></use>
+              </svg>
+            </el-button>
+            <div class="yingliang" @mouseleave="volumeShow = false">
+              <!-- 音量大小 -->
+              <el-button
+                type="primary"
+                circle
+                @mouseover.stop="volumeShow = true"
+              >
+                <svg class="icon" aria-hidden="true" style="font-size: 18px">
+                  <use xlink:href="#icon-shengyin"></use>
+                </svg>
+              </el-button>
 
-    <!-- 进度条 -->
-    <div class="myBofnagqi-jdt">
-      <el-progress class="jdt" :text-inside="true" :stroke-width="15"  :percentage="100" />
+              <div class="tanchu" v-show="volumeShow"></div>
+            </div>
+          </div>
+          <!-- 显示歌词 -->
+          <div class="myBofnagqi-bofangqianniu-geci">
+            <span>{{ musicParticulars.lyric[5] }}</span>
+          </div>
+          <!-- 查看播放列表 -->
+          <div class="myBofnagqi-bofangqianniu-bflb">
+            <svg class="icon" aria-hidden="true" style="font-size: 30px">
+              <use xlink:href="#icon-jichu_gengduo"></use>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 进度条 -->
+        <div class="myBofnagqi-jdt">
+          <!-- <el-progress
+            class="jdt"
+            :text-inside="true"
+            :stroke-width="15"
+            :percentage="100"
+          /> -->
+          <input
+            class="jdt"
+            type="range"
+            v-model="rangeValue.maxTime"
+            min="0"
+            :max="rangeValue.maxValue"
+          />
+          <div class="myBofnagqi-jdt-data">
+            <span>{{ rangeValue.maxTime }}</span>
+            <span>{{ rangeValue.maxValue }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -72,18 +110,46 @@
 <script setup>
 import { ref, reactive, onMounted, watch, watchEffect } from "vue";
 import useCounterStore from "../pinia/counter";
-import { reqSongUrl } from "../axios/songListOrSong";
+import { reqSongUrl, reqSongDetail, reqLyric } from "../axios/songListOrSong";
 // Pinia仓库
 const counterStore = useCounterStore();
 
 let musicPlayer = reactive({});
 
+const rangeValue = reactive({
+  // 当前值
+  maxTime: 0,
+  // 最大值
+  maxValue: 100,
+});
+
+// 歌曲地址
 let mp3 = ref("");
+// 音乐详情
+let musicParticulars = reactive({
+  // 歌曲id
+  songId: "",
+  // 歌曲图片
+  songImg: "",
+  // 歌曲名称
+  songName: "",
+  // 歌词时间
+  lyricTime: [],
+  // 歌词
+  lyric: [],
+  // 是否喜欢(未做)
+  loveOrNo: false,
+});
+// 播放器升降
 let shengjiang = ref(true);
+//音量大小是否显示
+let volumeShow = ref(false);
+// 判断音乐暂停还是播放
 let pd = ref(true);
+// 播放器
+let myAudio = ref(null);
 
-let myAudio = ref("");
-
+// 取反升降 控制播放器升降
 function changeShengjiang() {
   shengjiang.value = !shengjiang.value;
 }
@@ -91,8 +157,8 @@ function changeShengjiang() {
 // 切换音乐
 async function changeSong() {
   // 播放器音乐id   本地拿播放器id
-  let PlayerSongId = counterStore.lastPlayerSongId;
-  const songUrl = await reqSongUrl(PlayerSongId);
+  musicParticulars.songId = counterStore.lastPlayerSongId;
+  const songUrl = await reqSongUrl(musicParticulars.songId);
   mp3.value = songUrl.data.data[0].url;
 }
 
@@ -117,13 +183,48 @@ watch(
 
     // 本地播放器id修改
     changeSong();
-
+    // 更新播放器数据
+    updateSong();
   }
 );
 
+// 更新播放器数据
+async function updateSong() {
+  const { data: data } = await reqSongDetail(musicParticulars.songId);
+  // 歌曲图片
+  musicParticulars.songImg = data.songs[0].al.picUrl;
+  // 歌曲名称
+  musicParticulars.songName = data.songs[0].name;
+
+  const { data: data2 } = await reqLyric(musicParticulars.songId);
+
+  const lyrics = data2.lrc.lyric;
+  const regexFirst = /\[(.*?)\]/g;
+  const regexSecond = /\](.*?)\n/g;
+
+  const firstArray = [];
+  const secondArray = [];
+
+  let matchFirst;
+  while ((matchFirst = regexFirst.exec(lyrics)) !== null) {
+    firstArray.push(matchFirst[1]);
+  }
+  musicParticulars.lyricTime = firstArray;
+  let matchSecond;
+  while ((matchSecond = regexSecond.exec(lyrics)) !== null) {
+    secondArray.push(matchSecond[1]);
+  }
+  musicParticulars.lyric = secondArray;
+}
+
 onMounted(async () => {
-  changeSong();
+  // 拿到播放器DOM
   myAudio.value = document.querySelector(".my-audio");
+  // 设置播放器的音乐和音乐ID
+  changeSong();
+  // 更新播放器数据
+  updateSong();
+  console.log(musicParticulars);
 });
 </script>
 
@@ -163,28 +264,83 @@ onMounted(async () => {
   .myBofnagqi-bofangqianniu {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    margin-top: 10px;
-    width: 800px;
-    margin-left: 400px;
-    .myBofnagqi-bofangqianniu-wai {
-      width: 500px;
+    justify-content: flex-start;
+    margin-top: 5px;
+    .myBofnagqi-bofangqianniu-gequ {
+      width: 200px;
       display: flex;
+      align-items: center;
       flex-direction: row;
-      justify-content: space-between;
-      .myBofnagqi-bofangqianniu-nei {
-        display: flex;
+      justify-content: flex-start;
+      margin: 0 20px;
+      img {
+        width: 80px;
+        height: 80px;
+        border-radius: 40px;
+      }
+      span {
+        margin-left: 10px;
+        font-size: 15px;
       }
     }
-  }
-  .myBofnagqi-jdt {
-    width: 70%;
-    height: 30px;
-    background-color: #ffffff;
-    margin-bottom: 10px;
+    .myBofnagqi-bofangqianniu-you {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      .aax {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 10px;
+        width: 1300px;
+        .myBofnagqi-bofangqianniu-wai {
+          width: 500px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          margin: 0 20px;
+          .yingliang {
+            position: relative;
+            .tanchu {
+              position: absolute;
+              width: 50px;
+              height: 100px;
+              background-color: #f02e2e;
+              bottom: 30px;
+            }
+          }
+          .myBofnagqi-bofangqianniu-nei {
+            display: flex;
+          }
+        }
+        .myBofnagqi-bofangqianniu-geci {
+          margin: 0 20px;
+          font-size: 15px;
+        }
+        .myBofnagqi-bofangqianniu-bflb {
+        }
+      }
 
-    .jdt{
-      margin: 0 10px;
+      .myBofnagqi-jdt {
+        width: 1200px;
+        height: 40px;
+        background-color: #ffffff;
+        margin: 5px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 10px;
+        .jdt {
+          width: 95%;
+        }
+        .myBofnagqi-jdt-data {
+          width: 95%;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+        }
+      }
     }
   }
 }
