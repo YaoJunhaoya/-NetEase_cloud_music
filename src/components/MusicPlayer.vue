@@ -50,7 +50,8 @@
               </el-button>
             </div>
             <!-- 是否添加到我喜欢 -->
-            <el-button type="primary" circle>
+            <el-button type="primary" circle @click="BofangOrZantingSong">
+              
               <svg class="icon" aria-hidden="true" style="font-size: 18px">
                 <use xlink:href="#icon-aixin"></use>
               </svg>
@@ -242,7 +243,7 @@ onMounted(async () => {
 }
 
 .myBofnagqi {
-  width: calc(100vw - 40px);
+  width: calc(100% - 40px);
   left: 20px;
   height: 100px;
   background-color: rgb(214, 211, 211);
