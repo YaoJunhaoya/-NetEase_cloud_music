@@ -9,7 +9,7 @@
     <!-- 播放器显示页面 -->
     <div class="myBofnagqi-bofangqianniu">
       <!-- 歌曲名称和图片 -->
-      <div class="myBofnagqi-bofangqianniu-gequ">
+      <div class="myBofnagqi-bofangqianniu-gequ" @click="toSongDetails">
         <img :src="musicParticulars.songImg" />
         <span>{{ musicParticulars.songName }}</span>
       </div>
@@ -120,6 +120,10 @@
 import { ref, reactive, onMounted, watch, watchEffect } from "vue";
 import useCounterStore from "../pinia/counter";
 import { reqSongUrl, reqSongDetail, reqLyric } from "../axios/songListOrSong";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
 // Pinia仓库
 const counterStore = useCounterStore();
 
@@ -167,6 +171,15 @@ let pd = ref(true);
 // 播放器
 let myAudio = ref(null);
 
+// 跳转到歌曲详情
+function toSongDetails() {
+  router.push({
+    name: "SongDetails",
+    params: {
+      songId: musicParticulars.songId,
+    },
+  });
+}
 // 设置歌词的索引值
 function showLyric() {
   // 播放器进度条当前值
@@ -174,10 +187,12 @@ function showLyric() {
 
   console.log(currentTime);
   console.log(musicParticulars.lyricTime[dangqiangecudijihang.value]);
- 
- if (currentTime>musicParticulars.lyricTime[dangqiangecudijihang.value+1]) {
-  dangqiangecudijihang.value+=1
- }
+
+  if (
+    currentTime > musicParticulars.lyricTime[dangqiangecudijihang.value + 1]
+  ) {
+    dangqiangecudijihang.value += 1;
+  }
 }
 
 // 当前音乐的时间
@@ -259,7 +274,7 @@ async function updateSong() {
     secondArray.push(matchSecond[1]);
   }
   musicParticulars.lyric = secondArray;
-  dangqiangecudijihang.value=0
+  dangqiangecudijihang.value = 0;
 }
 
 // 获取音乐时间
