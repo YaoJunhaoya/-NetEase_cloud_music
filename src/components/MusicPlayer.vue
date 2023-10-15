@@ -51,7 +51,6 @@
             </div>
             <!-- 是否添加到我喜欢 -->
             <el-button type="primary" circle @click="BofangOrZantingSong">
-              
               <svg class="icon" aria-hidden="true" style="font-size: 18px">
                 <use xlink:href="#icon-aixin"></use>
               </svg>
@@ -68,12 +67,24 @@
                 </svg>
               </el-button>
 
-              <div class="tanchu" v-show="volumeShow"></div>
+              <div class="tanchu" v-show="volumeShow">
+                <input
+                  type="range"
+                  min="0"
+                  :max="100"
+                  v-model="bofnagqiVolume.current"
+                  @click="setVolume()"
+                />
+                <div>
+                  <span>{{ bofnagqiVolume.current }}</span>
+                  <span>100</span>
+                </div>
+              </div>
             </div>
           </div>
           <!-- 显示歌词 -->
           <div class="myBofnagqi-bofangqianniu-geci">
-            <span>{{ musicParticulars.lyric[5] }}</span>
+            <span>{{ musicParticulars.lyric[dangqiangecudijihang] }}</span>
           </div>
           <!-- 查看播放列表 -->
           <div class="myBofnagqi-bofangqianniu-bflb">
@@ -85,22 +96,19 @@
 
         <!-- 进度条 -->
         <div class="myBofnagqi-jdt">
-          <!-- <el-progress
-            class="jdt"
-            :text-inside="true"
-            :stroke-width="15"
-            :percentage="100"
-          /> -->
           <input
             class="jdt"
             type="range"
-            v-model="rangeValue.maxTime"
+            v-model="rangeValue.time"
             min="0"
             :max="rangeValue.maxValue"
+            @click="setSongTime()"
+            @mousedown="anxia()"
+            @mouseup="setSongTime()"
           />
           <div class="myBofnagqi-jdt-data">
-            <span>{{ rangeValue.maxTime }}</span>
-            <span>{{ rangeValue.maxValue }}</span>
+            <span>{{ formatSecondsToTime(rangeValue.time) }}</span>
+            <span>{{ formatSecondsToTime(rangeValue.maxValue) }}</span>
           </div>
         </div>
       </div>
@@ -117,13 +125,19 @@ const counterStore = useCounterStore();
 
 let musicPlayer = reactive({});
 
+//播放器进度条
 const rangeValue = reactive({
   // 当前值
-  maxTime: 0,
+  time: 0,
   // 最大值
   maxValue: 100,
 });
 
+// 播放器音量
+const bofnagqiVolume = reactive({
+  // 当前值
+  current: 50,
+});
 // 歌曲地址
 let mp3 = ref("");
 // 音乐详情
@@ -141,6 +155,9 @@ let musicParticulars = reactive({
   // 是否喜欢(未做)
   loveOrNo: false,
 });
+
+let dangqiangecudijihang = ref(0);
+
 // 播放器升降
 let shengjiang = ref(true);
 //音量大小是否显示
@@ -150,9 +167,49 @@ let pd = ref(true);
 // 播放器
 let myAudio = ref(null);
 
+// 设置歌词的索引值
+function showLyric() {
+  // 播放器进度条当前值
+  let currentTime = rangeValue.time;
+
+  console.log(currentTime);
+  console.log(musicParticulars.lyricTime[dangqiangecudijihang.value]);
+ 
+ if (currentTime>musicParticulars.lyricTime[dangqiangecudijihang.value+1]) {
+  dangqiangecudijihang.value+=1
+ }
+}
+
+// 当前音乐的时间
+function showaaa() {
+  // 设置时间为播放器当前的时间
+  rangeValue.time = myAudio.value.currentTime;
+  // 如果当前时间为结束时间 暂停播放器
+  if (rangeValue.time == rangeValue.maxValue) {
+    myAudio.value.pause();
+    pd.value = myAudio.value.paused;
+  }
+}
+
+// 当前音乐的时间
+function handleTimeUpdate() {
+  showaaa();
+  showLyric();
+}
+
 // 取反升降 控制播放器升降
 function changeShengjiang() {
   shengjiang.value = !shengjiang.value;
+}
+//修改播放进度
+function setSongTime() {
+  myAudio.value.currentTime = rangeValue.time;
+  myAudio.value.addEventListener("timeupdate", handleTimeUpdate);
+}
+// 暂停进度条更新
+function anxia() {
+  // 添加时间更新的监听器
+  myAudio.value.removeEventListener("timeupdate", handleTimeUpdate);
 }
 
 // 切换音乐
@@ -175,20 +232,6 @@ function BofangOrZantingSong() {
   }
 }
 
-// counterStore.lastPlayerSongId 必须是新值才能触发 （不能是同一首歌） 切换下一首歌 需要手动点击播放
-watch(
-  () => counterStore.lastPlayerSongId,
-  (newValue, oldValue) => {
-    myAudio.value.pause();
-    pd.value = myAudio.value.paused;
-
-    // 本地播放器id修改
-    changeSong();
-    // 更新播放器数据
-    updateSong();
-  }
-);
-
 // 更新播放器数据
 async function updateSong() {
   const { data: data } = await reqSongDetail(musicParticulars.songId);
@@ -208,7 +251,7 @@ async function updateSong() {
 
   let matchFirst;
   while ((matchFirst = regexFirst.exec(lyrics)) !== null) {
-    firstArray.push(matchFirst[1]);
+    firstArray.push(timeStringToSeconds(matchFirst[1]));
   }
   musicParticulars.lyricTime = firstArray;
   let matchSecond;
@@ -216,7 +259,60 @@ async function updateSong() {
     secondArray.push(matchSecond[1]);
   }
   musicParticulars.lyric = secondArray;
+  dangqiangecudijihang.value=0
 }
+
+// 获取音乐时间
+function getSongTime() {
+  setTimeout(() => {
+    rangeValue.maxValue = myAudio.value.duration;
+  }, 500);
+}
+
+// 设置播放器音量
+function setVolume() {
+  myAudio.value.volume = bofnagqiVolume.current / 100;
+}
+// 秒切换成分:秒:毫秒
+function formatSecondsToTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds) % 60;
+  const milliseconds = Math.round((seconds % 1) * 1000);
+
+  // 使用padStart()确保分钟、秒和毫秒都有正确的长度
+  const minutesStr = String(minutes).padStart(2, "0");
+  const secondsStr = String(remainingSeconds).padStart(2, "0");
+  const millisecondsStr = String(milliseconds).padStart(3, "0");
+
+  return `${minutesStr}:${secondsStr}.${millisecondsStr}`;
+}
+// 分秒变秒
+function timeStringToSeconds(timeString) {
+  const [minutesStr, secondsAndMillisecondsStr] = timeString.split(":");
+  const [secondsStr, millisecondsStr] = secondsAndMillisecondsStr.split(".");
+
+  const minutesInSeconds = parseInt(minutesStr, 10) * 60;
+  const seconds = parseFloat(secondsStr);
+  const millisecondsInSeconds = parseInt(millisecondsStr, 10) / 1000;
+
+  return minutesInSeconds + seconds + millisecondsInSeconds;
+}
+
+// counterStore.lastPlayerSongId 必须是新值才能触发 （不能是同一首歌） 切换下一首歌 需要手动点击播放
+watch(
+  () => counterStore.lastPlayerSongId,
+  (newValue, oldValue) => {
+    myAudio.value.pause();
+    pd.value = myAudio.value.paused;
+
+    // 本地播放器id修改
+    changeSong();
+    // 更新播放器数据
+    updateSong();
+    // 获取音乐时间
+    getSongTime();
+  }
+);
 
 onMounted(async () => {
   // 拿到播放器DOM
@@ -226,6 +322,15 @@ onMounted(async () => {
   // 更新播放器数据
   updateSong();
   console.log(musicParticulars);
+  // 获取音乐时间
+  getSongTime();
+  // console.log(rangeValue);
+
+  // 添加时间更新的监听器
+  myAudio.value.addEventListener("timeupdate", handleTimeUpdate);
+
+  // 获取播放器音乐
+  bofnagqiVolume.current = myAudio.value.volume * 100;
 });
 </script>
 
@@ -305,10 +410,24 @@ onMounted(async () => {
             position: relative;
             .tanchu {
               position: absolute;
-              width: 50px;
-              height: 100px;
-              background-color: #f02e2e;
+              width: 110px;
+              height: 40px;
+              background-color: #ffffff;
+              left: calc(-50px + 18px);
               bottom: 30px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              border-radius: 5px;
+              input {
+                width: 100px;
+              }
+              div {
+                width: 100px;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+              }
             }
           }
           .myBofnagqi-bofangqianniu-nei {
@@ -320,6 +439,8 @@ onMounted(async () => {
           font-size: 15px;
         }
         .myBofnagqi-bofangqianniu-bflb {
+          .icon {
+          }
         }
       }
 
