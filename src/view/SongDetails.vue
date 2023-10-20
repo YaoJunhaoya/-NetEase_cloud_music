@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import {
   reqSongDetail,
@@ -57,7 +57,7 @@ import {
 } from "../axios/songListOrSong";
 import { reqUserDetails } from "../axios/user";
 import useCounterStore from "../pinia/counter";
-import Comment from "./Comment.vue";
+import Comment from "../components/Comment.vue";
 
 //    路由
 const route = useRoute();
@@ -79,11 +79,32 @@ const songParticulars = reactive({
   SongComments: [],
 });
 
+// 获取歌单id，把歌单添加到播放器
+function getSongList(id) {
+  let arr = ref(counterStore.playerSongList);
+
+  // 判断里面有没有这个歌曲id了
+  if (!arr.value.includes(id)) {
+    // 获取列表
+    if (arr.value[0] != "歌曲") {
+      arr.value = [];
+      arr.value.push("歌曲");
+      arr.value.push(id);
+    } else {
+      arr.value.push(id);
+    }
+  }
+
+  // 上传到本地
+  counterStore.PlayerSongList(arr.value);
+}
+
 // 切换播放器音乐id
 function playSong() {
   // console.log(songParticulars.songId);
   counterStore.PlayerSongIdToLocal(songParticulars.songId);
   console.log("歌曲详情id:" + songParticulars.songId);
+  getSongList(songParticulars.songId);
 }
 
 // 歌词
@@ -183,7 +204,16 @@ onMounted(async () => {
           display: flex;
           flex-direction: column;
           align-items: center;
+          height: 550px;
+          overflow: auto;
+          border-radius: 20px;
+          box-shadow: 1px 1px 4px rgb(129, 129, 129);
+          padding: 5px 0;
+          &::-webkit-scrollbar {
+            width: 0;
+          }
         }
+
         .songContent-xx-a {
           margin: 10px 0;
         }

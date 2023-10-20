@@ -19,3 +19,13 @@
 用户登录后界面
 
 搜索
+
+
+
+playerSongList里只是显示列表
+
+高亮显示根据播放器的歌曲
+
+playerSongList里索引根据播放器的歌曲
+
+下一首歌根据playerSongList.list的索引

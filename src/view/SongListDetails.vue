@@ -100,7 +100,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, computed } from "vue";
+import { reactive, onMounted, computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import useCounterStore from "../pinia/counter";
 import {
@@ -109,7 +109,7 @@ import {
   reqSongListComment,
 } from "../axios/songListOrSong";
 import { reqUserDetails } from "../axios/user";
-import Comment from "./Comment.vue";
+import Comment from "../components/Comment.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -139,10 +139,24 @@ let gequliebiao = reactive({
   allNumber: SongListDetails.dataSong.length,
 });
 
+// 获取歌单id，把歌单添加到播放器
+function getSongList() {
+  let arr = ref([]);
+  arr.value.push(SongListDetails.data.id);
+  // 获取列表
+  SongListDetails.dataSong.forEach((item, index) => {
+    arr.value.push(SongListDetails.dataSong[index].id);
+  });
+  // console.log(SongListDetails.dataSong);
+  // 上传到本地
+  counterStore.PlayerSongList(arr.value);
+}
+
 // 切换播放器音乐id
 function playSong(id) {
   console.log("歌单详情歌曲id:", id);
   counterStore.PlayerSongIdToLocal(id);
+  getSongList();
 }
 
 // 歌单评论
