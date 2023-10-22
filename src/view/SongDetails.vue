@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import {
   reqSongDetail,
@@ -78,27 +78,6 @@ const songParticulars = reactive({
   lyric: [],
   SongComments: [],
 });
-
-// 获取歌单id，把歌单添加到播放器
-function getSongList(id) {
-  let arr = ref(counterStore.playerSongList);
-
-  // 判断里面有没有这个歌曲id了
-  if (!arr.value.includes(id)) {
-    // 获取列表
-    if (arr.value[0] != "歌曲") {
-      arr.value = [];
-      arr.value.push("歌曲");
-      arr.value.push(id);
-    } else {
-      arr.value.push(id);
-    }
-  }
-
-  // 上传到本地
-  counterStore.PlayerSongList(arr.value);
-}
-
 // 切换播放器音乐id
 function playSong() {
   // console.log(songParticulars.songId);
@@ -138,13 +117,63 @@ async function SongListComment() {
   songParticulars.SongComments = data.data.comments;
 
   songParticulars.SongComments.forEach(async (element) => {
-    const axx = await reqUserDetails(element.ipLocation.userId);
-    element.nickname = axx.data.profile.nickname;
-    element.avatarUrl = axx.data.profile.avatarUrl;
+    if (element.ipLocation.userId) {
+      const { data: axx } = await reqUserDetails(element.ipLocation.userId);
+      element.nickname = axx.profile.nickname || "未知用户";
+      element.avatarUrl =
+        axx.profile.avatarUrl ||
+        "http://p1.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg";
+    } else {
+      element.nickname = "未知用户";
+      element.avatarUrl =
+        "http://p1.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg";
+    }
   });
 
   // console.log(songParticulars.SongComments);
 }
+
+// 获取歌单id，把歌单添加到播放器
+function getSongList(id) {
+  // 获取本地PlayerSongList的数据
+  let arr = ref(counterStore.playerSongList);
+
+  // 判断里面有没有这个歌曲id了
+  if (!arr.value.includes(id)) {
+    // 获取列表 第一项是歌曲就添加歌曲 不是歌曲就变成歌曲
+    if (arr.value[0] != "歌曲") {
+      arr.value = [];
+      arr.value.push("歌曲");
+      arr.value.push(id);
+    } else {
+      arr.value.push(id);
+    }
+  }
+
+  // 上传到本地
+  counterStore.PlayerSongList(arr.value);
+}
+
+// 监视route.params.songId  在歌曲详情页面时，监视 route.params.songId 来改变页面
+watch(
+  () => route.params.songId,
+  async () => {
+    // 赋值歌曲id 没有传参来就去本地拿
+    songParticulars.songId = route.params.songId || counterStore.lastSongId;
+    // 调用仓库方法：存入歌曲id到本地
+    counterStore.SongIdToLocal(songParticulars.songId);
+
+    // 用歌曲id拿到歌曲信息
+    const gequxiangqing = await reqSongDetail(songParticulars.songId);
+    songParticulars.songMessage = gequxiangqing.data.songs[0];
+    songParticulars.img = songParticulars.songMessage.al.picUrl;
+    songParticulars.al = songParticulars.songMessage.al;
+    songParticulars.ar = songParticulars.songMessage.ar[0];
+    // console.log(songParticulars.songMessage);
+    updateSong();
+    SongListComment();
+  }
+);
 
 onMounted(async () => {
   // 赋值歌曲id 没有传参来就去本地拿

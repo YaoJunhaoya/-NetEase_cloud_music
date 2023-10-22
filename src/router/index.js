@@ -21,9 +21,16 @@ const router = createRouter({
         }, {
             // 歌曲详情
             path: '/songdetails',
-            name:'SongDetails',
+            name: 'SongDetails',
             component: SongDetails,
-            props:true
+            props: true
+        },
+        {
+            // 歌曲详情+id
+            path: '/songdetails/:songId',
+            name: 'SongDetailsId',
+            component: SongDetails,
+            props: true
         },
         {
             // 歌单详情
@@ -31,7 +38,6 @@ const router = createRouter({
             name: 'SongListDetails',
             component: SongListDetails,
             props: true
-
         }
     ]
 })

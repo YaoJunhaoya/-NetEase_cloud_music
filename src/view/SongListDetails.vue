@@ -57,7 +57,7 @@
       <!-- 歌单中歌单列表 -->
       <div class="songListToSongData">
         <!-- 标题 -->
-        <div class="title">我是标题</div>
+        <div class="title">歌曲列表</div>
         <!-- 我是一些歌曲 -->
         <div class="songListToSongData-song">
           <div
@@ -139,17 +139,23 @@ let gequliebiao = reactive({
   allNumber: SongListDetails.dataSong.length,
 });
 
-// 获取歌单id，把歌单添加到播放器
+// 获取歌单id，把歌单添加到播放器  （除非是同一个歌单不然都会更新）
 function getSongList() {
   let arr = ref([]);
-  arr.value.push(SongListDetails.data.id);
-  // 获取列表
-  SongListDetails.dataSong.forEach((item, index) => {
-    arr.value.push(SongListDetails.dataSong[index].id);
-  });
-  // console.log(SongListDetails.dataSong);
-  // 上传到本地
-  counterStore.PlayerSongList(arr.value);
+
+  // 判断 歌单id 与 本地的第一项 是否相同
+  if (counterStore.playerSongList[0] != SongListDetails.data.id) {
+    // 这是歌单id
+    arr.value.push(SongListDetails.data.id);
+    // 获取列表
+    SongListDetails.dataSong.forEach((item, index) => {
+      arr.value.push(SongListDetails.dataSong[index].id);
+    });
+    // 上传到本地
+    counterStore.PlayerSongList(arr.value);
+  } else {
+    console.log("是同一首歌单");
+  }
 }
 
 // 切换播放器音乐id
@@ -167,9 +173,17 @@ async function SongListComment() {
   SongListDetails.SongListComments = data.data.comments;
 
   SongListDetails.SongListComments.forEach(async (element) => {
-    const axx = await reqUserDetails(element.ipLocation.userId);
-    element.nickname = axx.data.profile.nickname;
-    element.avatarUrl = axx.data.profile.avatarUrl;
+    if (element.ipLocation.userId) {
+      const { data: axx } = await reqUserDetails(element.ipLocation.userId);
+      element.nickname = axx.profile.nickname || "未知用户";
+      element.avatarUrl =
+        axx.profile.avatarUrl ||
+        "http://p1.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg";
+    } else {
+      element.nickname = "未知用户";
+      element.avatarUrl =
+        "http://p1.music.126.net/SUeqMM8HOIpHv9Nhl9qt9w==/109951165647004069.jpg";
+    }
   });
 
   // console.log(SongListDetails.SongListComments);

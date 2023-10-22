@@ -4,23 +4,39 @@
     <!-- 隐藏和显示 -->
     <div class="show" @click="changeShengjiang"></div>
     <!-- 播放器 -->
-    <audio controls :src="mp3" class="my-audio" style="display: none"></audio>
+    <audio
+      controls
+      :src="mp3"
+      class="my-audio"
+      style="display: none"
+      @ended="audioEnded()"
+      @play="audioPlay()"
+      @pause="audioPause()"
+    ></audio>
 
     <!-- 播放器显示页面 -->
     <div class="myBofnagqi-bofangqianniu">
       <!-- 歌曲名称和图片 -->
       <div class="myBofnagqi-bofangqianniu-gequ" @click="toSongDetails">
         <img :src="musicParticulars.songImg" />
-        <span>{{ musicParticulars.songName }}</span>
+        <div class="name-vip">
+          <span class="vip">{{ isVip(musicParticulars.fee) }}</span>
+          <span class="name">{{ musicParticulars.songName }}</span>
+        </div>
       </div>
       <div class="myBofnagqi-bofangqianniu-you">
         <div class="aax">
           <!-- 播放按钮 -->
           <div class="myBofnagqi-bofangqianniu-wai">
             <!-- 循环，随机 -->
-            <el-button type="primary" circle>
-              <svg class="icon" aria-hidden="true" style="font-size: 18px">
-                <use xlink:href="#icon-shunxubofang"></use>
+            <el-button
+              type="primary"
+              circle
+              class="bofangType"
+              @click="changePlayType()"
+            >
+              <svg class="icon bofangType-icon" aria-hidden="true">
+                <use :xlink:href="PlaybackMode.arr[PlaybackMode.index]"></use>
               </svg>
             </el-button>
             <div class="myBofnagqi-bofangqianniu-nei">
@@ -50,7 +66,7 @@
               </el-button>
             </div>
             <!-- 是否添加到我喜欢 -->
-            <el-button type="primary" circle @click="BofangOrZantingSong">
+            <el-button type="primary" circle>
               <svg class="icon" aria-hidden="true" style="font-size: 18px">
                 <use xlink:href="#icon-aixin"></use>
               </svg>
@@ -108,7 +124,8 @@
                   :key="index"
                   :class="{ activate: playerSongList.i == index + 1 }"
                 >
-                  <span>{{ item.name }}+{{ index }}</span>
+                  <!-- <span>{{ item.name }}+{{ index }}</span> -->
+                  <PlayerSongList :playerSongList="item"></PlayerSongList>
                 </div>
               </div>
             </el-drawer>
@@ -143,17 +160,12 @@ import useCounterStore from "../pinia/counter";
 import { reqSongUrl, reqSongDetail, reqLyric } from "../axios/songListOrSong";
 import { useRouter } from "vue-router";
 
+import PlayerSongList from "./PlayerSongList.vue";
+
 // 路由
 const router = useRouter();
 // Pinia仓库
 const counterStore = useCounterStore();
-
-// 播放方式  顺序 循环 随机
-let PlaybackMode = reactive({
-  index: 0,
-  // 顺序 循环 随机
-  arr: ["icon-24gl-repeat2", "icon-24gl-repeatOnce2", "icon-suijibofang"],
-});
 
 // 播放器升降
 let shengjiang = ref(true);
@@ -180,7 +192,7 @@ let musicParticulars = reactive({
 // 跳转到歌曲详情
 function toSongDetails() {
   router.push({
-    name: "SongDetails",
+    name: "SongDetailsId",
     params: {
       songId: musicParticulars.songId,
     },
@@ -196,6 +208,8 @@ async function updateSong() {
   musicParticulars.songImg = data.songs[0].al.picUrl;
   // 歌曲名称
   musicParticulars.songName = data.songs[0].name;
+  // 是否vip
+  musicParticulars.fee = data.songs[0].fee;
 
   const { data: data2 } = await reqLyric(musicParticulars.songId);
 
@@ -226,11 +240,56 @@ function BofangOrZantingSong() {
   // 未播放：true
   if (myAudio.value.paused) {
     myAudio.value.play();
-    pd.value = myAudio.value.paused;
   } else {
     myAudio.value.pause();
-    pd.value = myAudio.value.paused;
   }
+}
+// 开始播放时间
+function audioPlay() {
+  // 添加时间更新的监听器
+  myAudio.value.addEventListener("timeupdate", handleTimeUpdate);
+  console.log("开始播放");
+  pd.value = myAudio.value.paused;
+}
+// 暂停播放事件
+function audioPause() {
+  myAudio.value.removeEventListener("timeupdate", handleTimeUpdate);
+  console.log("暂停播放");
+  pd.value = myAudio.value.paused;
+}
+
+// 播放方式  顺序 循环 随机
+let PlaybackMode = reactive({
+  index: 0,
+  // 顺序 循环 随机
+  arr: ["#icon-xunhuan", "#icon-danquxunhuan", "#icon-suijibofang"],
+});
+// 改变播放类型
+function changePlayType() {
+  if (PlaybackMode.index >= 2) {
+    PlaybackMode.index = 0;
+  } else {
+    PlaybackMode.index++;
+  }
+}
+// 播放结束后
+function audioEnded() {
+  // 下一首歌id
+  let gequ = ref("202369");
+  // 判断下一首歌播放什么   更换counterStore.PlayerSongIdToLocal() 再播放changeSong()放音乐
+  if (PlaybackMode.index == 0) {
+    playerChangeSong(1);
+    // console.log("顺序播放");
+  } else if (PlaybackMode.index == 1) {
+    playerChangeSong(0);
+    // console.log("循环播放");
+  } else if (PlaybackMode.index == 2) {
+    let suiji = Math.floor(Math.random() * playerSongList.list.length - 1);
+    playerChangeSong(suiji);
+    // console.log("随机播放");
+  }
+  changeSong();
+  // console.log("播放结束");
 }
 
 // 歌曲地址
@@ -241,6 +300,7 @@ async function changeSong() {
   musicParticulars.songId = counterStore.lastPlayerSongId;
   const songUrl = await reqSongUrl(musicParticulars.songId);
   mp3.value = songUrl.data.data[0].url;
+  myAudio.value.play();
 }
 
 // 歌词数组的索引
@@ -303,7 +363,7 @@ let volumeShow = ref(false);
 // 播放器音量
 const bofnagqiVolume = reactive({
   // 当前值
-  current: 50,
+  current: 20,
 });
 // 设置播放器音量
 function setVolume() {
@@ -325,24 +385,21 @@ function changPlayerSongListIndex() {
     }
   });
 }
-// 获取本地的数据加载到播放器里的歌曲列表
+// 获取本地的播放器列表数据 发送请求 获取歌曲列表里的所有详情
 async function bian() {
   playerSongList.list = counterStore.playerSongList;
 
+  // 除了第一个数据，其他全部获取到
   let arr = playerSongList.list.slice(1);
-  let string = "";
-  if (playerSongList.list[0] == "歌曲") {
-    // 里面是歌曲 会添加歌曲
-    string = arr.join(",");
-  } else {
-    // 里面是歌单，播放列表不会添加
-    string = arr.join(",");
-  }
+  // 逗号连接所有数据成为一个字符串
+  let string = arr.join(",");
+  // 发送请求获取歌曲数据
   const { data: data } = await reqSongDetail(string);
+  // 将第一个数据添加回去
   playerSongList.list = playerSongList.list.slice(0, 1);
+  // 将获取到的数据全部添加进去
   playerSongList.list.push(...data.songs);
-  playerSongList.index = playerSongList.list.name;
-  // console.log(playerSongList.list);
+  console.log(playerSongList);
 }
 // 播放器切换上一首或下一首
 function playerChangeSong(x) {
@@ -364,6 +421,21 @@ function playerChangeSong(x) {
 //
 //
 //
+// 判断是否是vip
+function isVip(item) {
+  let songTyoe = ref("");
+  // 0: 免费或无版权     1: VIP 歌曲     4: 购买专辑     8: 非会员可免费播放低音质，会员可播放高音质及下载   fee 为 1 或 8 的歌曲均可单独购买 2 元单曲
+  if (item == 0) {
+    songTyoe.value = "免费或无版权";
+  } else if (item == 1) {
+    songTyoe.value = "VIP";
+  } else if (item == 4) {
+    songTyoe.value = "购买专辑";
+  } else if (item == 8) {
+    songTyoe.value = "免费低音质";
+  }
+  return songTyoe.value;
+}
 // 秒切换成分:秒:毫秒
 function formatSecondsToTime(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -395,16 +467,13 @@ function timeStringToSeconds(timeString) {
 //
 //
 
-// 第一个变了 里面数据才会变
-// watch(playerSongList.list[0], () => {
-//   bian();
-// });
-
 // counterStore.lastPlayerSongId 必须是新值才能触发 （不能是同一首歌） 切换下一首歌 需要手动点击播放
 watch(
   () => counterStore.lastPlayerSongId,
   (newValue, oldValue) => {
+    // 播放器暂停
     myAudio.value.pause();
+    // 播放按钮改变
     pd.value = myAudio.value.paused;
 
     // 本地播放器id修改
@@ -413,10 +482,12 @@ watch(
     updateSong();
     // 获取音乐时间
     getSongTime();
-    // 获取本地的数据加载到播放器里的歌曲列表
+    // 获取本地的数据加载到播放器里的歌曲列表   这里应该监视playerSongList.list[0]的值有没有改变 改变后再触发
     bian();
     // 修改playerSongList.i的值
     changPlayerSongListIndex();
+    // 播放器播放 (不可用)
+    // myAudio.value.play()
   }
 );
 
@@ -432,11 +503,9 @@ onMounted(async () => {
   getSongTime();
   // console.log(rangeValue);
 
-  // 添加时间更新的监听器
-  myAudio.value.addEventListener("timeupdate", handleTimeUpdate);
-
   // 获取播放器音乐
-  bofnagqiVolume.current = myAudio.value.volume * 100;
+  // bofnagqiVolume.current = myAudio.value.volume * 100;
+  myAudio.value.volume = bofnagqiVolume.current / 100;
 
   // 获取本地的数据加载到播放器里的歌曲列表
   bian();
@@ -486,20 +555,37 @@ onMounted(async () => {
     margin-top: 5px;
     width: 100%;
     .myBofnagqi-bofangqianniu-gequ {
-      width: 200px;
+      width: 260px;
+      margin: 0 0px 0 50px;
       display: flex;
       align-items: center;
       flex-direction: row;
       justify-content: flex-start;
-      margin: 0 50px;
       img {
         width: 80px;
         height: 80px;
         border-radius: 40px;
       }
-      span {
+      .name-vip {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
         margin-left: 10px;
-        font-size: 15px;
+        max-width: 160px;
+        .vip {
+          padding: 1px 3px;
+          margin: 0 0 5px 0;
+          font-size: 5px;
+          color: red;
+          border: 1px solid red;
+          border-radius: 5px;
+          background-color: #e2e0e0;
+        }
+        .name {
+          font-size: 18px;
+          font-weight: 600;
+        }
       }
     }
     .myBofnagqi-bofangqianniu-you {
@@ -523,6 +609,14 @@ onMounted(async () => {
           flex-direction: row;
           justify-content: space-between;
           margin: 0 20px;
+          .bofangType {
+            background-color: #ffffff;
+            border: none;
+            .bofangType-icon {
+              font-size: 20px;
+              color: rgb(0, 0, 0);
+            }
+          }
           .yingliang {
             position: relative;
             .tanchu {
@@ -565,7 +659,7 @@ onMounted(async () => {
       }
 
       .myBofnagqi-jdt {
-        width: 100%;
+        width: calc(100% - 150px);
         height: 30px;
         background-color: #ffffff;
         margin: 5px 0;
