@@ -2,7 +2,7 @@
   <!-- 我是播放器 -->
   <div class="myBofnagqi" :class="shengjiang ? 'sheng' : 'jiang'">
     <!-- 隐藏和显示 -->
-    <div class="show" @click="changeShengjiang"></div>
+    <div class="show" @click="changeShengjiang" style="cursor:pointer"></div>
     <!-- 播放器 -->
     <audio
       controls
@@ -17,7 +17,7 @@
     <!-- 播放器显示页面 -->
     <div class="myBofnagqi-bofangqianniu">
       <!-- 歌曲名称和图片 -->
-      <div class="myBofnagqi-bofangqianniu-gequ" @click="toSongDetails">
+      <div class="myBofnagqi-bofangqianniu-gequ" @click="toSongDetails" style="cursor:pointer">
         <img :src="musicParticulars.songImg" />
         <div class="name-vip">
           <span class="vip">{{ isVip(musicParticulars.fee) }}</span>
@@ -103,7 +103,7 @@
             <span>{{ musicParticulars.lyric[dangqiangecudijihang] }}</span>
           </div>
           <!-- 查看播放列表 -->
-          <div class="myBofnagqi-bofangqianniu-bflb">
+          <div class="myBofnagqi-bofangqianniu-bflb" style="cursor:pointer">
             <svg
               class="icon"
               aria-hidden="true"
@@ -125,7 +125,10 @@
                   :class="{ activate: playerSongList.i == index + 1 }"
                 >
                   <!-- <span>{{ item.name }}+{{ index }}</span> -->
-                  <PlayerSongList :playerSongList="item"></PlayerSongList>
+                  <PlayerSongList
+                    :playerSongList="item"
+                    :ranking="index + 1"
+                  ></PlayerSongList>
                 </div>
               </div>
             </el-drawer>
@@ -137,6 +140,7 @@
           <input
             class="jdt"
             type="range"
+            style="cursor:pointer"
             v-model="rangeValue.time"
             min="0"
             :max="rangeValue.maxValue"
@@ -379,6 +383,7 @@ let playerSongList = reactive({
 });
 // 修改playerSongList.i的值
 function changPlayerSongListIndex() {
+  console.log("changPlayerSongListIndex");
   playerSongList.list.forEach((item, index) => {
     if (item == musicParticulars.songId) {
       playerSongList.i = index;
@@ -483,7 +488,8 @@ watch(
     // 获取音乐时间
     getSongTime();
     // 获取本地的数据加载到播放器里的歌曲列表   这里应该监视playerSongList.list[0]的值有没有改变 改变后再触发
-    bian();
+    // 判断歌曲有没有在播放列表里，没有再使用bian()
+    if (! playerSongList.list.some( (item) => item.id == counterStore.lastPlayerSongId ) ) bian();
     // 修改playerSongList.i的值
     changPlayerSongListIndex();
     // 播放器播放 (不可用)

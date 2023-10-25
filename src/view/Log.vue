@@ -9,28 +9,87 @@
         <div class="logImg">
           <img src="../image/log.png" alt="" />
         </div>
-        <!-- 输入框 -->
-        <div class="logInput">
-          <!-- 账号 -->
-          <div>
-            <el-form-item label="邮箱：">
-              <el-input
-                v-model="zhanghaoInput"
-                placeholder="请输入手机号或邮箱"
-                clearable
-              />
-            </el-form-item>
+        <!-- 右边区域 -->
+        <div class="youbianquyu">
+          <!-- 验证码登录 -->
+          <div class="logInput" v-if="loginType == 0">
+            <!-- 账号 -->
+            <div>
+              <el-form-item label="手机号：">
+                <el-input
+                  v-model="zhanghaoInput"
+                  placeholder="请输入手机号 "
+                  clearable
+                />
+              </el-form-item>
+            </div>
+            <!-- 密码 -->
+            <div>
+              <el-form-item label="验证码：">
+                <el-input
+                  v-model="passwordInput"
+                  placeholder="请输入验证码"
+                  clearable
+                  class="yzmkuang"
+                />
+              </el-form-item>
+              <button class="hqyzm" @click="getCode()">获取验证码</button>
+            </div>
           </div>
-          <!-- 密码 -->
-          <div>
-            <el-form-item label="密码：">
-              <el-input
-                v-model="passwordInput"
-                placeholder="请输入密码"
-                type="password"
-                clearable
-              />
-            </el-form-item>
+          <!-- 账号密码登录 -->
+          <div class="logInput" v-if="loginType == 1">
+            <!-- 账号 -->
+            <div>
+              <el-form-item label="账号：">
+                <el-input
+                  v-model="zhanghaoInput"
+                  placeholder="请输入手机号"
+                  clearable
+                />
+              </el-form-item>
+            </div>
+            <!-- 密码 -->
+            <div>
+              <el-form-item label="密码：">
+                <el-input
+                  v-model="passwordInput"
+                  placeholder="请输入密码"
+                  type="password"
+                  clearable
+                />
+              </el-form-item>
+            </div>
+          </div>
+          <!-- 邮箱登录 -->
+          <div class="logInput" v-if="loginType == 2">
+            <!-- 账号 -->
+            <div>
+              <el-form-item label="邮箱：">
+                <el-input
+                  v-model="zhanghaoInput"
+                  placeholder="请输入邮箱"
+                  clearable
+                />
+              </el-form-item>
+            </div>
+            <!-- 密码 -->
+            <div>
+              <el-form-item label="密码：">
+                <el-input
+                  v-model="passwordInput"
+                  placeholder="请输入密码"
+                  type="password"
+                  clearable
+                />
+              </el-form-item>
+            </div>
+          </div>
+          <div class="changeLogin">
+            <span v-if="loginType != 0" @click="loginType = 0">验证码登录</span>
+            <span v-if="loginType != 1" @click="loginType = 1"
+              >账号密码登录</span
+            >
+            <span v-if="loginType != 2" @click="loginType = 2">邮箱登录</span>
           </div>
           <el-button
             type="danger"
@@ -39,8 +98,9 @@
             :disabled="pdButton"
             class="logButton"
             @click="toLog"
-            >登录</el-button
           >
+            登录
+          </el-button>
         </div>
       </div>
     </div>
@@ -49,15 +109,38 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { reqPhoneLog, reqEmailLog } from "../axios/user";
+import {
+  reqPhoneCodeLog,
+  reqPhoneLog,
+  reqEmailLog,
+  reqSendPhoneCodeLog,
+} from "../axios/user";
 import useUserStore from "../pinia/user";
+import { useRouter,useRoute } from "vue-router";
 
-// 账号密码
-const zhanghaoInput = ref("yjh3342859687@163.com");
-const passwordInput = ref("Yjh15888673903");
+// 路由
+const router = useRouter();
+const route = useRoute();
 
 // Pinia仓库
 const userStore = useUserStore();
+
+// 登录方式
+let loginType = ref(0);
+
+// 获取验证码
+async function getCode() {
+  const { data: data } = await reqSendPhoneCodeLog(zhanghaoInput.value);
+  if (data.code == 200) {
+    alert("发送成功");
+  } else {
+    alert("发送失败");
+  }
+}
+
+// 账号密码
+const zhanghaoInput = ref("15888673903");
+const passwordInput = ref("");
 
 let pdButton = computed({
   get() {
@@ -67,12 +150,52 @@ let pdButton = computed({
 
 // 登录
 async function toLog() {
-  const req = await reqEmailLog(zhanghaoInput.value, passwordInput.value);
-  userStore.usetTokenToLocal(req.data.token);
-  userStore.userUserUidToLocal(req.data.account.id);
-  userStore.userLogState(req.data);
-  document.cookie = `username=${req.data.cookie}`;
-  console.log(req.data.cookie);
+  // 获取的数据
+  let allData = ref(null);
+  if (loginType.value == 0) {
+    // 验证码登录
+    const { data: req } = await reqPhoneCodeLog(
+      zhanghaoInput.value,
+      passwordInput.value
+    );
+    allData = req;
+  } else if (loginType.value == 1) {
+    // 账号密码登录
+
+    const { data: req } = await reqPhoneLog(
+      zhanghaoInput.value,
+      passwordInput.value
+    );
+    allData = req;
+  } else if (loginType.value == 2) {
+    // 邮箱登录
+    const { data: req } = await reqEmailLog(
+      zhanghaoInput.value,
+      passwordInput.value
+    );
+    allData = req;
+  }
+  console.log("allData", allData);
+  if (allData.code == 200) {
+    // 设置用户token
+    userStore.usetTokenToLocal(allData.token);
+    // 设置用户cookie
+    userStore.usetCookieToLocal(allData.cookie);
+    // 设置用户ID
+    userStore.userUserUidToLocal(allData.account.id);
+    // 账户信息
+    userStore.usetAccountToLocal(allData.account);
+    // 用户资料
+    userStore.usetProfileToLocal(allData.profile);
+    // 用户全部资料
+    userStore.userLogState(allData);
+    // 完成登录跳转到首页
+    router.push("/home")
+  } else {
+    alert("账号，密码或验证码有问题，请重试");
+    zhanghaoInput.value = "";
+    passwordInput.value = "";
+  }
 }
 </script>
 
@@ -122,7 +245,7 @@ async function toLog() {
           width: 80%;
         }
       }
-      .logInput {
+      .youbianquyu {
         width: 60%;
         height: 100%;
         display: flex;
@@ -131,10 +254,36 @@ async function toLog() {
         justify-content: center;
         font-size: 28px;
         border-left: 1px solid black;
-        div {
+        .logInput {
+          div {
+            display: flex;
+            // align-items: center;
+            justify-content: flex-start;
+          }
+          // 验证码登录
+          .yzmkuang {
+            width: 120px;
+          }
+          .hqyzm {
+            width: 80px;
+            height: 30px;
+            font-size: 10px;
+            margin-left: 20px;
+          }
+          // 账号密码
+          // 邮箱
+        }
+        .changeLogin {
+          font-size: 10px;
+          width: 50%;
           display: flex;
-          align-items: center;
+          flex-direction: row;
           justify-content: center;
+          align-items: center;
+          border-top: #999 1px solid;
+          span {
+            margin: 5px 5px;
+          }
         }
         .logButton {
           width: 200px;

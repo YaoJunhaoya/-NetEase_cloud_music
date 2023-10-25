@@ -2,26 +2,49 @@ import { defineStore } from 'pinia'
 
 const useUserStore = defineStore('userStore', {
     state: () => ({
-        // 登录信息
+        // 登录信息 用户的全部信息
         logState: JSON.parse(localStorage.getItem('logState')) || {},
         // 用户token
         token: localStorage.getItem('userToken') || "",
         // 用户id
-        uid: "1767320482" || localStorage.getItem('userUid') //自己id：1767320482 展示设置成自己的
+        uid: localStorage.getItem('userUid') || "1767320482",  //自己id：1767320482 展示设置成自己的
+        // 用户cookie
+        myCookie: localStorage.getItem('myCookie') || "",
+        myAccount: JSON.parse(localStorage.getItem('myAccount')) || {},
+        myProfile: JSON.parse(localStorage.getItem('myProfile')) || {},
+
     }),
     actions: {
-        // 把token信息存储在本地
-        usetTokenToLocal(item = "") {
-            localStorage.setItem('userToken', item)
-        },
         // 把登录信息存储在本地
         userLogState(item = {}) {
             localStorage.setItem('logState', JSON.stringify(item))
+            this.logState = item
+        },
+        // 把token信息存储在本地
+        usetTokenToLocal(item = "") {
+            localStorage.setItem('userToken', item)
+            this.token = item
         },
         // 把uid信息存储在本地
         userUserUidToLocal(item = "") {
             localStorage.setItem('userUid', item)
+            this.uid = item
         },
+        // 把Cookie存储在本地
+        usetCookieToLocal(item = "") {
+            localStorage.setItem('myCookie', item)
+            this.myCookie = item
+        },
+        // 把Account存储在本地
+        usetAccountToLocal(item = {}) {
+            localStorage.setItem('myAccount', JSON.stringify(item))
+            this.myAccount = item
+        },
+        // 把Profile存储在本地
+        usetProfileToLocal(item = {}) {
+            localStorage.setItem('myProfile', JSON.stringify(item))
+            this.myProfile = item
+        }
     },
     getters: {
 

@@ -29,13 +29,13 @@
         <use xlink:href="#icon-a-021_sousuo"></use>
       </svg>
       <!-- 搜索框 -->
-      <input type="text" class="sousuo-input" />
+      <input type="text" class="sousuo-input"  style="cursor:pointer"/>
     </div>
 
     <!-- 未登录 -->
-    <div @click="userLog" v-if="!userStore.token" class="noneLog">未登录</div>
+    <div @click="userLog" v-if="!userStore.token" class="noneLog" style="cursor:pointer">未登录</div>
     <!-- 我的 -->
-    <div class="my" v-else>
+    <div class="my" v-else style="cursor:pointer">
       <div @click="drawer = true">
         <img
           src="https://img0.baidu.com/it/u=4275172878,2244226890&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
@@ -87,6 +87,7 @@ function userLog() {
   align-items: center;
   border-bottom: 1px solid rgb(255, 68, 68);
   .music-iocn {
+    cursor:pointer;
     display: flex;
     flex-direction: row;
     align-items: center;

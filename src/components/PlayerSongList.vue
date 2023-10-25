@@ -1,5 +1,6 @@
 <template>
-  <div class="playerSongList" @click="playSong(playerSongList.id)">
+  <div class="playerSongList" @click="playSong(playerSongList.id)" style="cursor:pointer">
+    <div class="playerSongList-ranking">{{ ranking }}</div>
     <div class="playerSongList-a">
       <!-- 歌曲id -->
       <div class="playerSongList-a-id">{{ playerSongList.id }}</div>
@@ -26,16 +27,18 @@ defineProps({
     // type: Object,
     default: {},
   },
+  ranking: {
+    type: Number,
+    default: 1,
+  },
 });
 
 // Pinia仓库
 const counterStore = useCounterStore();
 
-
-
 // 播放音乐
 function playSong(id) {
-    counterStore.PlayerSongIdToLocal(id);
+  counterStore.PlayerSongIdToLocal(id);
 }
 
 // 判断是否vip
@@ -81,9 +84,15 @@ function isOriginal(item) {
   margin: 10px 0;
   padding: 5px 5px;
   box-shadow: 2px 2px 3px black;
+  .playerSongList-ranking {
+    font-size: 10px;
+    height: 100%;
+  }
   .playerSongList-a {
+    border-left: #999 1px solid;
     width: 60%;
     margin: 0 5px;
+    padding: 0 0 0 5px;
     .playerSongList-a-id {
       font-size: 10px;
       color: #999;
@@ -102,6 +111,13 @@ function isOriginal(item) {
     font-size: 15px;
     margin: 0 5px;
     .playerSongList-a-vip {
+      padding: 1px 3px;
+      margin: 0 0 5px 0;
+      font-size: 5px;
+      color: red;
+      border: 1px solid red;
+      border-radius: 5px;
+      background-color: #ffffff;
     }
     .playerSongList-a-original {
     }
