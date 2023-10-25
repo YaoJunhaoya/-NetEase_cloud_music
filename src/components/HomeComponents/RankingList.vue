@@ -1,7 +1,7 @@
 <template>
   <div class="rmgedanfeli">
     <!-- 标题 -->
-    <ComponentsTitle>排行榜</ComponentsTitle>
+    <ComponentsTitle>排行榜（未完成）</ComponentsTitle>
     <!-- 排行榜  这是首页的排行榜-->
     <div class="rmgedanfeli-content">
       <!-- 前四名排行榜 -->
