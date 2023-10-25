@@ -9,15 +9,13 @@ const myCookie = "MUSIC_R_T=1641904771466; Max-Age=2147483647; Expires=Sat, 10 N
 
 const myUrl = {
     a: 'http://localhost:3000',
-    b: 'https://wang-yiyun-music-api.vercel.app',
-    c: 'http://8144281bj8.zicp.fun:22958/',
-    d: 'https://music.cyrilstudio.top/',
-    e: "https://docs.neteasecloudmusicapi.binaryify.com/",
-    f: "https://music.163.com/#/"
+    b: 'http://8144281bj8.zicp.fun:22958/',//贝锐花生壳 内网穿透 
+    c: 'https://my-fork-netease-cloud-music-api-vercel-yaojunhaoya.vercel.app/',//vercel的第一个接口（第一第二内容相同的）
+    d: 'https://my-fork-netease-cloud-music-api-vercel-git-master-yaojunhaoya.vercel.app/',//vercel的第二个接口（第一第二内容相同的）
 }
 
 const requests = axios.create({
-    baseURL: myUrl.f, // 设置根路径 http://localhost:3000
+    baseURL: myUrl.c, // 设置根路径 http://localhost:3000
     timeout: 5000,
     //这告诉服务器请求正文将发送为JSON格式。
     headers: {

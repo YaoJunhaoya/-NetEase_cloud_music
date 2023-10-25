@@ -113,7 +113,7 @@ function isOriginal(item) {
     .playerSongList-a-vip {
       padding: 1px 3px;
       margin: 0 0 5px 0;
-      font-size: 5px;
+      font-size: 12px;
       color: red;
       border: 1px solid red;
       border-radius: 5px;
