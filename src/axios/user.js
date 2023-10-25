@@ -1,10 +1,16 @@
 import requests from './axios'
 
 // 时间戳
-var now = new Date();
-var timestamp = now.getTime();
+var timestamp = + new Date();
 // ip地址
 let realIP = "183.245.83.114"
+async function getIP() {
+    const response = await fetch('http://ip-api.com/json/');
+    const data = await response.json();
+    realIP = data.query;
+    return realIP;
+}
+getIP().then(() => console.log(realIP));
 
 // 
 export const reqLogCode = (phone) => requests({ url: `/captcha/sent?phone=${phone}&timestamp=${timestamp}&realIP=${realIP}`, method: 'get' });

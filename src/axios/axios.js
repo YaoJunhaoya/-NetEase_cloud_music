@@ -19,7 +19,8 @@ const requests = axios.create({
     timeout: 5000,
     //这告诉服务器请求正文将发送为JSON格式。
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        // 'Cookie': myCookie
     },
     // 在跨域请求时，允许携带敏感信息，如cookie、HTTP认证信息等
     withCredentials: true

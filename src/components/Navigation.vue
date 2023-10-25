@@ -11,7 +11,7 @@
     </div>
     <!-- 栏目 -->
     <div class="lanmu">
-      <div>发现音乐</div>
+      <div>音乐排行榜</div>
       <div>我的音乐</div>
     </div>
 

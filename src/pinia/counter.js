@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 
+// 这里存的都是与播放器有关内容
 const useCounterStore = defineStore('counterStore', {
     state: () => ({
         // 最后一次歌单的id

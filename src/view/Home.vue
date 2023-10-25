@@ -9,16 +9,16 @@
       <HitSongList></HitSongList>
       <!-- 排行榜 榜单 -->
       <RankingList></RankingList>
+      <!--底部美观 -->
+      <div class="dibumeiguan"></div>
     </div>
   </div>
 </template>
 
 <script setup>
-import Slideshow  from "../components/HomeComponents/Slideshow.vue";
+import Slideshow from "../components/HomeComponents/Slideshow.vue";
 import HitSongList from "../components/HomeComponents/HitSongList.vue";
 import RankingList from "../components/HomeComponents/RankingList.vue";
-
-
 </script>
 
 <style lang="less" scoped>
@@ -35,6 +35,9 @@ import RankingList from "../components/HomeComponents/RankingList.vue";
     align-items: center;
     border-radius: 20px;
     // box-shadow: 0px 2px 8px rgba(110, 110, 110, 0.822);
+    .dibumeiguan{
+      height: 30px;
+    }
   }
 
   .el-carousel__item h3 {

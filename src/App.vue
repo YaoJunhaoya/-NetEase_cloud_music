@@ -10,10 +10,14 @@
 <script setup>
 import MusicPlayerVue from "./components/MusicPlayer.vue";
 import NavigationVue from "./components/Navigation.vue";
+
 </script>
 
 <style lang="less" >
-.router-view-app{
-  padding-bottom: 100px;
+.app {
+  background-color: #dddada4d;
+}
+.router-view-app {
+  padding-bottom: 130px;
 }
 </style>

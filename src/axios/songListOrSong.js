@@ -4,7 +4,15 @@ import requests from './axios'
 var now = new Date();
 var timestamp = now.getTime();
 // ip地址
-let realIP ="183.245.83.114"
+let realIP = "183.245.83.114"//183.245.83.114
+async function getIP() {
+    const response = await fetch('http://ip-api.com/json/');
+    const data = await response.json();
+    realIP = data.query;
+    return realIP;
+}
+getIP().then(() => console.log(realIP));
+
 
 // 热门歌单分类
 export const reqRemengGedan = () => requests({ url: `/playlist/hot?timestamp=${timestamp}&realIP=${realIP}`, method: 'get' });
@@ -22,6 +30,8 @@ export const reqSongComment = (id, limit = 20, offset = 1) => requests({ url: `/
 export const reqSongUrl = (id) => requests({ url: `/song/url?id=${id}&timestamp=${timestamp}&realIP=${realIP}`, method: 'get' });
 // 获取歌词
 export const reqLyric = (id) => requests({ url: `/lyric?id=${id}&timestamp=${timestamp}&realIP=${realIP}`, method: 'get' });
+// 所有榜单
+export const reqToplist = () => requests({ url: `/toplist?timestamp=${timestamp}&realIP=${realIP}`, method: 'get' });
 
 
 
