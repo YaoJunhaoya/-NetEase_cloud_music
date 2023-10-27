@@ -43,7 +43,7 @@ onMounted(async () => {
     // 赋值前四名的排行榜
     rankingListData.firstFour = store.allRankingListFirstFour;
   }
-  console.log("我是排行榜rankingListData", rankingListData);
+  // console.log("我是排行榜rankingListData", rankingListData);
 });
 </script>
     

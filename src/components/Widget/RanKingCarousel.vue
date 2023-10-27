@@ -65,7 +65,7 @@ function fixedRange(value = 0) {
 
 onMounted(async () => {
   addMiddleIndex(0);
-  console.log(firstFour[dataIndex.leftIndex]);
+  // console.log(firstFour[dataIndex.leftIndex]);
 });
 </script>
    
