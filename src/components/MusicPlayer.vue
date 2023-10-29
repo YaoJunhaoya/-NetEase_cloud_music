@@ -2,7 +2,7 @@
   <!-- 我是播放器 -->
   <div class="myBofnagqi" :class="shengjiang ? 'sheng' : 'jiang'">
     <!-- 隐藏和显示 -->
-    <div class="show" @click="changeShengjiang" style="cursor:pointer"></div>
+    <div class="show" @click="changeShengjiang" style="cursor: pointer"></div>
     <!-- 播放器 -->
     <audio
       controls
@@ -17,7 +17,11 @@
     <!-- 播放器显示页面 -->
     <div class="myBofnagqi-bofangqianniu">
       <!-- 歌曲名称和图片 -->
-      <div class="myBofnagqi-bofangqianniu-gequ" @click="toSongDetails" style="cursor:pointer">
+      <div
+        class="myBofnagqi-bofangqianniu-gequ"
+        @click="toSongDetails"
+        style="cursor: pointer"
+      >
         <img :src="musicParticulars.songImg" />
         <div class="name-vip">
           <span class="vip">{{ isVip(musicParticulars.fee) }}</span>
@@ -103,7 +107,7 @@
             <span>{{ musicParticulars.lyric[dangqiangecudijihang] }}</span>
           </div>
           <!-- 查看播放列表 -->
-          <div class="myBofnagqi-bofangqianniu-bflb" style="cursor:pointer">
+          <div class="myBofnagqi-bofangqianniu-bflb" style="cursor: pointer">
             <svg
               class="icon"
               aria-hidden="true"
@@ -140,7 +144,7 @@
           <input
             class="jdt"
             type="range"
-            style="cursor:pointer"
+            style="cursor: pointer"
             v-model="rangeValue.time"
             min="0"
             :max="rangeValue.maxValue"
@@ -163,8 +167,10 @@ import { ref, reactive, onMounted, watch, watchEffect } from "vue";
 import useCounterStore from "../pinia/counter";
 import { reqSongUrl, reqSongDetail, reqLyric } from "../axios/songListOrSong";
 import { useRouter } from "vue-router";
+// import axios from "axios"
 
 import PlayerSongList from "./PlayerSongList.vue";
+import axioss from "axios";
 
 // 路由
 const router = useRouter();
@@ -302,8 +308,14 @@ let mp3 = ref("");
 async function changeSong() {
   // 播放器音乐id   本地拿播放器id
   musicParticulars.songId = counterStore.lastPlayerSongId;
-  const songUrl = await reqSongUrl(musicParticulars.songId);
-  mp3.value = songUrl.data.data[0].url;
+  const { data: data } = await reqSongUrl(musicParticulars.songId);
+  if (data.code == -460) {
+    mp3.value="http://m801.music.126.net/20231027200209/68219f907778827a78ff74bda6bbd8f7/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28481690714/49eb/b4ba/3b65/b588b4cc1278a95fb455bea58cc9ae91.mp3"
+    console.log("api的音乐url有问题，随便使用一首歌");
+  } else {
+    mp3.value = data.data[0].url;
+    console.log("mp3.value", mp3.value);
+  }
   myAudio.value.play();
 }
 
@@ -404,7 +416,7 @@ async function bian() {
   playerSongList.list = playerSongList.list.slice(0, 1);
   // 将获取到的数据全部添加进去
   playerSongList.list.push(...data.songs);
-  console.log(playerSongList);
+  // console.log(playerSongList);
 }
 // 播放器切换上一首或下一首
 function playerChangeSong(x) {
@@ -476,6 +488,7 @@ function timeStringToSeconds(timeString) {
 watch(
   () => counterStore.lastPlayerSongId,
   (newValue, oldValue) => {
+    console.log("播放器的音乐id变了");
     // 播放器暂停
     myAudio.value.pause();
     // 播放按钮改变
@@ -489,7 +502,12 @@ watch(
     getSongTime();
     // 获取本地的数据加载到播放器里的歌曲列表   这里应该监视playerSongList.list[0]的值有没有改变 改变后再触发
     // 判断歌曲有没有在播放列表里，没有再使用bian()
-    if (! playerSongList.list.some( (item) => item.id == counterStore.lastPlayerSongId ) ) bian();
+    if (
+      !playerSongList.list.some(
+        (item) => item.id == counterStore.lastPlayerSongId
+      )
+    )
+      bian();
     // 修改playerSongList.i的值
     changPlayerSongListIndex();
     // 播放器播放 (不可用)

@@ -1,11 +1,11 @@
 <template>
   <div class="rmgedanfeli">
     <!-- 标题 -->
-    <ComponentsTitle>排行榜（未完成）</ComponentsTitle>
+    <ComponentsTitle>排行榜</ComponentsTitle>
     <!-- 排行榜  这是首页的排行榜-->
     <div class="rmgedanfeli-content">
       <!-- 前四名排行榜 -->
-      <RanKingCarousel :firstFour="rankingListData.firstFour"></RanKingCarousel>
+      <RanKingCarousel></RanKingCarousel>
     </div>
   </div>
 </template>
@@ -28,9 +28,7 @@ const store = useSongStore();
 // 排行榜页面数据
 const rankingListData = reactive({
   // 所有的排行榜 可以把数据存储在本地
-  allRankingList: [],
-  // 首页的排行榜 只需要展示前四个
-  firstFour: [],
+  allRankingList: []
 });
 
 onMounted(async () => {
@@ -40,8 +38,6 @@ onMounted(async () => {
     rankingListData.allRankingList = data.list;
     // 把所有排行榜存入本地
     store.allRankingListToLocal(rankingListData.allRankingList);
-    // 赋值前四名的排行榜
-    rankingListData.firstFour = store.allRankingListFirstFour;
   }
   // console.log("我是排行榜rankingListData", rankingListData);
 });

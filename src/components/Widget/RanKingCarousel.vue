@@ -1,6 +1,11 @@
 <template>
   <div class="wai">
-    <div class="wai-to">前往全部榜单=></div>
+    <div class="wai-to">
+      <span>前往全部榜单</span>
+      <svg class="icon" aria-hidden="true" style="font-size: 18px">
+        <use xlink:href="#icon-youyou-"></use>
+      </svg>
+    </div>
     <div class="mainPart">
       <!-- 上一个 -->
       <div class="changeButton last" @click="addMiddleIndex(-1)">
@@ -11,16 +16,28 @@
       <!-- 三个内容轮播--->
       <div class="content">
         <!-- 左边内容 -->
-        <div class="content-side">
-          {{ firstFour[dataIndex.leftIndex]?.name || "空" }}
+        <div class="content-side content-div">
+          <RanKingCarouselItem
+            v-if="myFirstFour[dataIndex.leftIndex]"
+            :item="myFirstFour[dataIndex.leftIndex]"
+          ></RanKingCarouselItem>
+          <div v-else>空</div>
         </div>
         <!-- 中间内容 -->
-        <div class="content-main">
-          {{ firstFour[dataIndex.middleIndex]?.name || "空" }}
+        <div class="content-main content-div">
+          <RanKingCarouselItem
+            v-if="myFirstFour[dataIndex.middleIndex]"
+            :item="myFirstFour[dataIndex.middleIndex]"
+          ></RanKingCarouselItem>
+          <div v-else>空</div>
         </div>
         <!-- 右边内容 -->
-        <div class="content-side">
-          {{ firstFour[dataIndex.rightIndex]?.name || "空" }}
+        <div class="content-side content-div">
+          <RanKingCarouselItem
+            v-if="myFirstFour[dataIndex.rightIndex]"
+            :item="myFirstFour[dataIndex.rightIndex]"
+          ></RanKingCarouselItem>
+          <div v-else>空</div>
         </div>
       </div>
       <!-- 下一个 -->
@@ -34,14 +51,22 @@
 </template>
   
 <script setup  >
-import { ref, reactive, defineProps, onMounted, watch } from "vue";
+import {
+  ref,
+  reactive,
+  defineProps,
+  onMounted,
+  watch,
+  toRef,
+  toRefs,
+} from "vue";
+import useSongStore from "../../pinia/songStore";
+import RanKingCarouselItem from "./RanKingCarouselItem.vue";
 
-defineProps({
-  firstFour: {
-    type: Array,
-    default: [],
-  },
-});
+// pinia仓库
+const store = useSongStore();
+
+let myFirstFour = store.allRankingListFirstFour;
 
 // 当前显示的索引
 let dataIndex = reactive({
@@ -62,10 +87,8 @@ function fixedRange(value = 0) {
   if (value < 0) return max;
   if (value > 3) return 0;
 }
-
 onMounted(async () => {
   addMiddleIndex(0);
-  // console.log(firstFour[dataIndex.leftIndex]);
 });
 </script>
    
@@ -79,8 +102,6 @@ onMounted(async () => {
     justify-content: flex-end;
     align-items: center;
     padding-right: 30px;
-    border-bottom: 1px solid black;
-    border-radius: 10px;
     color: red;
   }
   .mainPart {
@@ -90,6 +111,7 @@ onMounted(async () => {
     justify-content: space-between;
     margin-top: 10px;
     height: calc(100% - 30px);
+    width: 1100px;
     .changeButton {
       width: 40px;
       height: 70px;
@@ -106,17 +128,18 @@ onMounted(async () => {
     }
     .content {
       height: 100%;
-      width: calc(100%);
+      width: 1100px;
       display: flex;
       // 所有排行榜
-      div {
+      .content-div {
         display: flex;
         flex-direction: row;
         justify-content: center;
-        box-shadow: 0px 0px 4px black;
+        box-shadow: 0px 0px 6px black;
         margin: 0px 5px;
+        border-radius: 10px;
       }
-      // 两遍的排行榜
+      // 两边的排行榜
       .content-side {
         width: 30%;
       }

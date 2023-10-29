@@ -29,13 +29,20 @@
         <use xlink:href="#icon-a-021_sousuo"></use>
       </svg>
       <!-- 搜索框 -->
-      <input type="text" class="sousuo-input"  style="cursor:pointer"/>
+      <input type="text" class="sousuo-input" style="cursor: pointer" />
     </div>
 
     <!-- 未登录 -->
-    <div @click="userLog" v-if="!userStore.token" class="noneLog" style="cursor:pointer">未登录</div>
+    <div
+      @click="userLog"
+      v-if="!userStore.token"
+      class="noneLog"
+      style="cursor: pointer"
+    >
+      未登录
+    </div>
     <!-- 我的 -->
-    <div class="my" v-else style="cursor:pointer">
+    <div class="my" v-else style="cursor: pointer">
       <div @click="drawer = true">
         <img
           src="https://img0.baidu.com/it/u=4275172878,2244226890&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
@@ -43,7 +50,7 @@
       </div>
 
       <el-drawer v-model="drawer" title="I am the title" :with-header="false">
-        <el-button @click="drawer = false">关闭</el-button>
+        <UserManagement ></UserManagement>
       </el-drawer>
     </div>
   </div>
@@ -54,6 +61,8 @@ import { useRouter } from "vue-router";
 import { reqUserLogState, reqUserLogOut, reqNewLogState } from "../axios/user";
 import useUserStore from "../pinia/user";
 import { ref } from "vue";
+
+import UserManagement from "./HomeComponents/UserManagement.vue";
 
 const router = useRouter();
 
@@ -87,7 +96,7 @@ function userLog() {
   align-items: center;
   border-bottom: 1px solid rgb(255, 68, 68);
   .music-iocn {
-    cursor:pointer;
+    cursor: pointer;
     display: flex;
     flex-direction: row;
     align-items: center;
