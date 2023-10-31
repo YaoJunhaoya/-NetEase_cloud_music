@@ -1,6 +1,6 @@
 <template>
   <div class="wai">
-    <div class="wai-to">
+    <div class="wai-to" style="cursor:pointer">
       <span>前往全部榜单</span>
       <svg class="icon" aria-hidden="true" style="font-size: 18px">
         <use xlink:href="#icon-youyou-"></use>
@@ -141,11 +141,11 @@ onMounted(async () => {
       }
       // 两边的排行榜
       .content-side {
-        width: 30%;
+        width: 300px;
       }
       // 中间的排行榜
       .content-main {
-        width: 40%;
+        width: 400px
       }
     }
   }

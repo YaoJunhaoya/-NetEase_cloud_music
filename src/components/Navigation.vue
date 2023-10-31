@@ -44,13 +44,11 @@
     <!-- 我的 -->
     <div class="my" v-else style="cursor: pointer">
       <div @click="drawer = true">
-        <img
-          src="https://img0.baidu.com/it/u=4275172878,2244226890&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
-        />
+        <img :src="userStore.myProfile.avatarUrl" />
       </div>
 
       <el-drawer v-model="drawer" title="I am the title" :with-header="false">
-        <UserManagement ></UserManagement>
+        <UserManagement @closePage="drawerToFalse"></UserManagement>
       </el-drawer>
     </div>
   </div>
@@ -69,7 +67,12 @@ const router = useRouter();
 // Pinia仓库
 const userStore = useUserStore();
 
+// 控制关闭el-drawer
 let drawer = ref(false);
+
+function drawerToFalse() {
+  drawer.value = false;
+}
 
 function toHome() {
   router.push("/home");

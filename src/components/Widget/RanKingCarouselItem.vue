@@ -2,7 +2,7 @@
   <!-- 外围 -->
   <div class="waiwei">
     <!-- 图片名称 -->
-    <div class="waiwei-ni">
+    <div class="waiwei-ni" >
       <!-- 图片 -->
       <div class="waiwei-ni-img">
         <img :src="props.item.coverImgUrl" alt="" />
@@ -18,16 +18,14 @@
         class="waiwei-list-each"
         v-for="(axx, index) in tenSongs.songDetails"
         :key="index"
+        :class="`waiwei-list-each-${index + 1}`"
       >
         <!-- 排名 -->
-        <div
-          class="waiwei-list-each-index"
-          :class="`waiwei-list-each-${index + 1}`"
-        >
+        <div class="waiwei-list-each-index">
           {{ index + 1 }}
         </div>
         <!-- 名称 -->
-        <div class="waiwei-list-each-name">{{ axx.name }}</div>
+        <div class="waiwei-list-each-name" ><span @click="goSongDetails(axx.id)" style="cursor: pointer">{{axx.name}}</span></div>
         <!-- 歌手 -->
         <div class="waiwei-list-each-songster">{{ singerName(axx.ar) }}</div>
       </div>
@@ -45,6 +43,10 @@
 <script setup  >
 import { ref, reactive, defineProps, onMounted, watch, toRefs } from "vue";
 import { reqSongListDetail, reqSongDetail } from "../../axios/songListOrSong";
+import { useRouter } from "vue-router";
+
+// 路由
+const router = useRouter();
 
 const props = defineProps({
   item: {
@@ -63,19 +65,31 @@ function singerName(arr) {
   let singers = arr.map((e) => e.name).join("/");
   return singers;
 }
-
 // 修改歌单歌曲
 async function changeSong() {
-  console.log("item", props.item);
+  // console.log("item", props.item);
   const { data: data } = await reqSongListDetail(props.item.id);
   tenSongs.songList = data.privileges.splice(0, 10);
-  console.log("tenSongs.songList", tenSongs.songList);
+  // console.log("tenSongs.songList", tenSongs.songList);
 
   let songIds = tenSongs.songList.map((e) => e.id).join(",");
   const { data: data2 } = await reqSongDetail(songIds);
   tenSongs.songDetails = data2.songs;
-  console.log("tenSongs.songDetails", tenSongs.songDetails);
+  // console.log("tenSongs.songDetails", tenSongs.songDetails);
 }
+
+// 跳转到歌曲详情页
+function goSongDetails(songId){
+  router.push({
+    name:"SongDetails",
+     params: {
+      // 歌单id
+      songId: songId,
+    },
+  })
+}
+
+
 
 watch(
   () => props.item,
@@ -112,6 +126,7 @@ onMounted(async () => {
       align-items: center;
       justify-content: space-between;
       margin: 3px 0;
+      cursor: pointer;
       img {
         width: 70px;
         height: 70px;
@@ -135,10 +150,10 @@ onMounted(async () => {
       align-items: center;
       width: calc(100% - 16px);
       height: 25px;
-      margin: 2px 5px;
+      margin: 4px 5px;
       padding: 0 3px;
       border-radius: 8px;
-      box-shadow: 2px 2px 4px rgb(138, 138, 138);
+      box-shadow: 2px 2px 5px rgb(104, 104, 104);
       .waiwei-list-each-index {
         font-size: 15px;
         width: 10%;
@@ -151,6 +166,7 @@ onMounted(async () => {
         white-space: nowrap; /* 不换行 */
         overflow: hidden; /* 隐藏超出部分 */
         text-overflow: ellipsis; /* 如果文本超出，则显示省略号 */
+        
       }
       .waiwei-list-each-songster {
         font-size: 13px;
@@ -160,18 +176,18 @@ onMounted(async () => {
         text-overflow: ellipsis; /* 如果文本超出，则显示省略号 */
       }
       //
-      .waiwei-list-each-1 {
-        color: rgb(201, 13, 12);
-        font-size: 18px;
-      }
-      .waiwei-list-each-2 {
-        color: #c10d0c;
-        font-size: 17px;
-      }
-      .waiwei-list-each-3 {
-        color: rgb(204, 86, 12);
-        font-size: 16px;
-      }
+    }
+    .waiwei-list-each-1 {
+      color: rgb(201, 13, 12);
+      font-size: 18px;
+    }
+    .waiwei-list-each-2 {
+      color: #c10d0c;
+      font-size: 17px;
+    }
+    .waiwei-list-each-3 {
+      color: rgb(204, 86, 12);
+      font-size: 16px;
     }
   }
   .ckgd {
@@ -182,6 +198,7 @@ onMounted(async () => {
     align-items: center;
     color: red;
     font-size: 12px;
+    cursor:pointer;
   }
 }
 </style>

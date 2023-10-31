@@ -57,9 +57,10 @@
                 @click="BofangOrZantingSong"
                 class="bofangorzanting"
               >
-                {{ pd ? "播放" : "暂停" }}
-                <svg class="icon" aria-hidden="true" style="font-size: 18px">
-                  <use xlink:href="#icon-bofang"></use>
+                <svg class="icon" aria-hidden="true" style="font-size: 45px">
+                  <use
+                    :xlink:href="pd ? '#icon-bofang' : '#icon-zanting1'"
+                  ></use>
                 </svg>
               </el-button>
               <!-- 下一首 -->
@@ -121,17 +122,18 @@
               v-model="drawer"
               title="I am the title"
               :with-header="false"
+              append-to-body
             >
               <div>
                 <div
                   v-for="(item, index) in playerSongList.list.slice(1)"
                   :key="index"
-                  :class="{ activate: playerSongList.i == index + 1 }"
                 >
                   <!-- <span>{{ item.name }}+{{ index }}</span> -->
                   <PlayerSongList
                     :playerSongList="item"
                     :ranking="index + 1"
+                    :activate="playerSongList.i == index + 1"
                   ></PlayerSongList>
                 </div>
               </div>
@@ -211,7 +213,7 @@ function toSongDetails() {
 
 // 播放器
 let myAudio = ref(null);
-// 更新播放器数据
+// 更新播放器歌词数据
 async function updateSong() {
   const { data: data } = await reqSongDetail(musicParticulars.songId);
   // 歌曲图片
@@ -310,8 +312,8 @@ async function changeSong() {
   musicParticulars.songId = counterStore.lastPlayerSongId;
   const { data: data } = await reqSongUrl(musicParticulars.songId);
   if (data.code == -460) {
-    mp3.value="http://m801.music.126.net/20231027200209/68219f907778827a78ff74bda6bbd8f7/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/28481690714/49eb/b4ba/3b65/b588b4cc1278a95fb455bea58cc9ae91.mp3"
-    console.log("api的音乐url有问题，随便使用一首歌");
+    mp3.value = "../../public/music/画.mp3";
+    console.log("api的音乐url有问题，随便使用一首歌", data);
   } else {
     mp3.value = data.data[0].url;
     console.log("mp3.value", mp3.value);
@@ -325,11 +327,17 @@ let dangqiangecudijihang = ref(0);
 function showLyric() {
   // 播放器进度条当前值
   let currentTime = rangeValue.time;
-  if (
-    currentTime > musicParticulars.lyricTime[dangqiangecudijihang.value + 1]
-  ) {
-    dangqiangecudijihang.value += 1;
-  }
+
+  // 根据当前进度条的值 判断当前应该为什么歌词
+
+  musicParticulars.lyricTime.forEach((e, index) => {
+    if (
+      currentTime > e &&
+      currentTime < musicParticulars.lyricTime[index + 1]
+    ) {
+      dangqiangecudijihang.value = index;
+    }
+  });
 }
 
 //播放器进度条
@@ -348,7 +356,7 @@ function getSongTime() {
     }
   }, 500);
 }
-// 当前音乐的时间
+// 监视当前音乐的时间
 function handleTimeUpdate() {
   showaaa();
   showLyric();
@@ -394,15 +402,16 @@ let playerSongList = reactive({
   i: 1,
 });
 // 修改playerSongList.i的值
-function changPlayerSongListIndex() {
+async function changPlayerSongListIndex() {
   console.log("changPlayerSongListIndex");
   playerSongList.list.forEach((item, index) => {
-    if (item == musicParticulars.songId) {
+    // item 在  onMounted中是id，watch中是对象
+    if (item == musicParticulars.songId || item.id == musicParticulars.songId) {
       playerSongList.i = index;
     }
   });
 }
-// 获取本地的播放器列表数据 发送请求 获取歌曲列表里的所有详情
+// 获取本地的播放器列表数据 发送请求 获取歌曲列表里的所有歌曲的详情
 async function bian() {
   playerSongList.list = counterStore.playerSongList;
 
@@ -506,8 +515,9 @@ watch(
       !playerSongList.list.some(
         (item) => item.id == counterStore.lastPlayerSongId
       )
-    )
+    ) {
       bian();
+    }
     // 修改playerSongList.i的值
     changPlayerSongListIndex();
     // 播放器播放 (不可用)
@@ -624,14 +634,17 @@ onMounted(async () => {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        margin-top: 10px;
+        align-items: center;
+        margin-top: 3px;
         width: 100%;
+        height: 45px;
         .myBofnagqi-bofangqianniu-wai {
           width: 500px;
           min-width: 330px;
           display: flex;
           flex-direction: row;
           justify-content: space-between;
+          align-items: center;
           margin: 0 20px;
           .bofangType {
             background-color: #ffffff;
@@ -667,6 +680,13 @@ onMounted(async () => {
           }
           .myBofnagqi-bofangqianniu-nei {
             display: flex;
+            align-items: center;
+            flex-direction: row;
+            .bofangorzanting {
+              height: 45px;
+              width: 80px;
+              color: red;
+            }
           }
         }
         .myBofnagqi-bofangqianniu-geci {
@@ -675,9 +695,6 @@ onMounted(async () => {
         }
         .myBofnagqi-bofangqianniu-bflb {
           .icon {
-          }
-          .activate {
-            color: red;
           }
         }
       }

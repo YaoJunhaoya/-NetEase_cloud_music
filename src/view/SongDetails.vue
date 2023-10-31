@@ -33,8 +33,12 @@
           </div>
           <!-- 歌词 -->
           <div class="songContent-xx-a geci">
-            <div v-for="(item, index) in songParticulars.lyric" :key="index">
-              {{ item }}
+            <div
+              v-for="(item, index) in songParticulars.lyric"
+              :key="index"
+              class="geci-a"
+            >
+              <div>{{ item }}</div>
             </div>
           </div>
         </div>
@@ -238,8 +242,12 @@ onMounted(async () => {
           border-radius: 20px;
           box-shadow: 1px 1px 4px rgb(129, 129, 129);
           padding: 5px 0;
+          width: 700px;
           &::-webkit-scrollbar {
             width: 0;
+          }
+          .geci-a {
+            margin: 5px 10px;
           }
         }
 

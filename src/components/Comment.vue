@@ -68,6 +68,9 @@ function getTime(item) {
     .comment-item-user {
       margin: 10px 10px;
       width: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       .comment-item-user-img {
         width: 60px;
         height: 60px;

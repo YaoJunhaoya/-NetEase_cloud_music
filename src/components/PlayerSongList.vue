@@ -1,7 +1,7 @@
 <template>
   <div class="playerSongList" @click="playSong(playerSongList.id)" style="cursor:pointer">
     <div class="playerSongList-ranking">{{ ranking }}</div>
-    <div class="playerSongList-a">
+    <div class="playerSongList-a" :class="{activate:activate}">
       <!-- 歌曲id -->
       <div class="playerSongList-a-id">{{ playerSongList.id }}</div>
       <!-- 歌曲名称 -->
@@ -31,6 +31,10 @@ defineProps({
     type: Number,
     default: 1,
   },
+  activate:{
+    type:Boolean,
+    default:false
+  }
 });
 
 // Pinia仓库
@@ -101,6 +105,9 @@ function isOriginal(item) {
       font-size: 18px;
       font-weight: 600;
     }
+  }
+  .activate{
+    color: red;
   }
   .playerSongList-b {
     display: flex;

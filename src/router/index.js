@@ -23,14 +23,14 @@ const router = createRouter({
             path: '/songdetails',
             name: 'SongDetails',
             component: SongDetails,
-            props: true
+            props: true,
         },
         {
             // 歌曲详情+id
             path: '/songdetails/:songId',
             name: 'SongDetailsId',
             component: SongDetails,
-            props: true
+            props: true,
         },
         {
             // 歌单详情
@@ -40,6 +40,15 @@ const router = createRouter({
             props: true
         }
     ]
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+    // 针对 Chrome 浏览器
+    document.body.scrollTop = 0
+    // 针对 Firefox 浏览器
+    document.documentElement.scrollTop = 0
+    next()
 })
 
 export default router;
