@@ -18,8 +18,8 @@ const useSongStore = defineStore('songStore', {
         allRankingListFirstFour(state) {
             let arr = state.allRankingList.splice(0, 4)
             return arr;
-        }
-        // 排行榜第五名及以后
+        },
+        
 
     },
 })
