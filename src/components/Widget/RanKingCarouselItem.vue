@@ -55,6 +55,7 @@ import { ref, reactive, defineProps, onMounted, watch, toRefs } from "vue";
 import { reqSongListDetail, reqSongDetail } from "../../axios/songListOrSong";
 import { useRouter } from "vue-router";
 import useCounterStore from "../../pinia/counter";
+import emitter from "../../plugins/Bus"
 
 // 仓库
 const counterStore = useCounterStore();
@@ -124,6 +125,7 @@ function playSong(id) {
   // 传人歌曲id到播放器
   counterStore.PlayerSongIdToLocal(id);
   getSongList(id);
+   emitter.emit("bofang", "我是首页排行榜的播放按钮");//第二步
 }
 
 // 跳转到歌曲详情页

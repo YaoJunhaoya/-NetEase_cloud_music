@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Home from '../view/Home.vue'
 import Log from '../view/Log.vue'
 import SongDetails from "../view/SongDetails.vue"
 import SongListDetails from "../view/SongListDetails.vue"
@@ -10,11 +9,11 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            component: Home
+            component: () => import('../view/Home.vue')
         },
         {
             path: '/home',
-            component: Home
+            component: () => import('../view/Home.vue')
         }, {
             path: '/log',
             component: Log
@@ -38,6 +37,12 @@ const router = createRouter({
             name: 'SongListDetails',
             component: SongListDetails,
             props: true
+        },
+        {
+            path: '/rankinglist',
+            name: "RanKingList",
+            component: () => import("../view/RankingList.vue"),
+            props:true
         }
     ]
 })

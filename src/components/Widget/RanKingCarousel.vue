@@ -1,6 +1,6 @@
 <template>
   <div class="wai">
-    <div class="wai-to" style="cursor:pointer">
+    <div class="wai-to" style="cursor: pointer" @click="toRankingList()">
       <span>前往全部榜单</span>
       <svg class="icon" aria-hidden="true" style="font-size: 18px">
         <use xlink:href="#icon-youyou-"></use>
@@ -62,9 +62,16 @@ import {
 } from "vue";
 import useSongStore from "../../pinia/songStore";
 import RanKingCarouselItem from "./RanKingCarouselItem.vue";
+import { useRouter } from "vue-router";
 
 // pinia仓库
 const store = useSongStore();
+
+// 路由跳转
+const router = useRouter();
+function toRankingList(){
+  router.push("/rankinglist")
+}
 
 let myFirstFour = store.allRankingListFirstFour;
 
@@ -145,7 +152,7 @@ onMounted(async () => {
       }
       // 中间的排行榜
       .content-main {
-        width: 400px
+        width: 400px;
       }
     }
   }

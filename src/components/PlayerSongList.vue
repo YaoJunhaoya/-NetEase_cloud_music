@@ -21,6 +21,7 @@
 <script setup  >
 import { ref, defineProps } from "vue";
 import useCounterStore from "../pinia/counter";
+import emitter from "../plugins/Bus";
 
 defineProps({
   playerSongList: {
@@ -43,6 +44,7 @@ const counterStore = useCounterStore();
 // 播放音乐
 function playSong(id) {
   counterStore.PlayerSongIdToLocal(id);
+  emitter.emit("bofang", "我是播放器列表切歌");//第二步
 }
 
 // 判断是否vip

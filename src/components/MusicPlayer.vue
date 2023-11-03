@@ -181,6 +181,7 @@ import { useRouter } from "vue-router";
 
 import PlayerSongList from "./PlayerSongList.vue";
 import axioss from "axios";
+import emitter from "../plugins/Bus";
 
 // 路由
 const router = useRouter();
@@ -324,7 +325,7 @@ async function changeSong() {
     console.log("api的音乐url有问题，随便使用一首歌", data);
   } else {
     mp3.value = data.data[0].url;
-    console.log("mp3.value", mp3.value);
+    // console.log("mp3.value", mp3.value);
   }
   myAudio.value.play();
 }
@@ -411,7 +412,7 @@ let playerSongList = reactive({
 });
 // 修改playerSongList.i的值
 async function changPlayerSongListIndex() {
-  console.log("changPlayerSongListIndex");
+  // console.log("changPlayerSongListIndex");
   playerSongList.list.forEach((item, index) => {
     // item 在  onMounted中是id，watch中是对象
     if (item == musicParticulars.songId || item.id == musicParticulars.songId) {
@@ -500,12 +501,16 @@ function timeStringToSeconds(timeString) {
 //
 //
 //
+// 兄弟组件传参
+emitter.on("bofang", (e) => {
+  // console.log(e);
+});
 
 // counterStore.lastPlayerSongId 必须是新值才能触发 （不能是同一首歌） 切换下一首歌 需要手动点击播放
 watch(
   () => counterStore.lastPlayerSongId,
   (newValue, oldValue) => {
-    console.log("播放器的音乐id变了");
+    // console.log("播放器的音乐id变了");
     // 播放器暂停
     myAudio.value.pause();
     // 播放按钮改变
@@ -519,7 +524,11 @@ watch(
     getSongTime();
     // 获取本地的数据加载到播放器里的歌曲列表   这里应该监视playerSongList.list[0]的值有没有改变 改变后再触发
     // 判断歌曲有没有在播放列表里，没有再使用bian()
-    if ( !playerSongList.list.some( (item) => item.id == counterStore.lastPlayerSongId) ) {
+    if (
+      !playerSongList.list.some(
+        (item) => item.id == counterStore.lastPlayerSongId
+      )
+    ) {
       // 播放器中没有要播放的歌曲
       // console.log("播放器中没有要播放的歌曲");
       bian();
@@ -533,14 +542,13 @@ watch(
 
     // 修改playerSongList.i的值
     changPlayerSongListIndex();
-    // 播放器播放 (不可用)
-    // myAudio.value.play()
   }
 );
 
 onMounted(async () => {
   // 拿到播放器DOM
   myAudio.value = document.querySelector(".my-audio");
+
   // 设置播放器的音乐和音乐ID
   changeSong();
   // 更新播放器数据

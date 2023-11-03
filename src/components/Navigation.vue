@@ -11,7 +11,7 @@
     </div>
     <!-- 栏目 -->
     <div class="lanmu">
-      <div>音乐排行榜</div>
+      <div @click="toRankingList()" class="RankingList">音乐排行榜</div>
       <div>我的音乐</div>
     </div>
 
@@ -74,12 +74,17 @@ function drawerToFalse() {
   drawer.value = false;
 }
 
+
+// 路由跳转
 function toHome() {
   router.push("/home");
 }
-
 function userLog() {
   router.push("/log");
+}
+function toRankingList(){
+ router.push("/rankinglist");
+
 }
 </script>
 
@@ -132,6 +137,12 @@ function userLog() {
       text-align: center;
       height: 70px;
       line-height: 70px;
+    }
+    .RankingList {
+      cursor: pointer;
+      &:hover {
+        color: rgb(255, 100, 100);
+      }
     }
   }
 
