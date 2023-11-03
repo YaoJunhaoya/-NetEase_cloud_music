@@ -37,6 +37,9 @@
               v-for="(item, index) in songParticulars.lyric"
               :key="index"
               class="geci-a"
+              :class="{
+                'lyric-activation': index == songParticulars.lyricIndex,
+              }"
             >
               <div>{{ item }}</div>
             </div>
@@ -52,7 +55,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 import {
   reqSongDetail,
@@ -62,6 +65,7 @@ import {
 import { reqUserDetails } from "../axios/user";
 import useCounterStore from "../pinia/counter";
 import Comment from "../components/Comment.vue";
+import emitter from "../plugins/Bus";
 
 //    路由
 const route = useRoute();
@@ -80,6 +84,7 @@ const songParticulars = reactive({
   lyricTime: [],
   // 歌词
   lyric: [],
+  lyricIndex: null,
   SongComments: [],
 });
 // 切换播放器音乐id
@@ -158,6 +163,32 @@ function getSongList(id) {
   counterStore.PlayerSongList(arr.value);
 }
 
+// 设置歌词索引
+function setLyricsIndex() {
+  emitter.on("idAndLyricsIndex", (item) => {
+    if (songParticulars.songId == item.id) {
+      songParticulars.lyricIndex = item.index;
+      // console.log(item.index);
+    }
+  });
+}
+// 监视歌词索引
+watch(
+  () => songParticulars.lyricIndex,
+  (newValue, oldValue) => {
+    // console.log(newValue, oldValue);
+    const Father = document.querySelector(".geci");
+    const Son = document.querySelector(".lyric-activation"); //这个是上一个歌词  目前激活的歌词是这个歌词的下个
+    console.log(Father, Son);
+    // 获取 container 和 child 的位置信息
+    if (Father && Son) {
+      console.log(Father.scrollTop);
+      console.log(Son.offsetTop);
+      Father.scrollTop=Son.offsetTop-(21*20)
+    }
+  }
+);
+
 // 监视route.params.songId  在歌曲详情页面时，监视 route.params.songId 来改变页面
 watch(
   () => route.params.songId,
@@ -194,6 +225,12 @@ onMounted(async () => {
   // console.log(songParticulars.songMessage);
   updateSong();
   SongListComment();
+  setLyricsIndex();
+});
+
+onBeforeUnmount(() => {
+  console.log("正在被销毁");
+  emitter.off("idAndLyricsIndex");
 });
 </script>
 
@@ -249,8 +286,12 @@ onMounted(async () => {
           .geci-a {
             margin: 5px 10px;
           }
+          .lyric-activation {
+            color: red;
+            font-weight: 600;
+            font-size: 20px;
+          }
         }
-
         .songContent-xx-a {
           margin: 10px 0;
         }

@@ -345,6 +345,7 @@ function showLyric() {
       currentTime < musicParticulars.lyricTime[index + 1]
     ) {
       dangqiangecudijihang.value = index;
+      emitter.emit("idAndLyricsIndex", {id:musicParticulars.songId,index:dangqiangecudijihang.value});
     }
   });
 }
@@ -501,10 +502,7 @@ function timeStringToSeconds(timeString) {
 //
 //
 //
-// 兄弟组件传参
-emitter.on("bofang", (e) => {
-  // console.log(e);
-});
+
 
 // counterStore.lastPlayerSongId 必须是新值才能触发 （不能是同一首歌） 切换下一首歌 需要手动点击播放
 watch(
