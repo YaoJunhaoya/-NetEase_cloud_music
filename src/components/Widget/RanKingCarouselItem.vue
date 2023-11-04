@@ -4,7 +4,7 @@
     <!-- 图片名称 -->
     <div class="waiwei-ni">
       <!-- 图片 -->
-      <div class="waiwei-ni-img">
+      <div class="waiwei-ni-img" @click="toRanking(props.item.id)">
         <img :src="props.item.coverImgUrl" alt="" />
       </div>
       <!-- 名称 -->
@@ -62,6 +62,15 @@ const counterStore = useCounterStore();
 
 // 路由
 const router = useRouter();
+function toRanking(id){
+  router.push({
+    path:"/rankinglist",
+    query:{
+      id:id
+    }
+  })
+}
+
 
 const props = defineProps({
   item: {

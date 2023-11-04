@@ -33,8 +33,6 @@
 
 6.搜索
 
-7.给axios所有请求带上cookie
-
 ## BUG
 
 播放器列表中changPlayerSongListIndex（），// item 在  onMounted中是id，watch中是对象

@@ -179,11 +179,8 @@ watch(
     // console.log(newValue, oldValue);
     const Father = document.querySelector(".geci");
     const Son = document.querySelector(".lyric-activation"); //这个是上一个歌词  目前激活的歌词是这个歌词的下个
-    console.log(Father, Son);
     // 获取 container 和 child 的位置信息
     if (Father && Son) {
-      console.log(Father.scrollTop);
-      console.log(Son.offsetTop);
       Father.scrollTop=Son.offsetTop-(21*20)
     }
   }

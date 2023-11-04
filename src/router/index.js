@@ -42,7 +42,7 @@ const router = createRouter({
             path: '/rankinglist',
             name: "RanKingList",
             component: () => import("../view/RankingList.vue"),
-            props:true
+            props: true
         }
     ]
 })

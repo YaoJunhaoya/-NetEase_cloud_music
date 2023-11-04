@@ -29,7 +29,7 @@
         <use xlink:href="#icon-a-021_sousuo"></use>
       </svg>
       <!-- 搜索框 -->
-      <input type="text" class="sousuo-input" style="cursor: pointer" />
+      <input type="text" class="sousuo-input" style="cursor: text;" />
     </div>
 
     <!-- 未登录 -->
