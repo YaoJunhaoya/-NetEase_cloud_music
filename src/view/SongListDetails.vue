@@ -109,6 +109,7 @@ import {
   reqSongListComment,
 } from "../axios/songListOrSong";
 import { reqUserDetails } from "../axios/user";
+import emitter from "../plugins/Bus" 
 import Comment from "../components/Comment.vue";
 
 const route = useRoute();
@@ -163,6 +164,8 @@ function playSong(id) {
   console.log("歌单详情歌曲id:", id);
   counterStore.PlayerSongIdToLocal(id);
   getSongList();
+  emitter.emit("SongDetailsPlay")
+
 }
 
 // 歌单评论

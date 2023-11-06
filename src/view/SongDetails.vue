@@ -93,6 +93,7 @@ function playSong() {
   counterStore.PlayerSongIdToLocal(songParticulars.songId);
   console.log("歌曲详情id:" + songParticulars.songId);
   getSongList(songParticulars.songId);
+  emitter.emit("SongDetailsPlay")
 }
 
 // 歌词

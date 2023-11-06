@@ -55,22 +55,21 @@ import { ref, reactive, defineProps, onMounted, watch, toRefs } from "vue";
 import { reqSongListDetail, reqSongDetail } from "../../axios/songListOrSong";
 import { useRouter } from "vue-router";
 import useCounterStore from "../../pinia/counter";
-import emitter from "../../plugins/Bus"
+import emitter from "../../plugins/Bus";
 
 // 仓库
 const counterStore = useCounterStore();
 
 // 路由
 const router = useRouter();
-function toRanking(id){
+function toRanking(id) {
   router.push({
-    path:"/rankinglist",
-    query:{
-      id:id
-    }
-  })
+    path: "/rankinglist",
+    query: {
+      id: id,
+    },
+  });
 }
-
 
 const props = defineProps({
   item: {
@@ -134,7 +133,8 @@ function playSong(id) {
   // 传人歌曲id到播放器
   counterStore.PlayerSongIdToLocal(id);
   getSongList(id);
-   emitter.emit("bofang", "我是首页排行榜的播放按钮");//第二步
+  emitter.emit("bofang", "我是首页排行榜的播放按钮"); //第二步
+  emitter.emit("SongDetailsPlay");
 }
 
 // 跳转到歌曲详情页

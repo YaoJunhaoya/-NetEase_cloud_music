@@ -173,7 +173,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch, watchEffect } from "vue";
+import { ref, reactive, onMounted, watch, watchEffect, nextTick } from "vue";
 import useCounterStore from "../pinia/counter";
 import { reqSongUrl, reqSongDetail, reqLyric } from "../axios/songListOrSong";
 import { useRouter } from "vue-router";
@@ -269,13 +269,13 @@ function BofangOrZantingSong() {
 function audioPlay() {
   // 添加时间更新的监听器
   myAudio.value.addEventListener("timeupdate", handleTimeUpdate);
-  console.log("开始播放");
+  // console.log("开始播放");
   pd.value = myAudio.value.paused;
 }
 // 暂停播放事件
 function audioPause() {
   myAudio.value.removeEventListener("timeupdate", handleTimeUpdate);
-  console.log("暂停播放");
+  // console.log("暂停播放");
   pd.value = myAudio.value.paused;
 }
 
@@ -345,7 +345,10 @@ function showLyric() {
       currentTime < musicParticulars.lyricTime[index + 1]
     ) {
       dangqiangecudijihang.value = index;
-      emitter.emit("idAndLyricsIndex", {id:musicParticulars.songId,index:dangqiangecudijihang.value});
+      emitter.emit("idAndLyricsIndex", {
+        id: musicParticulars.songId,
+        index: dangqiangecudijihang.value,
+      });
     }
   });
 }
@@ -502,7 +505,14 @@ function timeStringToSeconds(timeString) {
 //
 //
 //
-
+emitter.on("SongDetailsPlay", () => {
+  // console.log("播放器的SongDetailsPlay");
+  myAudio.value.pause();
+  setTimeout(() => {
+    // console.log("播放了");
+    myAudio.value.play();
+  }, 500);
+});
 
 // counterStore.lastPlayerSongId 必须是新值才能触发 （不能是同一首歌） 切换下一首歌 需要手动点击播放
 watch(

@@ -8,11 +8,13 @@
       <div
         v-for="(item, index) in rankings.cloudMusicRankings"
         :key="index"
-        :class="{ activate: index == activateRankingsIndex }"
         @click="refreshActivateRankingsIndex(item.id)"
-        style="cursor:pointer"
+        style="cursor: pointer"
       >
-        <div>{{ item.name }}</div>
+        <RankingsListItem
+          :item="item"
+          :activate="index == activateRankingsIndex"
+        ></RankingsListItem>
       </div>
       <!-- 全球媒体榜 -->
       <div class="rankingsTitle"><span>全球媒体榜</span></div>
@@ -20,11 +22,13 @@
       <div
         v-for="(item, index) in rankings.globalRankings"
         :key="index"
-        :class="{ activate: index + 4 == activateRankingsIndex }"
         @click="refreshActivateRankingsIndex(item.id)"
-        style="cursor:pointer"
+        style="cursor: pointer"
       >
-        <div>{{ item.name }}</div>
+        <RankingsListItem
+          :item="item"
+          :activate="index + 4 == activateRankingsIndex"
+        ></RankingsListItem>
       </div>
     </div>
     <!-- 排行榜内容 -->
@@ -68,6 +72,8 @@
 import { ref, reactive, onMounted, nextTick } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { reqToplist, reqSongListDetail } from "../axios/songListOrSong";
+
+import RankingsListItem from "../components/Widget/RankingsListItem.vue";
 
 // 路由
 const router = useRouter();
@@ -128,7 +134,7 @@ onMounted(async () => {
 });
 </script>
     
-<style lang="less" scoped>
+<style lang="less" scoped >
 .main {
   display: flex;
   flex-direction: row;
@@ -140,15 +146,29 @@ onMounted(async () => {
     margin: 10px;
     box-shadow: 0 0 4px black;
     overflow: auto;
+    /* 修改滚动条宽度 */
     &::-webkit-scrollbar {
-      width: 0;
+      width: 8px;
+    }
+
+    /* 修改滚动条轨道样式 */
+    &::-webkit-scrollbar-track {
+      background: #dddddd;
+    }
+
+    /* 修改滚动滑块样式 */
+    &::-webkit-scrollbar-thumb {
+      background: #797878;
+      border-radius: 5px;
+    }
+
+    /* 添加鼠标悬停时的滚动滑块样式 */
+    &::-webkit-scrollbar-thumb:hover {
+      background: #424141;
     }
     .rankingsTitle {
       font-size: 25px;
       font-weight: 600;
-    }
-    .activate {
-      color: red;
     }
   }
   .content {
@@ -172,7 +192,7 @@ onMounted(async () => {
           height: 100%;
         }
       }
-      .content-up-information{
+      .content-up-information {
         width: 500px;
       }
     }
