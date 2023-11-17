@@ -63,7 +63,9 @@
         </div>
       </div>
       <!-- 下部分 -->
-      <div class="content-below"></div>
+      <div class="content-below">
+        <RankingsContentList v-if="activateRankingsData.privileges && activateRankingsData.playlist.id" :songListId="activateRankingsData.playlist.id" :privileges="activateRankingsData.privileges" />
+      </div>
     </div>
   </div>
 </template>
@@ -72,6 +74,7 @@
 import { ref, reactive, onMounted, nextTick } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { reqToplist, reqSongListDetail } from "../axios/songListOrSong";
+import RankingsContentList from "../components/Widget/RankingsContentList.vue";
 
 import RankingsListItem from "../components/Widget/RankingsListItem.vue";
 
@@ -118,12 +121,13 @@ let activateRankingsData = reactive({
 });
 // 刷新选中的排行榜的信息
 async function refreshActivateRankingsData() {
+  // 这里获取了一次详情 可以直接把数据给子组件，子组件就没必要在向后端请求一次
   const { data: data } = await reqSongListDetail(
     rankings.allRankings[activateRankingsIndex.value].id
   );
   activateRankingsData.playlist = data.playlist;
   activateRankingsData.privileges = data.privileges;
-  console.log(activateRankingsData);
+  // console.log(activateRankingsData);
 }
 
 onMounted(async () => {
@@ -184,9 +188,11 @@ onMounted(async () => {
       display: flex;
       flex-direction: row;
       align-items: center;
+      border-bottom: 1px solid black;
+      width: 100%;
       .content-up-img {
-        width: 100px;
-        height: 100px;
+        width: 200px;
+        margin-right: 50px;
         img {
           width: 100%;
           height: 100%;
