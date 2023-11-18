@@ -7,10 +7,15 @@
       @click="toSongdetails(item.id)"
     >
       <!-- 排名 -->
-      <div class="RankingsContentList-item-index">{{ index + 1 }}</div>
+      <div
+        class="RankingsContentList-item-index"
+        :class="`RankingsContentList-item-${index + 1}`"
+      >
+        {{ index + 1 }}
+      </div>
       <!-- 图片 -->
       <div class="RankingsContentList-item-divimg">
-        <img :src="item.al.picUrl" alt=""  />
+        <img :src="item.al.picUrl" alt="" />
       </div>
       <!-- 歌曲名称 -->
       <div class="RankingsContentList-item-songName">{{ item.name }}</div>
@@ -19,11 +24,14 @@
         {{ singerName(item.ar) }}
       </div>
       <!-- 播放按钮 -->
-      <div @click.stop="playSong(item.id)">
+      <div @click.stop="playSong(item.id)" style="cursor: pointer">
         <svg class="icon item-icon" aria-hidden="true">
           <use xlink:href="#icon-a-021_shipin"></use>
         </svg>
       </div>
+    </div>
+    <div class="load-more">
+      <button @click="addSong()">加载更多</button>
     </div>
   </div>
 </template>
@@ -88,6 +96,22 @@ async function getSongDetails() {
 function singerName(ar = []) {
   return ar.map((e) => e.name).join(",");
 }
+// 添加更多
+function addSong() {
+  // 歌曲部分信息的个数
+  let a = SongListDetails.SongSectionInformation.length;
+  let b = SongListDetails.songDetails.length;
+  let newArr=[]
+  if (b - a < 10) {
+     newArr = SongListDetails.songDetails.slice(a, b - a);
+  } else {
+     newArr = SongListDetails.songDetails.slice(a, a + 10);
+  }
+  SongListDetails.SongSectionInformation = [
+    ...SongListDetails.SongSectionInformation,
+    ...newArr,
+  ];
+}
 
 // 获取歌单id，把歌单添加到播放器  （除非是同一个歌单不然都会更新）
 function getSongList(songListId) {
@@ -136,32 +160,69 @@ onUnmounted(() => {});
     
 <style lang="less" scoped>
 .RankingsContentList {
+  width: 1000px;
   .RankingsContentList-item {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+    margin: 10px 5px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 15px #000000;
     .RankingsContentList-item-index {
-      width: 2em;
+      width: 50px;
       font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .RankingsContentList-item-1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: red;
+    }
+    .RankingsContentList-item-2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: orange;
+    }
+    .RankingsContentList-item-3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: yellowgreen;
     }
     .RankingsContentList-item-divimg {
       width: 70px;
       height: 70px;
-      margin: 5px;
+      margin: 2px 40px 2px 10px;
       img {
         width: 100%;
         height: 100%;
+        border-radius: 10px;
       }
     }
     .RankingsContentList-item-songName {
       font-size: 20px;
       font-weight: 600;
+      margin: 0 20px;
+      width: 350px;
     }
     .RankingsContentList-item-singerName {
       font-size: 15px;
       color: #999;
       font-weight: 600;
+      width: 350px;
+    }
+  }
+  .load-more {
+    width: 100%;
+    text-align: center;
+    button {
+      cursor: pointer;
+      background-color: rgb(228, 95, 95);
+      color: rgb(255, 250, 220);
+      width: 200px;
+      height: 40px;
+      border: 1px rgb(228, 213, 5) solid;
     }
   }
 }

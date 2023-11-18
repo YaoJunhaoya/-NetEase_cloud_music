@@ -64,7 +64,13 @@
       </div>
       <!-- 下部分 -->
       <div class="content-below">
-        <RankingsContentList v-if="activateRankingsData.privileges && activateRankingsData.playlist.id" :songListId="activateRankingsData.playlist.id" :privileges="activateRankingsData.privileges" />
+        <RankingsContentList
+          v-if="
+            activateRankingsData.privileges && activateRankingsData.playlist.id
+          "
+          :songListId="activateRankingsData.playlist.id"
+          :privileges="activateRankingsData.privileges"
+        />
       </div>
     </div>
   </div>
@@ -150,6 +156,9 @@ onMounted(async () => {
     margin: 10px;
     box-shadow: 0 0 4px black;
     overflow: auto;
+    position: fixed;
+    top: 70px;
+    left: 10px;
     /* 修改滚动条宽度 */
     &::-webkit-scrollbar {
       width: 8px;
