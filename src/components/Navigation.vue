@@ -25,11 +25,11 @@
     <!-- 搜索 -->
     <div class="sousuo">
       <!-- 搜索图标 -->
-      <svg class="icon sousuo-icon" aria-hidden="true">
+      <svg class="icon sousuo-icon" aria-hidden="true" style="cursor:pointer" @click="toSearch()">
         <use xlink:href="#icon-a-021_sousuo"></use>
       </svg>
       <!-- 搜索框 -->
-      <input type="text" class="sousuo-input" style="cursor: text;" />
+      <input type="text" class="sousuo-input" style="cursor: text;" v-model="searchValue"  @keyup.enter="toSearch()"/>
     </div>
 
     <!-- 未登录 -->
@@ -58,6 +58,7 @@
 import { useRouter } from "vue-router";
 import { reqUserLogState, reqUserLogOut, reqNewLogState } from "../axios/user";
 import useUserStore from "../pinia/user";
+import useCounterStore from "../pinia/counter";
 import { ref } from "vue";
 
 import UserManagement from "./HomeComponents/UserManagement.vue";
@@ -66,13 +67,16 @@ const router = useRouter();
 
 // Pinia仓库
 const userStore = useUserStore();
+const counterStore = useCounterStore();
 
 // 控制关闭el-drawer
 let drawer = ref(false);
-
 function drawerToFalse() {
   drawer.value = false;
 }
+
+// 搜索内容
+let searchValue=ref("")
 
 
 // 路由跳转
@@ -85,6 +89,16 @@ function userLog() {
 function toRankingList(){
  router.push("/rankinglist");
 
+}
+function toSearch(){
+ router.push({
+  path:"/search",
+  query:{
+    value:searchValue.value
+  }
+ });
+//  把当前搜索的内容存在本地
+counterStore.SearchContent(searchValue.value)
 }
 </script>
 

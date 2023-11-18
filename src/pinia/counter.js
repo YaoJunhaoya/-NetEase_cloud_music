@@ -11,6 +11,9 @@ const useCounterStore = defineStore('counterStore', {
         lastPlayerSongId: JSON.parse(localStorage.getItem('PlayerSongId')) || "202369",
         // 播放器里的播放列表
         playerSongList: JSON.parse(localStorage.getItem('PlayerSongList')) || [],
+        // 搜索的内容
+        lastSearchContent: JSON.parse(localStorage.getItem('SearchContent')) || "",
+
     }),
     actions: {
         // 把歌单id存储在本地
@@ -34,6 +37,11 @@ const useCounterStore = defineStore('counterStore', {
         PlayerSongList(item) {
             localStorage.setItem('PlayerSongList', JSON.stringify(item))
             this.playerSongList = item
+        },
+        // 搜索内容存储在本地
+        SearchContent(item) {
+            localStorage.setItem('SearchContent', JSON.stringify(item))
+            this.lastSearchContent = item
         },
     },
     getters: {
