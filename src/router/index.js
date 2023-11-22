@@ -33,21 +33,37 @@ const router = createRouter({
         },
         {
             // 歌单详情
-            path: '/songlistdetails',
+            path: '/songlistdetails/:songListId',
             name: 'SongListDetails',
             component: SongListDetails,
             props: true
         },
         {
+            // 排行榜页面
             path: '/rankinglist',
             name: "RanKingList",
             component: () => import("../view/RankingList.vue"),
             props: true
         },
         {
+            // 搜索页面
             path: '/search',
             name: "Search",
             component: () => import("../view/Search.vue"),
+            props: true
+        },
+        {
+            // 歌手页面
+            path: '/singer/:singerId',
+            name: "Singer",
+            component: () => import("../view/Singer.vue"),
+            props: true
+        },
+        {
+            // 用户页面
+            path: '/user/:userId',
+            name: "User",
+            component: () => import("../view/User.vue"),
             props: true
         }
     ]

@@ -12,7 +12,8 @@
         round
         v-for="(item, index) in songList.hotSongList"
         :key="index"
-        @click="changType(index)" >
+        @click="changType(index)"
+      >
         {{ item.name }}
       </el-button>
     </div>
@@ -26,6 +27,9 @@
       >
         <img :src="item.coverImgUrl" alt="" />
         <span>{{ item.name }}</span>
+      </div>
+      <div v-if="songList.CompetitiveSongList.length == 0" class="zanwuneirong">
+        此分类暂无内容
       </div>
     </div>
   </div>
@@ -116,6 +120,16 @@ onMounted(async () => {
         width: 100%;
         height: 100%;
       }
+    }
+    .zanwuneirong {
+      width: 100%;
+      height: 460px;
+      text-align: center;
+      line-height: 460px;
+      font-size: 130px;
+      font-weight: 600;
+      background-color: #ffffff;
+      border-radius: 30px;
     }
   }
 }

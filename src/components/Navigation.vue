@@ -12,6 +12,7 @@
     <!-- 栏目 -->
     <div class="lanmu">
       <div @click="toRankingList()" class="RankingList">音乐排行榜</div>
+      <div>歌手馆</div>
       <div>我的音乐</div>
     </div>
 
@@ -25,11 +26,32 @@
     <!-- 搜索 -->
     <div class="sousuo">
       <!-- 搜索图标 -->
-      <svg class="icon sousuo-icon" aria-hidden="true" style="cursor:pointer" @click="toSearch()">
+      <svg
+        class="icon sousuo-icon"
+        aria-hidden="true"
+        style="cursor: pointer"
+        @click="toSearch()"
+      >
         <use xlink:href="#icon-a-021_sousuo"></use>
       </svg>
       <!-- 搜索框 -->
-      <input type="text" class="sousuo-input" style="cursor: text;" v-model="searchValue"  @keyup.enter="toSearch()"/>
+      <input
+        type="text"
+        class="sousuo-input"
+        style="cursor: text"
+        v-model="searchValue"
+        @keyup.enter="toSearch()"
+        @focusin="gainFocus()"
+        @blur="loseFocus()"
+        @input="searchOnchange"
+        placeholder="搜索： 歌曲 歌单 歌手 用户"
+      />
+
+      <SearchPopup
+        class="search-popup"
+        v-show="isSearchFocus"
+        :searchValue="searchValueTow"
+      ></SearchPopup>
     </div>
 
     <!-- 未登录 -->
@@ -59,9 +81,11 @@ import { useRouter } from "vue-router";
 import { reqUserLogState, reqUserLogOut, reqNewLogState } from "../axios/user";
 import useUserStore from "../pinia/user";
 import useCounterStore from "../pinia/counter";
-import { ref } from "vue";
+import { ref, onMounted, reactive, nextTick } from "vue";
 
 import UserManagement from "./HomeComponents/UserManagement.vue";
+import SearchPopup from "./Search/SearchPopup.vue";
+import emitter from "../plugins/Bus";
 
 const router = useRouter();
 
@@ -75,9 +99,49 @@ function drawerToFalse() {
   drawer.value = false;
 }
 
-// 搜索内容
-let searchValue=ref("")
+// 防抖
+let fangdou = reactive({
+  time: null,
+});
 
+// 搜索内容
+let searchValue = ref("");
+// 搜索内容传给组件（不是搜索内容，搜索窗口展示）
+let searchValueTow = ref("");
+
+// 是否在搜索框焦点上
+let isSearchFocus = ref(false);
+// 获得焦点
+function gainFocus() {
+  isSearchFocus.value = true;
+}
+// 失去焦点
+async function loseFocus() {
+  let pd = false;
+  // 接收参数
+  emitter.on("beFoSearch", async (e) => {
+    pd = true;
+    await toSearch(e);
+    isSearchFocus.value = false;
+    await nextTick(() => {
+      emitter.off("beFoSearch");
+    });
+  });
+
+    setTimeout(() => {
+    if (!pd) {
+      isSearchFocus.value = false;
+    }
+  }, 300);
+}
+
+// 内容发生改变
+function searchOnchange(e) {
+  clearTimeout(fangdou.time);
+  fangdou.time = setTimeout(() => {
+    searchValueTow.value = e.srcElement.value;
+  }, 700);
+}
 
 // 路由跳转
 function toHome() {
@@ -86,20 +150,57 @@ function toHome() {
 function userLog() {
   router.push("/log");
 }
-function toRankingList(){
- router.push("/rankinglist");
+function toRankingList() {
+  router.push("/rankinglist");
+}
 
-}
-function toSearch(){
- router.push({
-  path:"/search",
-  query:{
-    value:searchValue.value
+// 历史记录
+let SearchHistory = reactive({
+  data: ["z", "x"],
+});
+async function toSearch(item = searchValue.value) {
+  console.log(item);
+  router.push({
+    path: "/search",
+    query: {
+      value: item,
+    },
+  });
+  // 查找内容在数组中位置
+  let a = SearchHistory.data.indexOf(item);
+  //  把当前搜索的内容存在本地(单个)
+  counterStore.SearchContent(item);
+  // 先对比一下里面有没有相同的 有相同的先删除相同的 然后再添加当前这个
+  //没有相同的
+  if (a < 0) {
+    // 添加当前搜索记录
+    SearchHistory.data.push(item);
+    // 如果数组大于10个 那么就删除第一个
+    if (SearchHistory.data.length > 10) {
+      SearchHistory.data.shift();
+    }
+    // 存储历史记录
+    counterStore.StorageSearchHistory(SearchHistory.data);
+  } else {
+    SearchHistory.data.splice(a, 1); // 删除元素
+    // 添加当前搜索记录
+    SearchHistory.data.push(item);
+    // 如果数组大于10个 那么就删除第一个
+    if (SearchHistory.data.length > 10) {
+      SearchHistory.data.shift();
+    }
+    // 存储历史记录
+    counterStore.StorageSearchHistory(SearchHistory.data);
   }
- });
-//  把当前搜索的内容存在本地
-counterStore.SearchContent(searchValue.value)
+
+  // 清除内容
+  searchValue.value = "";
+  searchValueTow.value = "";
 }
+
+onMounted(() => {
+  SearchHistory.data = counterStore.SearchHistory;
+});
 </script>
 
 <style lang="less" scoped>
@@ -170,6 +271,7 @@ counterStore.SearchContent(searchValue.value)
     height: 30px;
     border-radius: 10px;
     position: relative;
+    z-index: 3;
     .sousuo-icon {
       font-size: 30px;
       position: absolute;
@@ -184,6 +286,12 @@ counterStore.SearchContent(searchValue.value)
       width: 250px;
       border: 1px solid rgb(228, 228, 228);
       background-color: rgb(228, 228, 228);
+    }
+
+    .search-popup {
+      position: absolute;
+      top: 40px;
+      left: -50px;
     }
   }
 

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div>搜索页面</div>
     <div>当前在搜索：{{ searchContent }}</div>
   </div>
 </template>

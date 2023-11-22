@@ -75,14 +75,17 @@
                 <use xlink:href="#icon-a-021_shipin"></use>
               </svg>
             </div>
-            <div class="songListToSongData-song-item-3">
-              <span> 歌曲：</span>{{ item.name }}
+            <div class="fnagzhiyichu songListToSongData-song-item-3">
+              <span class="fnagzhiyichu-title"> 歌曲：</span>
+              <span class="fnagzhiyichu-a">{{ item.name }}</span>
             </div>
-            <div class="songListToSongData-song-item-4">
-              <span>作者：</span>{{ item.ar[0].name }}
+            <div class="fnagzhiyichu songListToSongData-song-item-4">
+              <span class="fnagzhiyichu-title">作者：</span>
+              <span class="fnagzhiyichu-a">{{ item.ar[0].name }}</span>
             </div>
-            <div class="songListToSongData-song-item-5">
-              <span>专辑：</span>{{ item.al.name }}
+            <div class="fnagzhiyichu songListToSongData-song-item-5">
+              <span class="fnagzhiyichu-title">专辑：</span>
+              <span class="fnagzhiyichu-a">{{ item.al.name }}</span>
             </div>
           </div>
           <el-button
@@ -100,7 +103,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, computed, ref } from "vue";
+import { reactive, onMounted, computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import useCounterStore from "../pinia/counter";
 import {
@@ -109,7 +112,7 @@ import {
   reqSongListComment,
 } from "../axios/songListOrSong";
 import { reqUserDetails } from "../axios/user";
-import emitter from "../plugins/Bus" 
+import emitter from "../plugins/Bus";
 import Comment from "../components/Comment.vue";
 
 const route = useRoute();
@@ -164,8 +167,7 @@ function playSong(id) {
   console.log("歌单详情歌曲id:", id);
   counterStore.PlayerSongIdToLocal(id);
   getSongList();
-  emitter.emit("SongDetailsPlay")
-
+  emitter.emit("SongDetailsPlay");
 }
 
 // 歌单评论
@@ -225,7 +227,6 @@ async function songs() {
     ...SongListDetails.showDataSong,
     ...xx.data.songs,
   ];
-  // console.log(SongListDetails.showDataSong);
 }
 
 // 跳转到歌曲详情页面
@@ -239,11 +240,13 @@ function toSongDetails(item) {
   });
 }
 
-onMounted(async () => {
+// 监视和加载共同方法
+async function watchAndMounted() {
+  // 歌单id变了 清除歌单之前的数据
+  SongListDetails.showDataSong = [];
   // 传入歌单id
   let songlistId = route.params.songListId || counterStore.songlistId;
   SongListDetails.songlistId = songlistId;
-  // console.log(songlistId);
 
   // 仓库中 把歌单id存在本地
   counterStore.SongListIdToLocal(songlistId);
@@ -252,7 +255,6 @@ onMounted(async () => {
   const xx = await reqSongListDetail(songlistId);
   // 赋值拿到歌单数据
   SongListDetails.data = xx.data.playlist;
-  // console.log(SongListDetails.data);
 
   // 歌单里的歌曲们
   SongListDetails.dataSong = xx.data.playlist.trackIds;
@@ -262,6 +264,16 @@ onMounted(async () => {
 
   // 获取歌单评论
   SongListComment();
+}
+watch(
+  () => route.params.songListId,
+  async () => {
+    await watchAndMounted();
+  }
+);
+
+onMounted(async () => {
+  await watchAndMounted();
 });
 </script>
 
@@ -347,6 +359,11 @@ onMounted(async () => {
               font-weight: 600;
             }
           }
+          .fnagzhiyichu {
+            .fnagzhiyichu-title {
+              width: 50px;
+            }
+          }
           .songListToSongData-song-item-1 {
             width: 50px;
           }
@@ -357,13 +374,34 @@ onMounted(async () => {
             }
           }
           .songListToSongData-song-item-3 {
-            width: 300px;
+            width: 250px;
+            .fnagzhiyichu-a {
+              width: 210px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              color: #333;
+            }
           }
           .songListToSongData-song-item-4 {
-            width: 300px;
+            width: 250px;
+            .fnagzhiyichu-a {
+              width: 210px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              color: #333;
+            }
           }
           .songListToSongData-song-item-5 {
-            width: 300px;
+            width: 250px;
+            .fnagzhiyichu-a {
+              width: 210px;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+              color: #333;
+            }
           }
         }
         .songListToSongData-song-button {
