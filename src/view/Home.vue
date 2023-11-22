@@ -35,7 +35,7 @@ import RankingList from "../components/HomeComponents/RankingList.vue";
     align-items: center;
     border-radius: 20px;
     // box-shadow: 0px 2px 8px rgba(110, 110, 110, 0.822);
-    .dibumeiguan{
+    .dibumeiguan {
       height: 30px;
     }
   }

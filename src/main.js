@@ -24,6 +24,7 @@ app.use(pinia)
 app.config.globalProperties.$http = axios;
 app.use(ElementPlus)
 app.use(vant)
+window.document.title = "仿网易云音乐";
 
 
 app.mount('#app')

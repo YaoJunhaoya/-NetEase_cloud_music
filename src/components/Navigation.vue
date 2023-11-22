@@ -128,11 +128,9 @@ async function loseFocus() {
     });
   });
 
-    setTimeout(() => {
-    if (!pd) {
-      isSearchFocus.value = false;
-    }
-  }, 300);
+  if (!pd) {
+    isSearchFocus.value = false;
+  }
 }
 
 // 内容发生改变

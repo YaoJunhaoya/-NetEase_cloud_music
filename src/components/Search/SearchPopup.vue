@@ -9,7 +9,7 @@
           <span
             v-for="(item, index) in SearchHistoryReverse"
             :key="index"
-            @click.stop="toSearch(item)"
+            @mousedown="toSearch(item)"
           >
             {{ item }}
           </span>
@@ -23,7 +23,7 @@
             class="content"
             v-for="(item, index) in hotSearchData"
             :key="index"
-            @click.stop="toSearch(item.searchWord)"
+            @mousedown="toSearch(item.searchWord)"
           >
             <div class="index">{{ index + 1 }}</div>
             <div class="name">{{ item.searchWord }}</div>
@@ -263,6 +263,12 @@ function digitalConverter(value) {
         padding: 0 5px;
         border: 1px solid #333;
         border-radius: 10px;
+        cursor: pointer;
+        &:hover {
+          color: rgb(255, 255, 255);
+          background-color: rgb(255, 74, 74);
+          border: 1px solid #999;
+        }
       }
     }
   }

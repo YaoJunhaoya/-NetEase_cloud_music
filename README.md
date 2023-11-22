@@ -10,9 +10,7 @@
 
 ## 会网络拥挤的接口
 
-[歌曲评论](https://docs.neteasecloudmusicapi.binaryify.com/#/?id=%e6%ad%8c%e6%9b%b2%e8%af%84%e8%ae%ba) /comment/music
-
-音乐url  /song/url/v1
+无
 
 ## 需要完成
 

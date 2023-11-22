@@ -9,10 +9,12 @@ const router = createRouter({
     routes: [
         {
             path: '/',
+            name: "Home",
             component: () => import('../view/Home.vue')
         },
         {
             path: '/home',
+            name: "Home",
             component: () => import('../view/Home.vue')
         }, {
             path: '/log',
@@ -71,6 +73,11 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
+    if (to.name) {
+        window.document.title = to.name
+    } else {
+        window.document.title = "仿网易云音乐"
+    }
     // 针对 Chrome 浏览器
     document.body.scrollTop = 0
     // 针对 Firefox 浏览器
