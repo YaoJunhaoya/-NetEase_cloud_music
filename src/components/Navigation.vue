@@ -5,7 +5,7 @@
     <!-- 图标 -->
     <div class="music-iocn" @click="toHome">
       <img src="https://img1.baidu.com/it/u=1003401282,2815738756&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500" />
-      <span>仿网易云音乐2</span>
+      <span>仿网易云音乐</span>
     </div>
     <!-- 栏目 -->
     <div class="lanmu">

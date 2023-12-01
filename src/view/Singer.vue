@@ -1,5 +1,6 @@
 <template>
   <div>
+    歌手页面
     <div>当前歌手id:{{route.params.singerId}}</div>
   </div>
 </template>

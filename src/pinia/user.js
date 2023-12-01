@@ -44,9 +44,19 @@ const useUserStore = defineStore('userStore', {
         usetProfileToLocal(item = {}) {
             localStorage.setItem('myProfile', JSON.stringify(item))
             this.myProfile = item
+        },
+        // 清除所有登录信息
+        ClearLoginInformation() {
+            this.userLogState()
+            this.usetTokenToLocal()
+            this.userUserUidToLocal()
+            this.usetCookieToLocal()
+            this.usetAccountToLocal()
+            this.usetProfileToLocal()
         }
     },
     getters: {
+
 
     },
 })
