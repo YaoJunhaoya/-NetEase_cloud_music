@@ -16,6 +16,7 @@ const router = createRouter({
             name: "Home",
             component: () => import('../view/Home.vue')
         }, {
+            // 登录页面
             path: '/log',
             component: Log
         }, {
@@ -47,10 +48,17 @@ const router = createRouter({
             props: true
         },
         {
-            // 搜索页面
-            path: '/search',
-            name: "Search",
-            component: () => import("../view/Search.vue"),
+            // 个人中心
+            path: '/personal_center',
+            name: "PersonalCenter",
+            component: () => import("../view/PersonalCenter.vue"),
+            props: true
+        },
+        {
+            // 动态页面
+            path: '/moment',
+            name: "Moment",
+            component: () => import("../view/Moment.vue"),
             props: true
         },
         {
@@ -66,7 +74,31 @@ const router = createRouter({
             name: "User",
             component: () => import("../view/User.vue"),
             props: true
-        }
+        },
+        {
+            // MV页面
+            path: '/mv',
+            name: "MV",
+            component: () => import("../view/MV.vue"),
+            props: true
+        },
+        ,
+        {
+            // 专辑页面
+            path: '/collection',
+            name: "Collection",
+            component: () => import("../view/Collection.vue"),
+            props: true
+        },
+        ,
+        {
+            // 搜索页面
+            path: '/search',
+            name: "Search",
+            component: () => import("../view/Search.vue"),
+            props: true
+        },
+        
     ]
 })
 

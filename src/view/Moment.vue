@@ -1,5 +1,8 @@
 <template>
-  <div>用户页面 （显示用户的信息 如歌单）</div>
+  <div>
+    动态页面
+    朋友圈
+  </div>
 </template>
     
 <script setup  >
