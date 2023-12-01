@@ -8,9 +8,27 @@
 </template>
 
 <script setup>
+import { onMounted, onBeforeUnmount } from "vue";
 import MusicPlayerVue from "./components/MusicPlayer.vue";
 import NavigationVue from "./components/Navigation.vue";
 
+// 大屏自适应
+// import autofit from "autofit.js";
+
+onMounted(() => {
+  // autofit.init(
+  //   {
+  //     ah: 1080,
+  //     dw: 1920,
+  //     el: "#app",
+  //     resize: true,
+  //   },
+  //   false
+  // );
+});
+onBeforeUnmount(() => {
+  // autofit.off();
+});
 </script>
 
 <style lang="less" >

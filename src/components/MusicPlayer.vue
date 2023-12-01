@@ -22,7 +22,7 @@
         @click="toSongDetails"
         style="cursor: pointer"
       >
-        <img :src="musicParticulars.songImg" />
+        <img :class="{ xuanzhuan: !pd }" :src="musicParticulars.songImg" />
         <div class="name-vip">
           <span class="vip">{{ isVip(musicParticulars.fee) }}</span>
           <span class="name">{{ musicParticulars.songName }}</span>
@@ -579,6 +579,15 @@ onMounted(async () => {
 </script>
 
 <style lang="less" scoped>
+@keyframes rotateImage {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .sheng {
   position: fixed; /* 使用固定定位 */
   bottom: 0px; /* 显示时是0px 不显示时是-90px */
@@ -628,6 +637,9 @@ onMounted(async () => {
         width: 80px;
         height: 80px;
         border-radius: 40px;
+      }
+      .xuanzhuan {
+        animation: rotateImage 18s linear infinite;
       }
       .name-vip {
         display: flex;

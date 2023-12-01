@@ -93,7 +93,7 @@ function playSong() {
   counterStore.PlayerSongIdToLocal(songParticulars.songId);
   console.log("歌曲详情id:" + songParticulars.songId);
   getSongList(songParticulars.songId);
-  emitter.emit("SongDetailsPlay")
+  emitter.emit("SongDetailsPlay");
 }
 
 // 歌词
@@ -182,7 +182,7 @@ watch(
     const Son = document.querySelector(".lyric-activation"); //这个是上一个歌词  目前激活的歌词是这个歌词的下个
     // 获取 container 和 child 的位置信息
     if (Father && Son) {
-      Father.scrollTop=Son.offsetTop-(21*20)
+      Father.scrollTop = Son.offsetTop - 21 * 20;
     }
   }
 );

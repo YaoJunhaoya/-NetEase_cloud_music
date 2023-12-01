@@ -48,14 +48,14 @@
           :key="index"
         >
           <!-- 歌曲名称 -->
-          <span class="name" @click="toSong(item.id)">{{ item.name }}</span>
+          <span class="name" @mousedown="toSong(item.id)">{{ item.name }}</span>
           <!-- 歌手名称 -->
           <div>
             <span
               class="songer"
               v-for="(item2, index) in item.artists"
               :key="index"
-              @click="toSinger(item2.id)"
+              @mousedown="toSinger(item2.id)"
               >{{ item2.name }}</span
             >
           </div>
@@ -71,7 +71,7 @@
           class="box songListList"
           v-for="(item, index) in searchResult.singListsFive"
           :key="index"
-          @click="toSongList(item)"
+          @mousedown="toSongList(item)"
         >
           <!-- 歌单名称 -->
           <span class="name">{{ item.name }}</span>
@@ -93,7 +93,7 @@
           class="box songerList"
           v-for="(item, index) in searchResult.singersFive"
           :key="index"
-          @click="toSinger(item.id)"
+          @mousedown="toSinger(item.id)"
         >
           <div class="img">
             <img :src="item.img1v1Url" alt="" />
