@@ -8,3 +8,5 @@ export const reqSearch = (keywords, type = 1, limit = 30, offset = 0) => request
 
 // 热搜列表(详细) 热搜榜
 export const reqSearchHotDetail = () => requests({ url: `/search/hot/detail`, method: 'get' });
+// 搜索//keywords名称type类型，offset分页数
+export const reqSearchlist = (keywords, type, limit, offset) => requests({ url: `/search?keywords=${keywords}&type=${type}&limit =${limit}&offset=${offset}`, method: 'get' });
