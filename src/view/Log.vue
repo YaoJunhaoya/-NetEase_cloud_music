@@ -84,12 +84,35 @@
               </el-form-item>
             </div>
           </div>
+          <!-- 扫码登录 -->
+          <div class="logInput" v-if="loginType == 3">
+            <!-- 二维码 -->
+            <div v-if="qrKey" class="qrCode">
+              <!-- 801等待扫码 -->
+              <div>
+                <img
+                  :class="{ imgslur: qrCodeState.code == 802 }"
+                  :src="qrImg"
+                  alt=""
+                />
+              </div>
+              <!-- 802授权中 -->
+              <div class="code802" v-if="qrCodeState.code == 802">
+                <img :src="qrCodeState.userImg" alt="" />
+                <span>{{ qrCodeState.name }}</span>
+              </div>
+              <!-- 803授权登陆成功 -->
+              <!-- 800二维码不存在或已过期 -->
+            </div>
+            <div></div>
+          </div>
           <div class="changeLogin">
             <span v-if="loginType != 0" @click="loginType = 0">验证码登录</span>
             <span v-if="loginType != 1" @click="loginType = 1"
               >账号密码登录</span
             >
             <span v-if="loginType != 2" @click="loginType = 2">邮箱登录</span>
+            <span v-if="loginType != 3" @click="loginType = 3">扫码登录</span>
           </div>
           <el-button
             type="danger"
@@ -98,6 +121,7 @@
             :disabled="pdButton"
             class="logButton"
             @click="toLog"
+            v-show="loginType != 3"
           >
             登录
           </el-button>
@@ -108,15 +132,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, reactive, onMounted } from "vue";
 import {
   reqPhoneCodeLog,
   reqPhoneLog,
   reqEmailLog,
   reqSendPhoneCodeLog,
+  reqQrKey,
+  reqQrCreate,
+  reqQrCheck,
+  reqUserAccount,
 } from "../axios/user";
 import useUserStore from "../pinia/user";
-import { useRouter,useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 // 路由
 const router = useRouter();
@@ -190,13 +218,78 @@ async function toLog() {
     // 用户全部资料
     userStore.userLogState(allData);
     // 完成登录跳转到首页
-    router.push("/home")
+    router.push("/home");
   } else {
     alert("账号，密码或验证码有问题，请重试");
     zhanghaoInput.value = "";
     passwordInput.value = "";
   }
 }
+// 二维码的key
+let qrKey = ref("");
+// 二维码图
+let qrImg = ref("");
+async function getQrImg() {
+  const { data: a } = await reqQrCreate(qrKey.value);
+  qrImg.value = a.data.qrimg;
+}
+// 当前扫码状态
+let qrCodeState = reactive({
+  code: "",
+  name: "",
+  userImg: "",
+});
+// 获取账号信息
+async function getUserAccount() {
+  const { data: a } = await reqUserAccount();
+  // console.log(a);
+  // 设置用户token
+  userStore.usetTokenToLocal("随便设置");
+  // 设置用户ID
+  userStore.userUserUidToLocal(a.account.id);
+  // 账户信息
+  userStore.usetAccountToLocal(a.account);
+  // 用户资料
+  userStore.usetProfileToLocal(a.profile);
+  // 用户全部资料
+  userStore.userLogState(a);
+}
+
+// 监视登录类型
+watch(
+  () => loginType.value,
+  async () => {
+    if (loginType.value == 3) {
+      // 生成二维码的key
+      const { data: a } = await reqQrKey();
+      qrKey.value = a.data.unikey;
+      if (qrKey.value != "") {
+        getQrImg();
+        // 启动触发器 一直循环检查二维码状态
+        let intervalId = setInterval(async function () {
+          const { data: a } = await reqQrCheck(qrKey.value);
+          qrCodeState.code = a.code;
+          console.log(a); //801等待扫码 802授权中 803授权登陆成功 800二维码不存在或已过期
+          if (qrCodeState.code == 802) {
+            qrCodeState.userImg = a.avatarUrl;
+            qrCodeState.name = a.nickname;
+          } else if (qrCodeState.code == 803) {
+            // 设置用户cookie
+            userStore.usetCookieToLocal(a.cookie);
+            // 获取账号信息
+            await getUserAccount();
+            // 跳转到首页
+            router.push({
+              path: "/home",
+            });
+            // 关闭定时器
+            clearInterval(intervalId);
+          }
+        }, 2500);
+      }
+    }
+  }
+);
 </script>
 
 <style lang="less" scoped>
@@ -255,6 +348,24 @@ async function toLog() {
         font-size: 28px;
         border-left: 1px solid black;
         .logInput {
+          .qrCode {
+            display: flex;
+            align-items: center;
+            .imgslur {
+              filter: blur(5px);
+            }
+            .code802 {
+              width: 150px;
+              height: 150px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              img {
+                width: 100px;
+                height: 100px;
+              }
+            }
+          }
           div {
             display: flex;
             // align-items: center;
