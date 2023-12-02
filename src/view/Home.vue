@@ -16,9 +16,32 @@
 </template>
 
 <script setup>
+import { ref, reactive, onMounted } from "vue";
 import Slideshow from "../components/HomeComponents/Slideshow.vue";
 import HitSongList from "../components/HomeComponents/HitSongList.vue";
 import RankingList from "../components/HomeComponents/RankingList.vue";
+import { reqUserAccount } from "../axios/user";
+import useUserStore from "../pinia/user";
+// Pinia仓库
+const userStore = useUserStore();
+// 获取账号信息
+async function getUserAccount() {
+  const { data: a } = await reqUserAccount();
+  console.log(a);
+  // 设置用户token
+    userStore.usetTokenToLocal("随便设置");
+  // 设置用户ID
+  userStore.userUserUidToLocal(a.account.id);
+  // 账户信息
+  userStore.usetAccountToLocal(a.account);
+  // 用户资料
+  userStore.usetProfileToLocal(a.profile);
+  // 用户全部资料
+  userStore.userLogState(a);
+}
+onMounted(() => {
+  getUserAccount();
+});
 </script>
 
 <style lang="less" scoped>
