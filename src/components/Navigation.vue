@@ -35,7 +35,7 @@
     </div>
 
     <!-- 未登录 -->
-    <div @click="userLog" v-if="!userStore.token" class="noneLog" style="cursor: pointer">
+    <div @click="userLog" v-if="!userStore.myCookie" class="noneLog" style="cursor: pointer">
       未登录
     </div>
     <!-- 我的 -->

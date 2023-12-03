@@ -5,7 +5,6 @@
     <el-button @click="outNewLogIn"> 刷新登录 </el-button>
     <el-button @click="getLog"> 登录状态 </el-button>
     <el-button @click="toPersonalCenter"> 个人中心 </el-button>
-    <el-button @click="toAnonimous"> 游客登录 </el-button>
   </div>
 </template>
     
@@ -72,12 +71,6 @@ function toPersonalCenter() {
   });
   // 关闭窗口
   closePage();
-}
-// 游客登录
-async function toAnonimous() {
-  const { data: data } = await reqAnonimous();
-  console.log(data);
-  baocunCookie(data.cookie)
 }
 </script>
     
