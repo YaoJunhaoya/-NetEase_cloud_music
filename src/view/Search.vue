@@ -16,13 +16,15 @@
         </li>
       </ul>
       <!-- 单曲样式 -->
-      <SearchSingle :searchData="searchData" :currentPage="pagination.currentPage" v-if="searchData.current == 0" />
-
+      <SearchSingle :searchData="searchData" :pagination="pagination" v-if="searchData.current == 0"
+        @paginationChange="paginationChange" />
       <!-- 专辑样式 -->
-      <SearchAlbum :searchData="searchData" v-if="searchData.current == 1" />
-      <SearchSongSheet :searchData="searchData" v-if="searchData.current == 3"></SearchSongSheet>
-      <el-pagination background layout="prev, pager, next" :page-size="pagination.pageSize"
-        :total="parseInt(pagination.total)" :current-page="pagination.currentPage" @current-change="paginationChange" />
+      <SearchAlbum :searchData="searchData" :pagination="pagination" v-if="searchData.current == 1"
+        @paginationChange="paginationChange" />
+      <!-- 歌单样式 -->
+      <SearchSongSheet :searchData="searchData" :pagination="pagination" v-if="searchData.current == 3"
+        @paginationChange="paginationChange" />
+
       <div class="dibumeiguan"></div>
     </div>
   </div>
@@ -53,7 +55,7 @@ let searchData = reactive({
   current: 0
 });
 function paginationChange(val) {
-  pagination.currentPage = val
+  // pagination.currentPage = val
   data(searchData.current, val - 1);
 }
 let searchContent = ref("");
@@ -90,7 +92,7 @@ async function data(current = 0, offset = 0, limit = 30) {
       if (searchData.SongData.songs) searchData.SongData.songs = searchData.SongData.songs.splice(0, slicing)
       if (searchData.SongData.albums) searchData.SongData.songs = searchData.SongData.albums.splice(0, slicing)
     }
-    console.log(searchData.SongData);
+    // console.log(searchData.SongData);
   }
 }
 watch(
