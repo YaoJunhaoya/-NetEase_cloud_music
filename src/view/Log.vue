@@ -145,6 +145,7 @@ import {
 } from "../axios/user";
 import useUserStore from "../pinia/user";
 import { useRouter, useRoute } from "vue-router";
+import baocunCookie from "../plugins/ReserveCookie";
 
 // 路由
 const router = useRouter();
@@ -209,6 +210,7 @@ async function toLog() {
     userStore.usetTokenToLocal(allData.token);
     // 设置用户cookie
     userStore.usetCookieToLocal(allData.cookie);
+    baocunCookie(allData.cookie);
     // 设置用户ID
     userStore.userUserUidToLocal(allData.account.id);
     // 账户信息
@@ -276,6 +278,7 @@ watch(
           } else if (qrCodeState.code == 803) {
             // 设置用户cookie
             userStore.usetCookieToLocal(a.cookie);
+            baocunCookie(a.cookie);
             // 获取账号信息
             await getUserAccount();
             // 跳转到首页

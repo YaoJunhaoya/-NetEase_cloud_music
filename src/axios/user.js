@@ -17,6 +17,8 @@ export const reqPhoneCodeLog = (phone, captcha) => requests({ url: `/login/cellp
 export const reqSendPhoneCodeLog = (phone) => requests({ url: `/captcha/sent?phone=${phone}`, method: 'get' });
 // 邮箱登录
 export const reqEmailLog = (email, password) => requests({ url: `/login?email=${email}&password=${password}`, method: 'get' });
+// 游客登录
+export const reqAnonimous = () => requests({ url: `/register/anonimous?timestamp=${+ new Date()}&noCookie=true`, method: 'get' });
 // 登录状态
 export const reqUserLogState = () => requests({ url: `/login/status`, method: 'get' });
 // 退出登录
@@ -29,11 +31,11 @@ export const reqUserPlayRecord = (uid, type = 1) => requests({ url: `/user/recor
 export const reqUserDetails = (uid) => requests({ url: `/user/detail?uid=${uid}`, method: 'get' });
 
 // 1. 二维码 key 生成接口
-export const reqQrKey = () => requests({ url: `/login/qr/key?timestamp=${+ new Date()}`, method: 'get' });
+export const reqQrKey = () => requests({ url: `/login/qr/key?timestamp=${+ new Date()}&noCookie=true`, method: 'get' });
 // 2. 二维码生成接口
-export const reqQrCreate = (key) => requests({ url: `/login/qr/create?key=${key}&qrimg=true&timestamp=${+ new Date() }`, method: 'get' });
+export const reqQrCreate = (key) => requests({ url: `/login/qr/create?key=${key}&qrimg=true&timestamp=${+ new Date()}&noCookie=true`, method: 'get' });
 // 3. 二维码检测扫码状态接口
-export const reqQrCheck = (key) => requests({ url: `/login/qr/check?key=${key}&timestamp=${+ new Date() }&noCookie=true`, method: 'get' });
+export const reqQrCheck = (key) => requests({ url: `/login/qr/check?key=${key}&timestamp=${+ new Date()}&noCookie=true`, method: 'get' });
 
 // 获取账号信息
 export const reqUserAccount = (key) => requests({ url: `/user/account`, method: 'get' });

@@ -2,15 +2,23 @@
   <div>
     <el-button @click="closePage"> 关闭 </el-button>
     <el-button @click="outLogIn"> 退出登录 </el-button>
+    <el-button @click="outNewLogIn"> 刷新登录 </el-button>
     <el-button @click="getLog"> 登录状态 </el-button>
     <el-button @click="toPersonalCenter"> 个人中心 </el-button>
+    <el-button @click="toAnonimous"> 游客登录 </el-button>
   </div>
 </template>
     
 <script setup  >
 import { useRouter } from "vue-router";
-import { reqUserLogState } from "../../axios/user";
+import {
+  reqUserLogState,
+  reqLogOut,
+  reqNewLogState,
+  reqAnonimous,
+} from "../../axios/user";
 import useUserStore from "../../pinia/user";
+import baocunCookie from "../../plugins/ReserveCookie"
 
 // 路由
 const router = useRouter();
@@ -25,12 +33,18 @@ function closePage() {
 }
 
 // 退出登录
-function outLogIn() {
+async function outLogIn() {
   // 清除登录信息
-  userStore.ClearLoginInformation()
+  userStore.ClearLoginInformation();
+  document.cookie=""
+  // 退出登录接口
+  const { data: data } = await reqLogOut();
+  console.log(data);
   // 跳转到登录界面
   let pd = confirm("是否跳转到登录界面?");
+  // 关闭窗口
   closePage();
+  // 判断是否跳转
   if (pd) {
     // 跳转登录
     router.push({
@@ -39,11 +53,16 @@ function outLogIn() {
   }
 }
 
+// 刷新登录
+async function outNewLogIn() {
+  const { data: data } = await reqNewLogState();
+  console.log(data.data);
+}
+
 // 查看登录状态
 async function getLog() {
   const { data: data } = await reqUserLogState();
   console.log(data.data);
-  alert(JSON.stringify(data.data));
 }
 
 // 去个人中心
@@ -53,6 +72,12 @@ function toPersonalCenter() {
   });
   // 关闭窗口
   closePage();
+}
+// 游客登录
+async function toAnonimous() {
+  const { data: data } = await reqAnonimous();
+  console.log(data);
+  baocunCookie(data.cookie)
 }
 </script>
     
