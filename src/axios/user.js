@@ -38,7 +38,22 @@ export const reqQrCreate = (key) => requests({ url: `/login/qr/create?key=${key}
 export const reqQrCheck = (key) => requests({ url: `/login/qr/check?key=${key}&timestamp=${+ new Date()}&noCookie=true`, method: 'get' });
 
 // 获取账号信息
-export const reqUserAccount = (key) => requests({ url: `/user/account`, method: 'get' });
+export const reqUserAccount = ( ) => requests({ url: `/user/account`, method: 'get' });
+// 获取用户信息 , 歌单，收藏，mv, dj 数量
+export const reqUserSubcount = ( ) => requests({ url: `/user/subcount`, method: 'get' });
+// 获取用户等级信息
+export const reqUserLevel = ( ) => requests({ url: `/user/level`, method: 'get' });
+// 获取用户关注列表
+export const reqUserFollows = (uid, limit=30, offset=0) => requests({ url: `/user/follows?uid=${uid}&limit=${limit}&offset=${offset}`, method: 'get' });
+// 获取用户粉丝列表
+export const reqUserFolloweds = (uid, limit = 30, offset = 0) => requests({ url: `/user/followeds?uid=${uid}&limit=${limit}&offset=${offset}`, method: 'get' });
+
+// 获取 VIP 信息
+export const reqVipInfo = (uid) => requests({ url: `/vip/info?uid=${uid}`, method: 'get' });
+// 获取 VIP 信息(app端)
+export const reqVipInfoV2 = (uid) => requests({ url: `/vip/info/v2?uid=${uid}`, method: 'get' });
+
+
 
 
 
