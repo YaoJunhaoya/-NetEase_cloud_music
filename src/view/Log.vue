@@ -206,8 +206,6 @@ async function toLog() {
   }
   console.log("allData", allData);
   if (allData.code == 200) {
-    // 设置用户token
-    userStore.usetTokenToLocal(allData.token);
     // 设置用户cookie
     userStore.usetCookieToLocal(allData.cookie);
     baocunCookie(allData.cookie);
@@ -245,8 +243,6 @@ let qrCodeState = reactive({
 async function getUserAccount() {
   const { data: a } = await reqUserAccount();
   // console.log(a);
-  // 设置用户token
-  userStore.usetTokenToLocal("随便设置");
   // 设置用户ID
   userStore.userUserUidToLocal(a.account.id);
   // 账户信息
