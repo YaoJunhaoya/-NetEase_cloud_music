@@ -4,13 +4,15 @@ const useUserStore = defineStore('userStore', {
     state: () => ({
         // 登录信息 用户的全部信息
         logState: JSON.parse(localStorage.getItem('logState')) || {},
-        // 用户token
+        // 用户token（可能会弃用）
         token: localStorage.getItem('userToken') || "",
         // 用户id
         uid: localStorage.getItem('userUid') || "1767320482",  //自己id：1767320482 展示设置成自己的
         // 用户cookie
         myCookie: localStorage.getItem('myCookie') || "",
+        // 账号信息
         myAccount: JSON.parse(localStorage.getItem('myAccount')) || {},
+        // 用户信息 属性 资料
         myProfile: JSON.parse(localStorage.getItem('myProfile')) || {},
 
     }),
