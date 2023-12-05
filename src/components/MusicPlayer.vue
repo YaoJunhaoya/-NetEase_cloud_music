@@ -161,7 +161,6 @@ function toSongDetails() {
 let myAudio = ref(null);
 // 更新播放器歌词数据
 async function updateSong() {
-  console.log('musicParticulars.songId', musicParticulars.songId);
   const { data: data } = await reqSongDetail(musicParticulars.songId);
   // 歌曲图片
   musicParticulars.songImg = data.songs[0].al.picUrl;

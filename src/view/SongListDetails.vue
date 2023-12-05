@@ -240,7 +240,6 @@ async function watchAndMounted() {
 
   // 歌单里的歌曲们
   SongListDetails.dataSong = xx.data.playlist.trackIds;
-
   //设置给用户看见的歌曲列表
   songs();
 

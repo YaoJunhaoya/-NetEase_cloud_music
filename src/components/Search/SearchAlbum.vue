@@ -4,14 +4,14 @@
     <!-- 歌单 -->
     <div class="big">
       <div class="allGedan">
-        <div class="gedan" v-for="album in searchData.SongData.albums" :key="album.id">
+        <div class="gedan" v-for="album in searchData.SongData.albums" :key="album.id" @click="goCollection(album.id)">
           <img :src="album.picUrl" alt />
           <span>{{ album.name }}</span>
-          <div class="play-button" @click="Playalbum(album.id)">
+          <a class="play-button" @click.stop="Playalbum(album.id)">
             <svg class="icon " aria-hidden="true">
               <use xlink:href="#icon-playCircle"></use>
             </svg>
-          </div>
+          </a>
         </div>
       </div>
       <el-pagination background layout="prev, pager, next" :page-size="pagination.pageSize"
@@ -25,6 +25,7 @@ import { reactive, ref } from 'vue';
 import { reqAlbumList } from '../../axios/album'
 import useCounterStore from "../../pinia/counter"
 import emitter from "../../plugins/Bus";
+import { useRouter } from 'vue-router'
 // Pinia仓库
 const counterStore = useCounterStore();
 const props = defineProps({
@@ -32,6 +33,7 @@ const props = defineProps({
   pagination: Object
 });
 const emit = defineEmits(['paginationChange'])
+const router = useRouter()
 // 当前页
 let currentPage = ref(1)
 let albumsList = reactive({
@@ -43,6 +45,13 @@ function paginationChange(val) {
   currentPage.value = val
   emit('paginationChange', val)
 }
+// 跳转专辑页面
+function goCollection(id) {
+  router.push({
+    name: 'Collection',
+    params: { id: id }
+  })
+}
 // 点击播放
 async function Playalbum(id) {
   let { data } = await reqAlbumList(id)
@@ -52,6 +61,7 @@ async function Playalbum(id) {
   getSongList(id)
   emitter.emit("SongDetailsPlay");
 }
+// 获取本地歌单
 function getSongList(id) {
   let arr = ref([]);
   // 判断 歌单id 与 本地的第一项 是否相同
