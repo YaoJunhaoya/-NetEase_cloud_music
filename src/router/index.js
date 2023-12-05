@@ -85,7 +85,7 @@ const router = createRouter({
         ,
         {
             // 专辑页面
-            path: '/collection',
+            path: '/collection/:id',
             name: "Collection",
             component: () => import("../view/Collection.vue"),
             props: true
@@ -98,7 +98,7 @@ const router = createRouter({
             component: () => import("../view/Search.vue"),
             props: true
         },
-        
+
     ]
 })
 

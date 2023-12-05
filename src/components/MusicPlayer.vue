@@ -4,24 +4,13 @@
     <!-- 隐藏和显示 -->
     <div class="show" @click="changeShengjiang" style="cursor: pointer"></div>
     <!-- 播放器 -->
-    <audio
-      controls
-      :src="mp3"
-      class="my-audio"
-      style="display: none"
-      @ended="audioEnded()"
-      @play="audioPlay()"
-      @pause="audioPause()"
-    ></audio>
+    <audio controls :src="mp3" class="my-audio" style="display: none" @ended="audioEnded()" @play="audioPlay()"
+      @pause="audioPause()"></audio>
 
     <!-- 播放器显示页面 -->
     <div class="myBofnagqi-bofangqianniu">
       <!-- 歌曲名称和图片 -->
-      <div
-        class="myBofnagqi-bofangqianniu-gequ"
-        @click="toSongDetails"
-        style="cursor: pointer"
-      >
+      <div class="myBofnagqi-bofangqianniu-gequ" @click="toSongDetails" style="cursor: pointer">
         <img :class="{ xuanzhuan: !pd }" :src="musicParticulars.songImg" />
         <div class="name-vip">
           <span class="vip">{{ isVip(musicParticulars.fee) }}</span>
@@ -34,12 +23,7 @@
           <div class="myBofnagqi-bofangqianniu-wai">
             <div class="myBofnagqi-bofangqianniu-nei">
               <!-- 上一首 -->
-              <div
-                type="primary"
-                plain
-                @click="playerChangeSong(-1)"
-                style="cursor: pointer"
-              >
+              <div type="primary" plain @click="playerChangeSong(-1)" style="cursor: pointer">
                 <svg class="icon" aria-hidden="true" style="font-size: 30px">
                   <use xlink:href="#icon-ziyuanldpi"></use>
                 </svg>
@@ -47,18 +31,11 @@
               <!-- 播放或者暂停 -->
               <div @click="BofangOrZantingSong" style="cursor: pointer">
                 <svg class="icon" aria-hidden="true" style="font-size: 35px">
-                  <use
-                    :xlink:href="pd ? '#icon-bofang1' : '#icon-zanting2'"
-                  ></use>
+                  <use :xlink:href="pd ? '#icon-bofang1' : '#icon-zanting2'"></use>
                 </svg>
               </div>
               <!-- 下一首 -->
-              <div
-                type="primary"
-                plain
-                @click="playerChangeSong(1)"
-                style="cursor: pointer"
-              >
+              <div type="primary" plain @click="playerChangeSong(1)" style="cursor: pointer">
                 <svg class="icon" aria-hidden="true" style="font-size: 30px">
                   <use xlink:href="#icon-ziyuanldpi1"></use>
                 </svg>
@@ -73,36 +50,21 @@
                 </svg>
               </el-button>
               <!-- 循环，随机 -->
-              <el-button
-                type="primary"
-                circle
-                class="bofangType"
-                @click="changePlayType()"
-              >
+              <el-button type="primary" circle class="bofangType" @click="changePlayType()">
                 <svg class="icon bofangType-icon" aria-hidden="true">
                   <use :xlink:href="PlaybackMode.arr[PlaybackMode.index]"></use>
                 </svg>
               </el-button>
               <div class="yingliang" @mouseleave="volumeShow = false">
                 <!-- 音量大小 -->
-                <el-button
-                  type="primary"
-                  circle
-                  @mouseover.stop="volumeShow = true"
-                >
+                <el-button type="primary" circle @mouseover.stop="volumeShow = true">
                   <svg class="icon" aria-hidden="true" style="font-size: 18px">
                     <use xlink:href="#icon-shengyin"></use>
                   </svg>
                 </el-button>
 
                 <div class="tanchu" v-show="volumeShow">
-                  <input
-                    type="range"
-                    min="0"
-                    :max="100"
-                    v-model="bofnagqiVolume.current"
-                    @click="setVolume()"
-                  />
+                  <input type="range" min="0" :max="100" v-model="bofnagqiVolume.current" @click="setVolume()" />
                   <div>
                     <span>{{ bofnagqiVolume.current }}</span>
                     <span>100</span>
@@ -117,32 +79,16 @@
           </div>
           <!-- 查看播放列表 -->
           <div class="myBofnagqi-bofangqianniu-bflb" style="cursor: pointer">
-            <svg
-              class="icon"
-              aria-hidden="true"
-              style="font-size: 30px"
-              @click="drawer = true"
-            >
+            <svg class="icon" aria-hidden="true" style="font-size: 30px" @click="drawer = true">
               <use xlink:href="#icon-jichu_gengduo"></use>
             </svg>
 
-            <el-drawer
-              v-model="drawer"
-              title="I am the title"
-              :with-header="false"
-              append-to-body
-            >
+            <el-drawer v-model="drawer" title="I am the title" :with-header="false" append-to-body>
               <div>
-                <div
-                  v-for="(item, index) in playerSongList.list.slice(1)"
-                  :key="index"
-                >
+                <div v-for="(item, index) in playerSongList.list.slice(1)" :key="index">
                   <!-- <span>{{ item.name }}+{{ index }}</span> -->
-                  <PlayerSongList
-                    :playerSongList="item"
-                    :ranking="index + 1"
-                    :activate="playerSongList.i == index + 1"
-                  ></PlayerSongList>
+                  <PlayerSongList :playerSongList="item" :ranking="index + 1" :activate="playerSongList.i == index + 1">
+                  </PlayerSongList>
                 </div>
               </div>
             </el-drawer>
@@ -151,17 +97,8 @@
 
         <!-- 进度条 -->
         <div class="myBofnagqi-jdt">
-          <input
-            class="jdt"
-            type="range"
-            style="cursor: pointer"
-            v-model="rangeValue.time"
-            min="0"
-            :max="rangeValue.maxValue"
-            @click="setSongTime()"
-            @mousedown="anxia()"
-            @mouseup="setSongTime()"
-          />
+          <input class="jdt" type="range" style="cursor: pointer" v-model="rangeValue.time" min="0"
+            :max="rangeValue.maxValue" @click="setSongTime()" @mousedown="anxia()" @mouseup="setSongTime()" />
           <div class="myBofnagqi-jdt-data">
             <span>{{ formatSecondsToTime(rangeValue.time) }}</span>
             <span>{{ formatSecondsToTime(rangeValue.maxValue) }}</span>
@@ -583,21 +520,28 @@ onMounted(async () => {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
 .sheng {
-  position: fixed; /* 使用固定定位 */
-  bottom: 0px; /* 显示时是0px 不显示时是-90px */
-  left: 0; /* 固定位置距离屏幕左侧 0px */
+  position: fixed;
+  /* 使用固定定位 */
+  bottom: 0px;
+  /* 显示时是0px 不显示时是-90px */
+  left: 0;
+  /* 固定位置距离屏幕左侧 0px */
 }
 
 .jiang {
-  position: fixed; /* 使用固定定位 */
-  bottom: -90px; /* 显示时是0px 不显示时是-90px */
-  left: 0; /* 固定位置距离屏幕左侧 0px */
+  position: fixed;
+  /* 使用固定定位 */
+  bottom: -90px;
+  /* 显示时是0px 不显示时是-90px */
+  left: 0;
+  /* 固定位置距离屏幕左侧 0px */
 }
 
 .myBofnagqi {
@@ -611,6 +555,7 @@ onMounted(async () => {
   justify-content: space-between;
   border-radius: 20px;
   box-shadow: 0px 0px 8px black;
+
   /* 其他样式 */
   .show {
     position: absolute;
@@ -620,12 +565,14 @@ onMounted(async () => {
     right: 20px;
     top: -30px;
   }
+
   .myBofnagqi-bofangqianniu {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     margin-top: 5px;
     width: 100%;
+
     .myBofnagqi-bofangqianniu-gequ {
       width: 260px;
       margin: 0 0px 0 50px;
@@ -633,14 +580,17 @@ onMounted(async () => {
       align-items: center;
       flex-direction: row;
       justify-content: flex-start;
+
       img {
         width: 80px;
         height: 80px;
         border-radius: 40px;
       }
+
       .xuanzhuan {
         animation: rotateImage 18s linear infinite;
       }
+
       .name-vip {
         display: flex;
         flex-direction: column;
@@ -648,6 +598,7 @@ onMounted(async () => {
         justify-content: space-between;
         margin-left: 10px;
         max-width: 160px;
+
         .vip {
           padding: 1px 3px;
           margin: 0 0 5px 0;
@@ -657,12 +608,14 @@ onMounted(async () => {
           border-radius: 5px;
           background-color: #e2e0e0;
         }
+
         .name {
           font-size: 18px;
           font-weight: 600;
         }
       }
     }
+
     .myBofnagqi-bofangqianniu-you {
       display: flex;
       flex-direction: column;
@@ -671,6 +624,7 @@ onMounted(async () => {
       margin: 0 50px;
       width: calc(100% - 200px);
       height: 95px;
+
       .aax {
         display: flex;
         flex-direction: row;
@@ -679,6 +633,7 @@ onMounted(async () => {
         margin-top: 3px;
         width: 100%;
         height: 45px;
+
         .myBofnagqi-bofangqianniu-wai {
           display: flex;
           flex-direction: row;
@@ -690,6 +645,7 @@ onMounted(async () => {
           padding: 2px 10px;
           border-radius: 10px;
           box-shadow: 1px 1px 8px #585858;
+
           .myBofnagqi-bofangqianniu-nei {
             display: flex;
             align-items: center;
@@ -698,23 +654,28 @@ onMounted(async () => {
             width: 150px;
             height: 45px;
           }
+
           .myBofnagqi-bofangqianniu-nei-you {
             display: flex;
             flex-direction: row;
             justify-content: space-around;
             align-items: center;
             width: 150px;
+
             // 播放类型
             .bofangType {
               margin: 0 0;
+
               .bofangType-icon {
                 font-size: 20px;
                 color: rgb(0, 0, 0);
               }
             }
+
             // 音量
             .yingliang {
               position: relative;
+
               .tanchu {
                 position: absolute;
                 width: 110px;
@@ -726,9 +687,11 @@ onMounted(async () => {
                 flex-direction: column;
                 align-items: center;
                 border-radius: 5px;
+
                 input {
                   width: 100px;
                 }
+
                 div {
                   width: 100px;
                   display: flex;
@@ -739,13 +702,14 @@ onMounted(async () => {
             }
           }
         }
+
         .myBofnagqi-bofangqianniu-geci {
           margin: 0 20px;
           font-size: 15px;
         }
+
         .myBofnagqi-bofangqianniu-bflb {
-          .icon {
-          }
+          .icon {}
         }
       }
 
@@ -758,9 +722,11 @@ onMounted(async () => {
         flex-direction: column;
         align-items: center;
         border-radius: 10px;
+
         .jdt {
           width: 95%;
         }
+
         .myBofnagqi-jdt-data {
           width: 95%;
           display: flex;

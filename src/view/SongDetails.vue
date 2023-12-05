@@ -33,14 +33,9 @@
           </div>
           <!-- 歌词 -->
           <div class="songContent-xx-a geci">
-            <div
-              v-for="(item, index) in songParticulars.lyric"
-              :key="index"
-              class="geci-a"
-              :class="{
-                'lyric-activation': index == songParticulars.lyricIndex,
-              }"
-            >
+            <div v-for="(item, index) in songParticulars.lyric" :key="index" class="geci-a" :class="{
+              'lyric-activation': index == songParticulars.lyricIndex,
+            }">
               <div>{{ item }}</div>
             </div>
           </div>
@@ -239,6 +234,7 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: center;
   margin: 0 auto;
+
   .xiangqing {
     width: 80%;
     min-height: 500px;
@@ -246,28 +242,34 @@ onBeforeUnmount(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     .songContent {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+
       .songContent-img {
         width: 500px;
         height: 500px;
         margin: 10px 30px;
+
         img {
           width: 100%;
           border-radius: 250px;
         }
       }
+
       .songContent-xx {
         display: flex;
         flex-direction: column;
         margin: 10px 10px;
+
         .gequ {
           div {
             margin: 10px 0;
           }
         }
+
         .geci {
           display: flex;
           flex-direction: column;
@@ -278,29 +280,34 @@ onBeforeUnmount(() => {
           box-shadow: 1px 1px 4px rgb(129, 129, 129);
           padding: 5px 0;
           width: 700px;
+
           &::-webkit-scrollbar {
             width: 0;
           }
+
           .geci-a {
             margin: 5px 10px;
           }
+
           .lyric-activation {
             color: red;
             font-weight: 600;
             font-size: 20px;
           }
         }
+
         .songContent-xx-a {
           margin: 10px 0;
         }
+
         .bofnag-icon {
           font-size: 35px;
         }
       }
     }
+
     .qita {
       width: 1100px;
     }
   }
-}
-</style>
+}</style>

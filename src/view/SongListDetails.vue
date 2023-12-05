@@ -35,12 +35,7 @@
           <div>
             <!-- 标签 -->
             <div>
-              标签：<span
-                class="biaoqian"
-                v-for="(item, index) in SongListDetails.data.tags"
-                :key="index"
-                >{{ item }}</span
-              >
+              标签：<span class="biaoqian" v-for="(item, index) in SongListDetails.data.tags" :key="index">{{ item }}</span>
             </div>
           </div>
         </div>
@@ -49,8 +44,7 @@
       <div class="jieshao">
         <div class="jieshaodata">
           <span style="color: rgba(206, 31, 31, 0.76); font-weight: 600">
-            介绍：</span
-          >
+            介绍：</span>
           <span>{{ SongListDetails.data.description }}</span>
         </div>
       </div>
@@ -60,17 +54,10 @@
         <div class="title">歌曲列表</div>
         <!-- 我是一些歌曲 -->
         <div class="songListToSongData-song">
-          <div
-            v-for="(item, index) in SongListDetails.showDataSong"
-            :key="index"
-            class="songListToSongData-song-item"
-            @click="toSongDetails(item)"
-          >
+          <div v-for="(item, index) in SongListDetails.showDataSong" :key="index" class="songListToSongData-song-item"
+            @click="toSongDetails(item)">
             <div class="songListToSongData-song-item-1">{{ index + 1 }}</div>
-            <div
-              class="songListToSongData-song-item-2"
-              @click.stop="playSong(item.id)"
-            >
+            <div class="songListToSongData-song-item-2" @click.stop="playSong(item.id)">
               <svg class="icon item-icon" aria-hidden="true">
                 <use xlink:href="#icon-a-021_shipin"></use>
               </svg>
@@ -88,12 +75,7 @@
               <span class="fnagzhiyichu-a">{{ item.al.name }}</span>
             </div>
           </div>
-          <el-button
-            class="songListToSongData-song-button"
-            type="danger"
-            @click="addSongs(1)"
-            >加载更多</el-button
-          >
+          <el-button class="songListToSongData-song-button" type="danger" @click="addSongs(1)">加载更多</el-button>
         </div>
       </div>
       <!-- 评论 -->
@@ -146,7 +128,6 @@ let gequliebiao = reactive({
 // 获取歌单id，把歌单添加到播放器  （除非是同一个歌单不然都会更新）
 function getSongList() {
   let arr = ref([]);
-
   // 判断 歌单id 与 本地的第一项 是否相同
   if (counterStore.playerSongList[0] != SongListDetails.data.id) {
     // 这是歌单id
@@ -254,11 +235,11 @@ async function watchAndMounted() {
   // 通过传入的歌单id  在线获取歌单信息
   const xx = await reqSongListDetail(songlistId);
   // 赋值拿到歌单数据
+
   SongListDetails.data = xx.data.playlist;
 
   // 歌单里的歌曲们
   SongListDetails.dataSong = xx.data.playlist.trackIds;
-
   //设置给用户看见的歌曲列表
   songs();
 
@@ -283,12 +264,14 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .mySongList {
     width: 1200px;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: #ffffffd7;
+
     .songListData {
       width: 1200px;
       height: 400px;
@@ -297,37 +280,45 @@ onMounted(async () => {
       display: flex;
       flex-direction: row;
       align-items: center;
+
       .myImg {
         width: 300px;
         height: 300px;
         margin: 0 50px;
         border: 2px solid rgb(187, 186, 178);
         box-shadow: 3px 3px 5px #999;
+
         img {
           width: 100%;
           height: 100%;
         }
       }
+
       .songListIntroduce {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+
         .biaoqian {
           margin: 0 10px;
         }
       }
     }
+
     .jieshao {
       width: 100%;
       min-height: 100px;
       border-bottom: 1px dashed #999;
       color: #222;
+
       .jieshaodata {
         margin: 10px 30px;
       }
     }
+
     .songListToSongData {
       width: 1200px;
+
       // height: 3000px;
       .title {
         margin: 10px 50px;
@@ -335,11 +326,13 @@ onMounted(async () => {
         padding-bottom: 10px;
         border-bottom: 3px solid rgb(214, 52, 52);
       }
+
       .songListToSongData-song {
         margin: 10px 50px;
         display: flex;
         flex-direction: column;
         align-items: center;
+
         .songListToSongData-song-item {
           width: 100%;
           height: 50px;
@@ -351,30 +344,38 @@ onMounted(async () => {
           justify-content: space-between;
           border-radius: 25px;
           box-shadow: 6px 3px 6px #999;
+
           div {
             margin: 0 20px;
             display: flex;
+
             span {
               color: rgba(206, 31, 31, 0.76);
               font-weight: 600;
             }
           }
+
           .fnagzhiyichu {
             .fnagzhiyichu-title {
               width: 50px;
             }
           }
+
           .songListToSongData-song-item-1 {
             width: 50px;
           }
+
           .songListToSongData-song-item-2 {
             width: 50px;
+
             .item-icon {
               font-size: 30px;
             }
           }
+
           .songListToSongData-song-item-3 {
             width: 250px;
+
             .fnagzhiyichu-a {
               width: 210px;
               overflow: hidden;
@@ -383,8 +384,10 @@ onMounted(async () => {
               color: #333;
             }
           }
+
           .songListToSongData-song-item-4 {
             width: 250px;
+
             .fnagzhiyichu-a {
               width: 210px;
               overflow: hidden;
@@ -393,8 +396,10 @@ onMounted(async () => {
               color: #333;
             }
           }
+
           .songListToSongData-song-item-5 {
             width: 250px;
+
             .fnagzhiyichu-a {
               width: 210px;
               overflow: hidden;
@@ -404,6 +409,7 @@ onMounted(async () => {
             }
           }
         }
+
         .songListToSongData-song-button {
           width: 200px;
           height: 40px;

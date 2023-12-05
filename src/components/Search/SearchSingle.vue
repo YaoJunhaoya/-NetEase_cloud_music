@@ -25,12 +25,14 @@
           <span class="fnagzhiyichu-a">{{ item.album.name }}</span>
         </div>
       </div>
+      <el-pagination background layout="prev, pager, next" :page-size="pagination.pageSize"
+        :total="parseInt(pagination.total)" :current-page="currentPage" @current-change="paginationChange" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router'
 import useCounterStore from "../../pinia/counter";
 import emitter from "../../plugins/Bus";
@@ -39,8 +41,10 @@ const counterStore = useCounterStore();
 const router = useRouter()
 const props = defineProps({
   searchData: Object,
-  currentPage: Number
+  pagination: Object
 })
+const emit = defineEmits(['paginationChange'])
+let currentPage = ref(1)
 // 跳转详细页
 function toSongDetails(item) {
   router.push({
@@ -74,6 +78,18 @@ function playSong(id) {
   getSongList(id);
   emitter.emit("SongDetailsPlay");
 }
+// 分页点击
+function paginationChange(val) {
+  currentPage.value = val
+  emit('paginationChange', val)
+}
+
+watch(
+  props.searchData,
+  (newValue) => {
+    console.log(newValue);
+  }
+);
 </script>
 
 <style lang="less" scoped>
