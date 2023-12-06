@@ -34,17 +34,28 @@
               @mouseleave="levelHint = false"
               v-if="userProperty.getUserLevelInformation.info"
             >
-              <svg class="icon" aria-hidden="true" style="font-size: 25px">
+              <svg class="icon" aria-hidden="true" style="font-size: 20px">
                 <use xlink:href="#icon-info"></use>
               </svg>
               <div class="hint" v-show="levelHint">
-                <span
-                  v-for="(
-                    item, index
-                  ) in userProperty.getUserLevelInformation.info.split('$')"
-                  :key="index"
-                  >{{ item }}</span
-                >
+                <!-- 等级特权 -->
+                <div class="djtq">
+                  <span
+                    v-for="(
+                      item, index
+                    ) in userProperty.getUserLevelInformation.info.split('$')"
+                    :key="index"
+                    >{{ item }}</span
+                  >
+                </div>
+                <!-- 升级条件 -->
+                <div class="sjtj">
+                  <div class="sjtj-title">下一级条件:</div>
+                  <div class="sjtj-rw">
+                    <div :class="{'rw-ok':userProperty.getUserLevelInformation.nowPlayCount==userProperty.getUserLevelInformation.nextPlayCount}">听歌：<span>{{userProperty.getUserLevelInformation.nowPlayCount}}/{{userProperty.getUserLevelInformation.nextPlayCount}}首</span></div>
+                    <div :class="{'rw-ok':userProperty.getUserLevelInformation.nowLoginCount==userProperty.getUserLevelInformation.nextLoginCount}">登录：<span>{{userProperty.getUserLevelInformation.nowLoginCount}}/{{userProperty.getUserLevelInformation.nextLoginCount}}天</span></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -59,17 +70,21 @@
         </div>
         <!-- 签到 -->
         <div class="sign_in">
-          <el-button @click="qiandao"> 签到 </el-button>
-          <el-button @click="yuhnbeiqiandao"> 云贝签到 </el-button>
+          <el-button @click="qiandao" :disabled="signInDetails.pdqiandao">
+            {{ signInDetails.pdqiandao ? "已签到" : "签到" }}
+          </el-button>
         </div>
         <!-- 用户信息 -->
         <div class="user-xx">
           <!-- 生日 -->
-          <span
-            >生日：{{ changeTime(userProperty.myProfile.birthday, 0) }}</span
-          >
+          <div class="user-xx-a">
+            <span
+              >生日：{{ changeTime(userProperty.myProfile.birthday, 0) }}</span
+            >
+          </div>
           <!-- 粉丝 关注 -->
           <div
+            class="user-xx-a"
             v-if="
               userProperty.getUserFolloweds.followeds &&
               userProperty.getUserFollows.follow
@@ -81,7 +96,7 @@
             >
           </div>
           <!-- 歌单 收藏 -->
-          <div>
+          <div class="user-xx-a">
             <span v-if="userProperty.getUserSubcount.createdPlaylistCount">
               歌单：{{ userProperty.getUserSubcount.createdPlaylistCount }}
             </span>
@@ -217,6 +232,24 @@ function closePage() {
 // 判断鼠标移入
 let levelHint = ref(false);
 
+// 签到信息
+const signInDetails = reactive({
+  // 云贝签到信息
+  yunbei: {},
+  // 判断是否已经签到
+  pdqiandao: false,
+});
+
+// 签到
+async function qiandao() {
+  // 签到
+  await getDailySignin();
+  // 云贝签到
+  await getYunbeiSignin();
+  // 云贝签到信息
+  await getYunbeiInfo();
+}
+
 // 用户信息 属性 资料 和账号信息
 let userProperty = reactive({
   myAccount: {},
@@ -277,7 +310,7 @@ async function getUserSubcount() {
 async function getUserLevel() {
   const { data: a } = await reqUserLevel();
   userProperty.getUserLevelInformation = a.data;
-  // console.log("获取用户等级信息", a);
+  console.log("获取用户等级信息", a);
 }
 // 获取用户关注列表
 async function getUserFollows(uid) {
@@ -307,38 +340,28 @@ async function getVipInfoV2(uid) {
 //签到
 async function getDailySignin() {
   const { data: a } = await reqDailySignin();
-  console.log("签到", a);
+  // console.log("签到", a);
 }
-//签到信息
+//乐签信息
 async function getHappyInfo() {
   const { data: a } = await reqHappyInfo();
-  console.log("签到信息", a);
+  // console.log("乐签信息", a);
 }
 //云贝签到
 async function getYunbeiSignin() {
   const { data: a } = await reqYunbeiSignin();
-  console.log("云贝签到", a);
+  // console.log("云贝签到", a);
 }
 //云贝签到信息
 async function getYunbeiInfo() {
   const { data: a } = await reqYunbeiInfo();
-  console.log("云贝签到信息", a);
+  signInDetails.yunbei = a;
+  if (signInDetails.yunbei.mobileSign && signInDetails.yunbei.pcSign) {
+    signInDetails.pdqiandao = true;
+  }
+  // console.log("云贝签到信息", a);
 }
 
-// 签到
-async function qiandao() {
-  // 签到
-  await getDailySignin();
-  // 签到信息
-  await getHappyInfo();
-}
-// 签到
-async function yuhnbeiqiandao() {
-  // 云贝签到
-  await getYunbeiSignin();
-  // 云贝签到信息
-  await getYunbeiInfo();
-}
 onMounted(async () => {
   userProperty.myAccount = userStore.myAccount;
   userProperty.myProfile = userStore.myProfile;
@@ -355,7 +378,7 @@ onMounted(async () => {
   await getVipInfo(userStore.uid);
   // 获取 VIP 信息(app端)
   await getVipInfoV2(userStore.uid);
-  // 签到信息
+  // 乐签信息
   await getHappyInfo();
   // 云贝签到信息
   await getYunbeiInfo();
@@ -389,15 +412,19 @@ onMounted(async () => {
         font-size: 25px;
         font-weight: 600;
         text-align: center;
+        margin-bottom: 5px;
       }
       .user-level {
         display: flex;
+        justify-content: space-evenly;
+        align-items: flex-start;
+        width: 100%;
         .level {
           display: flex;
           align-items: center;
           margin: 0 10px;
           .level-a {
-            width: 50px;
+            width: 64px;
             height: 20px;
             color: red;
             text-align: center;
@@ -408,10 +435,11 @@ onMounted(async () => {
           }
           .div-icon {
             position: relative;
+            height: 20px;
+            top: 5px;
             .hint {
               position: absolute;
               width: 200px;
-              height: 80px;
               background-color: rgb(255, 255, 255);
               left: -30px;
               display: flex;
@@ -420,6 +448,33 @@ onMounted(async () => {
               border: 1px solid black;
               box-shadow: 2px 2px 3px black;
               border-radius: 10px;
+              .djtq {
+                font-size: 16px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                color: red;
+                font-weight: 600;
+              }
+              .sjtj {
+                .sjtj-title {
+                  font-size: 12px;
+                  color: #000000;
+                  border-top: 1px solid black;
+                  margin-top: 5px;
+                }
+                .sjtj-rw {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-start;
+                  font-size: 14px;
+                  color: #999;
+                  .rw-ok{
+                    color: green;
+                    font-weight: 600;
+                  }
+                }
+              }
             }
           }
         }
@@ -439,6 +494,14 @@ onMounted(async () => {
       .user-xx {
         width: 100%;
         margin-top: 10px;
+        .user-xx-a {
+          font-size: 15px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-evenly;
+          align-items: center;
+          color: #555;
+        }
       }
     }
   }
@@ -451,7 +514,7 @@ onMounted(async () => {
       width: 100%;
       .el-button {
         width: 100px;
-        height: 100px;
+        height: 95px;
         div {
           display: flex;
           flex-direction: column;
@@ -459,6 +522,7 @@ onMounted(async () => {
           span {
             font-size: 15px;
             font-weight: 600;
+            margin-top: 5px;
           }
         }
       }
