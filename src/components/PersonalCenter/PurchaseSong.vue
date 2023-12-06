@@ -1,5 +1,7 @@
 <template>
-  <div>用户页面 （显示用户的信息 如歌单 不是个人中心）</div>
+  <div>
+    已购单曲
+  </div>
 </template>
     
 <script setup  >

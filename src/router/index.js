@@ -52,15 +52,74 @@ const router = createRouter({
             path: '/personal_center',
             name: "PersonalCenter",
             component: () => import("../view/PersonalCenter.vue"),
-            props: true
+            props: true,
+            children: [
+                {
+                    // 个人中心 首页
+                    path: '',
+                    component: () => import("../components/PersonalCenter/Home.vue"),
+                    props: true
+                },
+                {
+                    // 个人中心 首页
+                    path: 'home',
+                    name: "PersonalCenterHome",
+                    component: () => import("../components/PersonalCenter/Home.vue"),
+                    props: true
+                },
+                {
+                    // 最近播放
+                    path: 'recently_played',
+                    name: "RecentlyPlayed",
+                    component: () => import("../components/PersonalCenter/RecentlyPlayed.vue"),
+                    props: true
+                },
+                {
+                    // 我的喜欢
+                    path: 'my_like',
+                    name: "MyLike",
+                    component: () => import("../components/PersonalCenter/MyLike.vue"),
+                    props: true
+                },
+                {
+                    // 我的歌单
+                    path: 'my_songList',
+                    name: "MySongList",
+                    component: () => import("../components/PersonalCenter/MySongList.vue"),
+                    props: true
+                },
+                {
+                    // 云盘
+                    path: 'cloud_disk',
+                    name: "CloudDisk",
+                    component: () => import("../components/PersonalCenter/CloudDisk.vue"),
+                    props: true
+                },
+                {
+                    // 已购单曲
+                    path: 'purchase_song',
+                    name: "PurchaseSong",
+                    component: () => import("../components/PersonalCenter/PurchaseSong.vue"),
+                    props: true
+                },
+                {
+                    // 我的好友
+                    path: 'my_good_friend',
+                    name: "MyGoodFriend",
+                    component: () => import("../components/PersonalCenter/MyGoodFriend.vue"),
+                    props: true
+                },
+                {
+                    // 动态页面
+                    path: 'moment',
+                    name: "Moment",
+                    component: () => import("../components/PersonalCenter/Moment.vue"),
+                    props: true
+                },
+            ]
+
         },
-        {
-            // 动态页面
-            path: '/moment',
-            name: "Moment",
-            component: () => import("../view/Moment.vue"),
-            props: true
-        },
+
         {
             // 歌手页面
             path: '/singer/:singerId',
