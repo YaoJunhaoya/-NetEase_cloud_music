@@ -1,18 +1,23 @@
 <template>
   <div class="UserManagement">
-    <div>
+    <div class="UserManagement-end">
       <el-button @click="closePage"> 关闭 </el-button>
       <el-button @click="outLogIn"> 退出登录 </el-button>
-      <el-button> 签到 </el-button>
-      <el-button> 云贝签到 </el-button>
     </div>
     <div class="upper">
       <!-- 头像 -->
-      <img class="user-img" :src="userProperty.myProfile.avatarUrl" alt="" />
+      <img
+        class="user-img"
+        :src="userProperty.myProfile.avatarUrl"
+        alt=""
+        @click="toPage('home')"
+      />
       <!-- 名称 信息 -->
       <div class="upper-property">
         <!-- 用户名称 -->
-        <span class="user-name">{{ userProperty.myProfile.nickname }}</span>
+        <span class="user-name" @click="toPage('home')">{{
+          userProperty.myProfile.nickname
+        }}</span>
         <!-- 等级信息 -->
         <div class="user-level">
           <!-- 用户等级 -->
@@ -52,17 +57,28 @@
             />
           </div>
         </div>
+        <!-- 签到 -->
+        <div class="sign_in">
+          <el-button @click="qiandao"> 签到 </el-button>
+          <el-button @click="yuhnbeiqiandao"> 云贝签到 </el-button>
+        </div>
         <!-- 用户信息 -->
         <div class="user-xx">
           <!-- 生日 -->
-          <span >生日：{{ changeTime(userProperty.myProfile.birthday, 0) }}</span >
+          <span
+            >生日：{{ changeTime(userProperty.myProfile.birthday, 0) }}</span
+          >
           <!-- 粉丝 关注 -->
           <div
             v-if="
               userProperty.getUserFolloweds.followeds &&
-              userProperty.getUserFollows.follow " >
+              userProperty.getUserFollows.follow
+            "
+          >
             <span>关注：{{ userProperty.getUserFollows.follow.length }}</span>
-            <span >粉丝：{{ userProperty.getUserFolloweds.followeds.length }}</span >
+            <span
+              >粉丝：{{ userProperty.getUserFolloweds.followeds.length }}</span
+            >
           </div>
           <!-- 歌单 收藏 -->
           <div>
@@ -77,16 +93,86 @@
       </div>
     </div>
     <div class="middle">
-      <el-button @click="toPersonalCenter"> 个人中心 </el-button>
-      <el-button> 最近播放-歌曲 </el-button>
-      <el-button> 我的喜欢 </el-button>
-      <el-button> 我的歌单 </el-button>
-      <el-button> 我的好友 </el-button>
-      <el-button> 动态 </el-button>
-      <el-button> 云盘 </el-button>
-      <el-button> 已购单曲 </el-button>
+      <!-- 个人中心 -->
+      <div class="grzx">
+        <el-button @click="toPage('home')">
+          <div>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-gerenzhongxin"></use>
+            </svg>
+            <span>个人中心</span>
+          </div>
+        </el-button>
+      </div>
+      <!-- 歌单 -->
+      <div class="gd">
+        <el-button @click="toPage('recently_played')">
+          <div>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-zuijinliulan"></use>
+            </svg>
+            <span>最近播放-歌曲</span>
+          </div>
+        </el-button>
+        <el-button @click="toPage('my_like')">
+          <div>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-xihuan"></use>
+            </svg>
+            <span>我的喜欢</span>
+          </div>
+        </el-button>
+        <el-button @click="toPage('my_songList')">
+          <div>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-icon-gedan"></use>
+            </svg>
+            <span>我的歌单</span>
+          </div>
+        </el-button>
+      </div>
+      <!-- 云盘 已购歌单 -->
+      <div class="ypyggd">
+        <el-button @click="toPage('cloud_disk')">
+          <div>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-a-yunpan1"></use>
+            </svg>
+            <span>云盘</span>
+          </div>
+        </el-button>
+        <el-button @click="toPage('purchase_song')">
+          <div>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-goumai"></use>
+            </svg>
+            <span>已购单曲</span>
+          </div>
+        </el-button>
+      </div>
+      <!-- 好友 动态 -->
+      <div class="hydt">
+        <el-button @click="toPage('my_good_friend')">
+          <div>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-haoyou"></use>
+            </svg>
+            <span>我的好友</span>
+          </div>
+        </el-button>
+        <el-button @click="toPage('moment')">
+          <div>
+            <svg class="icon" aria-hidden="true">
+              <use
+                xlink:href="#icon-airudiantubiaohuizhi-zhuanqu_zixundongtai"
+              ></use>
+            </svg>
+            <span>动态</span>
+          </div>
+        </el-button>
+      </div>
     </div>
-    <span
+    <span class="scdlsj"
       >上次登录时间： {{ changeTime(userProperty.myProfile.lastLoginTime, 2) }}
     </span>
   </div>
@@ -106,6 +192,12 @@ import {
   reqVipInfo,
   reqVipInfoV2,
 } from "../../axios/user";
+import {
+  reqDailySignin,
+  reqHappyInfo,
+  reqYunbeiSignin,
+  reqYunbeiInfo,
+} from "../../axios/signIn";
 import useUserStore from "../../pinia/user";
 import baocunCookie from "../../plugins/ReserveCookie";
 import { ref, onMounted, reactive } from "vue";
@@ -145,28 +237,31 @@ let userProperty = reactive({
 
 // 退出登录
 async function outLogIn() {
-  // 清除登录信息
-  userStore.ClearLoginInformation();
-  document.cookie = "";
-  // 退出登录接口
-  const { data: data } = await reqLogOut();
-  console.log(data);
-  // 跳转到登录界面
-  let pd = confirm("是否跳转到登录界面?");
-  // 关闭窗口
-  closePage();
-  // 判断是否跳转
-  if (pd) {
-    // 跳转登录
-    router.push({
-      path: "/log",
-    });
+  let isOut = confirm("确定退出当前账号吗?");
+  if (isOut) {
+    // 清除登录信息
+    userStore.ClearLoginInformation();
+    document.cookie = "";
+    // 退出登录接口
+    const { data: data } = await reqLogOut();
+    console.log(data);
+    // 跳转到登录界面
+    let pd = confirm("是否跳转到登录界面?");
+    // 关闭窗口
+    closePage();
+    // 判断是否跳转
+    if (pd) {
+      // 跳转登录
+      router.push({
+        path: "/log",
+      });
+    }
   }
 }
 // 去个人中心
-function toPersonalCenter() {
+function toPage(pageName) {
   router.push({
-    path: "/personal_center",
+    path: `/personal_center/${pageName}`,
   });
   // 关闭窗口
   closePage();
@@ -200,13 +295,49 @@ async function getUserFolloweds(uid) {
 async function getVipInfo(uid) {
   const { data: a } = await reqVipInfo(uid);
   userProperty.userVip = a.data;
-  console.log("获取 VIP 信息", a.data);
+  // console.log("获取 VIP 信息", a.data);
 }
 // 获取 VIP 信息(app端)
 async function getVipInfoV2(uid) {
   const { data: a } = await reqVipInfoV2(uid);
   userProperty.userVipPhone = a.data;
-  console.log("获取 VIP 信息(app端)", a.data);
+  // console.log("获取 VIP 信息(app端)", a.data);
+}
+
+//签到
+async function getDailySignin() {
+  const { data: a } = await reqDailySignin();
+  console.log("签到", a);
+}
+//签到信息
+async function getHappyInfo() {
+  const { data: a } = await reqHappyInfo();
+  console.log("签到信息", a);
+}
+//云贝签到
+async function getYunbeiSignin() {
+  const { data: a } = await reqYunbeiSignin();
+  console.log("云贝签到", a);
+}
+//云贝签到信息
+async function getYunbeiInfo() {
+  const { data: a } = await reqYunbeiInfo();
+  console.log("云贝签到信息", a);
+}
+
+// 签到
+async function qiandao() {
+  // 签到
+  await getDailySignin();
+  // 签到信息
+  await getHappyInfo();
+}
+// 签到
+async function yuhnbeiqiandao() {
+  // 云贝签到
+  await getYunbeiSignin();
+  // 云贝签到信息
+  await getYunbeiInfo();
 }
 onMounted(async () => {
   userProperty.myAccount = userStore.myAccount;
@@ -224,11 +355,21 @@ onMounted(async () => {
   await getVipInfo(userStore.uid);
   // 获取 VIP 信息(app端)
   await getVipInfoV2(userStore.uid);
+  // 签到信息
+  await getHappyInfo();
+  // 云贝签到信息
+  await getYunbeiInfo();
 });
 </script>
     
 <style lang="less" scoped>
 .UserManagement {
+  .UserManagement-end {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
   .upper {
     display: flex;
     flex-direction: column;
@@ -288,9 +429,16 @@ onMounted(async () => {
           }
         }
       }
+      .sign_in {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+      }
       .user-xx {
         width: 100%;
-        margin: 10px 0;
+        margin-top: 10px;
       }
     }
   }
@@ -298,12 +446,59 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 20px 0;
-    .el-button {
-      margin: 0;
-      width: 400px;
-      margin: 10px 0;
+    margin: 10px 0;
+    div {
+      width: 100%;
+      .el-button {
+        width: 100px;
+        height: 100px;
+        div {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          span {
+            font-size: 15px;
+            font-weight: 600;
+          }
+        }
+      }
     }
+    .grzx {
+      display: flex;
+      justify-content: space-between; /* 如果需要按钮之间有均匀的间距 */
+      .el-button {
+        flex: 1; /* 让按钮根据 flex 容器的子元素数量平均分配大小 */
+        margin: 5px; /* 可根据需要调整按钮之间的间距 */
+      }
+    }
+    .gd {
+      display: flex;
+      justify-content: space-between; /* 如果需要按钮之间有均匀的间距 */
+      .el-button {
+        flex: 3; /* 让按钮根据 flex 容器的子元素数量平均分配大小 */
+        margin: 5px; /* 可根据需要调整按钮之间的间距 */
+      }
+    }
+    .ypyggd {
+      display: flex;
+      justify-content: space-between; /* 如果需要按钮之间有均匀的间距 */
+      .el-button {
+        flex: 2; /* 让按钮根据 flex 容器的子元素数量平均分配大小 */
+        margin: 5px; /* 可根据需要调整按钮之间的间距 */
+      }
+    }
+    .hydt {
+      display: flex;
+      justify-content: space-between; /* 如果需要按钮之间有均匀的间距 */
+      .el-button {
+        flex: 2; /* 让按钮根据 flex 容器的子元素数量平均分配大小 */
+        margin: 5px; /* 可根据需要调整按钮之间的间距 */
+      }
+    }
+  }
+  .scdlsj {
+    font-size: 13px;
+    color: #999;
   }
 }
 </style>

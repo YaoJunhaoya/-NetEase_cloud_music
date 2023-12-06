@@ -75,7 +75,7 @@
               <span class="fnagzhiyichu-a">{{ item.al.name }}</span>
             </div>
           </div>
-          <el-button class="songListToSongData-song-button" type="danger" @click="addSongs(1)">加载更多</el-button>
+          <el-button v-if="!SongListDetails.jzwb" type="danger" @click="addSongs(1)">加载更多</el-button>
         </div>
       </div>
       <!-- 评论 -->
@@ -114,6 +114,8 @@ let SongListDetails = reactive({
   SongListComments: [],
   // 歌单的id
   songlistId: "",
+    // 加载完毕 用户看见的歌单和总歌单数量一样 就true
+  jzwb:false
 });
 
 let gequliebiao = reactive({
@@ -123,6 +125,7 @@ let gequliebiao = reactive({
   concat: 10,
   // 总数量
   allNumber: SongListDetails.dataSong.length,
+
 });
 
 // 获取歌单id，把歌单添加到播放器  （除非是同一个歌单不然都会更新）
@@ -208,6 +211,8 @@ async function songs() {
     ...SongListDetails.showDataSong,
     ...xx.data.songs,
   ];
+  if (SongListDetails.showDataSong.length==SongListDetails.dataSong.length) SongListDetails.jzwb=true
+  // console.log(SongListDetails);
 }
 
 // 跳转到歌曲详情页面
