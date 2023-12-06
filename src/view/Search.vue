@@ -18,13 +18,9 @@
       <!-- 单曲样式 -->
       <SearchSingle :searchData="searchData" :pagination="pagination" v-if="searchData.current == 0"
         @paginationChange="paginationChange" />
-      <!-- 专辑样式 -->
-      <SearchAlbum :searchData="searchData" :pagination="pagination" v-if="searchData.current == 1"
-        @paginationChange="paginationChange" />
-      <!-- 歌单样式 -->
-      <SearchSongSheet :searchData="searchData" :pagination="pagination" v-if="searchData.current == 3"
-        @paginationChange="paginationChange" />
-
+      <!-- 专辑 歌单 样式 -->
+      <SearchAlbum :searchData="searchData" :pagination="pagination"
+        v-if="searchData.current == 1 || searchData.current == 3" @paginationChange="paginationChange" />
       <div class="dibumeiguan"></div>
     </div>
   </div>
@@ -33,7 +29,6 @@
 <script setup>
 import SearchSingle from "../components/Search/SearchSingle.vue";
 import SearchAlbum from "../components/Search/SearchAlbum.vue";
-import SearchSongSheet from "../components/Search/SearchSongSheet.vue";
 import { ref, onMounted, watch, reactive } from "vue";
 import useCounterStore from "../pinia/counter";
 import { reqSearchlist, reqSearch } from "../axios/search";
@@ -50,7 +45,7 @@ let pagination = reactive({
 let searchData = reactive({
   // 歌曲数据
   SongData: [],
-  types: ["单曲", "专辑", "歌手", "歌单", "用户", " MV"],
+  types: ["单曲", "专辑", "歌手", "歌单", "用户", "视频"],
   // 分类索引
   current: 0
 });
@@ -76,6 +71,10 @@ async function data(current = 0, offset = 0, limit = 30) {
     type = 100;
   } else if (current == 3) {
     type = 1000;
+  } else if (current == 4) {
+    type = 1002;
+  } else if (current == 5) {
+    type = 1004;
   }
   let result = await reqSearchlist(
     counterStore.lastSearchContent,
@@ -85,14 +84,15 @@ async function data(current = 0, offset = 0, limit = 30) {
   );
   if ((result.data.code = 200)) {
     searchData.SongData = result.data.result
-    pagination.total = searchData.SongData.songCount || searchData.SongData.albumCount
+    pagination.total = searchData.SongData.songCount || searchData.SongData.albumCount || searchData.SongData.playlistCount
     if ((limit * (offset + 1) > pagination.total) && pagination.total != 1) {
       let slicing = limit - (limit * (offset + 1) - pagination.total)
       // 因limit修改请求数量不变，只能切割数组保证数据
       if (searchData.SongData.songs) searchData.SongData.songs = searchData.SongData.songs.splice(0, slicing)
       if (searchData.SongData.albums) searchData.SongData.songs = searchData.SongData.albums.splice(0, slicing)
+      if (searchData.SongData.playlists) searchData.SongData.songs = searchData.SongData.playlists.splice(0, slicing)
     }
-    // console.log(searchData.SongData);
+    console.log(result.data.result);
   }
 }
 watch(
