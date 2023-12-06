@@ -4,27 +4,16 @@
       <!-- 标题 -->
       <ComponentsTitle> 热门歌单分类</ComponentsTitle>
       <!-- 歌单切换按钮 -->
-      <el-button
-        class="fenglei"
-        :class="{
-          activeFenglei: songList.hotSongListType.name == item.name,
-        }"
-        round
-        v-for="(item, index) in songList.hotSongList"
-        :key="index"
-        @click="changType(index)"
-      >
+      <el-button class="fenglei" :class="{
+        activeFenglei: songList.hotSongListType.name == item.name,
+      }" round v-for="(item, index) in songList.hotSongList" :key="index" @click="changType(index)">
         {{ item.name }}
       </el-button>
     </div>
     <!-- 歌单 -->
     <div class="allGedan">
-      <div
-        class="gedan"
-        v-for="(item, index) in songList.CompetitiveSongList"
-        :key="index"
-        @click="toSongListDetails(item)"
-      >
+      <div class="gedan" v-for="(item, index) in songList.CompetitiveSongList" :key="index"
+        @click="toSongListDetails(item)">
         <img :src="item.coverImgUrl" alt="" />
         <span>{{ item.name }}</span>
       </div>
@@ -67,7 +56,6 @@ async function changType(index) {
 
 // 跳转歌单详情页面 //传入歌单id
 function toSongListDetails(item) {
-  // console.log(item);
   router.push({
     name: "SongListDetails",
     params: {
@@ -96,10 +84,12 @@ onMounted(async () => {
 .rmgedanfeli {
   .flei {
     margin: 10px 0;
+
     .fenglei {
       margin: 0 10px;
       background-color: rgb(255, 255, 255);
     }
+
     .activeFenglei {
       color: rgb(255, 255, 255);
       background-color: rgb(255, 65, 32);
@@ -110,6 +100,7 @@ onMounted(async () => {
     display: flex;
     flex-wrap: wrap;
     width: 1100px;
+
     .gedan {
       width: 150px;
       height: 150px;
@@ -121,6 +112,7 @@ onMounted(async () => {
         height: 100%;
       }
     }
+
     .zanwuneirong {
       width: 100%;
       height: 460px;

@@ -87,7 +87,6 @@ function paginationChange(val) {
 watch(
   props.searchData,
   (newValue) => {
-    console.log(newValue);
   }
 );
 </script>
