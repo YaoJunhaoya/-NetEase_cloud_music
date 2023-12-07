@@ -52,8 +52,36 @@
                 <div class="sjtj">
                   <div class="sjtj-title">下一级条件:</div>
                   <div class="sjtj-rw">
-                    <div :class="{'rw-ok':userProperty.getUserLevelInformation.nowPlayCount==userProperty.getUserLevelInformation.nextPlayCount}">听歌：<span>{{userProperty.getUserLevelInformation.nowPlayCount}}/{{userProperty.getUserLevelInformation.nextPlayCount}}首</span></div>
-                    <div :class="{'rw-ok':userProperty.getUserLevelInformation.nowLoginCount==userProperty.getUserLevelInformation.nextLoginCount}">登录：<span>{{userProperty.getUserLevelInformation.nowLoginCount}}/{{userProperty.getUserLevelInformation.nextLoginCount}}天</span></div>
+                    <div
+                      :class="{
+                        'rw-ok':
+                          userProperty.getUserLevelInformation.nowPlayCount ==
+                          userProperty.getUserLevelInformation.nextPlayCount,
+                      }"
+                    >
+                      听歌：<span
+                        >{{
+                          userProperty.getUserLevelInformation.nowPlayCount
+                        }}/{{
+                          userProperty.getUserLevelInformation.nextPlayCount
+                        }}首</span
+                      >
+                    </div>
+                    <div
+                      :class="{
+                        'rw-ok':
+                          userProperty.getUserLevelInformation.nowLoginCount ==
+                          userProperty.getUserLevelInformation.nextLoginCount,
+                      }"
+                    >
+                      登录：<span
+                        >{{
+                          userProperty.getUserLevelInformation.nowLoginCount
+                        }}/{{
+                          userProperty.getUserLevelInformation.nextLoginCount
+                        }}天</span
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
@@ -70,8 +98,13 @@
         </div>
         <!-- 签到 -->
         <div class="sign_in">
-          <el-button @click="qiandao" :disabled="signInDetails.pdqiandao">
-            {{ signInDetails.pdqiandao ? "已签到" : "签到" }}
+          <el-button
+            @click="qiandao"
+            :disabled="signInDetails.pdqiandao || signInDetails.pdNew"
+          >
+            {{
+              signInDetails.pdqiandao || signInDetails.pdNew ? "已签到" : "签到"
+            }}
           </el-button>
         </div>
         <!-- 用户信息 -->
@@ -90,99 +123,32 @@
               userProperty.getUserFollows.follow
             "
           >
-            <span>关注：{{ userProperty.getUserFollows.follow.length }}</span>
+            <span> {{ userProperty.getUserFollows.follow.length }} 关注</span>
             <span
-              >粉丝：{{ userProperty.getUserFolloweds.followeds.length }}</span
+              >{{ userProperty.getUserFolloweds.followeds.length }} 粉丝</span
             >
           </div>
           <!-- 歌单 收藏 -->
           <div class="user-xx-a">
             <span v-if="userProperty.getUserSubcount.createdPlaylistCount">
-              歌单：{{ userProperty.getUserSubcount.createdPlaylistCount }}
+              {{ userProperty.getUserSubcount.createdPlaylistCount }} 歌单
             </span>
             <span v-if="userProperty.getUserSubcount.subPlaylistCount">
-              收藏：{{ userProperty.getUserSubcount.subPlaylistCount }}</span
+              {{ userProperty.getUserSubcount.subPlaylistCount }} 收藏</span
             >
           </div>
         </div>
       </div>
     </div>
     <div class="middle">
-      <!-- 个人中心 -->
-      <div class="grzx">
-        <el-button @click="toPage('home')">
+      <!-- 按钮 -->
+      <div :class="item.cssYangshi" v-for="(item,index) in domYangShi" :key="index">
+        <el-button v-for="(item2,index2) in item.name" :key="index2"  @click="toPage(`${item.toRouter[index2]}`)">
           <div>
             <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-gerenzhongxin"></use>
+              <use  :xlink:href="`#${item.icon[index2]}`"></use>
             </svg>
-            <span>个人中心</span>
-          </div>
-        </el-button>
-      </div>
-      <!-- 歌单 -->
-      <div class="gd">
-        <el-button @click="toPage('recently_played')">
-          <div>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-zuijinliulan"></use>
-            </svg>
-            <span>最近播放-歌曲</span>
-          </div>
-        </el-button>
-        <el-button @click="toPage('my_like')">
-          <div>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-xihuan"></use>
-            </svg>
-            <span>我的喜欢</span>
-          </div>
-        </el-button>
-        <el-button @click="toPage('my_songList')">
-          <div>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-icon-gedan"></use>
-            </svg>
-            <span>我的歌单</span>
-          </div>
-        </el-button>
-      </div>
-      <!-- 云盘 已购歌单 -->
-      <div class="ypyggd">
-        <el-button @click="toPage('cloud_disk')">
-          <div>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-a-yunpan1"></use>
-            </svg>
-            <span>云盘</span>
-          </div>
-        </el-button>
-        <el-button @click="toPage('purchase_song')">
-          <div>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-goumai"></use>
-            </svg>
-            <span>已购单曲</span>
-          </div>
-        </el-button>
-      </div>
-      <!-- 好友 动态 -->
-      <div class="hydt">
-        <el-button @click="toPage('my_good_friend')">
-          <div>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-haoyou"></use>
-            </svg>
-            <span>我的好友</span>
-          </div>
-        </el-button>
-        <el-button @click="toPage('moment')">
-          <div>
-            <svg class="icon" aria-hidden="true">
-              <use
-                xlink:href="#icon-airudiantubiaohuizhi-zhuanqu_zixundongtai"
-              ></use>
-            </svg>
-            <span>动态</span>
+            <span>{{item2}}</span>
           </div>
         </el-button>
       </div>
@@ -224,6 +190,39 @@ const router = useRouter();
 // Pinia仓库
 const userStore = useUserStore();
 
+// dom属性
+const domYangShi = reactive({
+  // 个人中心
+  grzx: {
+    cssYangshi: "grzx",
+    toRouter: ["home"],
+    icon: ["icon-gerenzhongxin"],
+    name:['个人中心']
+  },
+  // 歌单
+  gd: {
+    cssYangshi: "gd",
+    toRouter: ["recently_played", "my_like", "my_songList"],
+    icon: ["icon-zuijinliulan", "icon-xihuan", "icon-icon-gedan"],
+    name:['最近播放-歌曲','我的喜欢','我的歌单']
+  },
+  // 云盘 已购歌单
+  ypyggd: {
+    cssYangshi: "ypyggd",
+    toRouter: ["cloud_disk", "purchase_song"],
+    icon: ["icon-a-yunpan1", "icon-goumai"],
+    name:['云盘','已购单曲']
+  },
+  // 好友 动态
+  hydt: {
+    cssYangshi: "hydt",
+    toRouter: ["my_good_friend", "moment"],
+    icon: ["icon-haoyou", "icon-airudiantubiaohuizhi-zhuanqu_zixundongtai"],
+    name:['我的好友','动态']
+
+  },
+});
+
 const emit = defineEmits(["closePage"]);
 // 关闭窗口状态
 function closePage() {
@@ -238,10 +237,13 @@ const signInDetails = reactive({
   yunbei: {},
   // 判断是否已经签到
   pdqiandao: false,
+  // 判断 立刻变
+  pdNew: false,
 });
 
 // 签到
 async function qiandao() {
+  signInDetails.pdNew = true;
   // 签到
   await getDailySignin();
   // 云贝签到
@@ -469,7 +471,7 @@ onMounted(async () => {
                   align-items: flex-start;
                   font-size: 14px;
                   color: #999;
-                  .rw-ok{
+                  .rw-ok {
                     color: green;
                     font-weight: 600;
                   }
@@ -501,6 +503,11 @@ onMounted(async () => {
           justify-content: space-evenly;
           align-items: center;
           color: #555;
+          span {
+            border-bottom: 1px solid #999;
+            padding-bottom: 2px;
+            margin-bottom: 3px;
+          }
         }
       }
     }
