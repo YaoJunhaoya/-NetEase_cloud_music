@@ -22,6 +22,9 @@
       <SearchAlbum :searchData="searchData" :pagination="pagination"
         v-if="searchData.current == 1 || searchData.current == 3" @paginationChange="paginationChange" />
       <div class="dibumeiguan"></div>
+      <!-- 视频样式 -->
+      <SearchVideo :searchData="searchData" :pagination="pagination" v-if="searchData.current == 5"
+        @paginationChange="paginationChange" />
     </div>
   </div>
 </template>
@@ -29,9 +32,10 @@
 <script setup>
 import SearchSingle from "../components/Search/SearchSingle.vue";
 import SearchAlbum from "../components/Search/SearchAlbum.vue";
+import SearchVideo from "../components/Search/SearchVideo.vue";
 import { ref, onMounted, watch, reactive } from "vue";
 import useCounterStore from "../pinia/counter";
-import { reqSearchlist, reqSearch } from "../axios/search";
+import { reqSearchlist } from "../axios/search";
 import { useRouter } from "vue-router";
 // Pinia仓库
 const counterStore = useCounterStore();
@@ -74,7 +78,7 @@ async function data(current = 0, offset = 0, limit = 30) {
   } else if (current == 4) {
     type = 1002;
   } else if (current == 5) {
-    type = 1004;
+    type = 1014;
   }
   let result = await reqSearchlist(
     counterStore.lastSearchContent,
@@ -84,13 +88,14 @@ async function data(current = 0, offset = 0, limit = 30) {
   );
   if ((result.data.code = 200)) {
     searchData.SongData = result.data.result
-    pagination.total = searchData.SongData.songCount || searchData.SongData.albumCount || searchData.SongData.playlistCount
+    pagination.total = searchData.SongData.songCount || searchData.SongData.albumCount || searchData.SongData.playlistCount || searchData.SongData.videoCount
     if ((limit * (offset + 1) > pagination.total) && pagination.total != 1) {
       let slicing = limit - (limit * (offset + 1) - pagination.total)
       // 因limit修改请求数量不变，只能切割数组保证数据
       if (searchData.SongData.songs) searchData.SongData.songs = searchData.SongData.songs.splice(0, slicing)
-      if (searchData.SongData.albums) searchData.SongData.songs = searchData.SongData.albums.splice(0, slicing)
-      if (searchData.SongData.playlists) searchData.SongData.songs = searchData.SongData.playlists.splice(0, slicing)
+      if (searchData.SongData.albums) searchData.SongData.albums = searchData.SongData.albums.splice(0, slicing)
+      if (searchData.SongData.playlists) searchData.SongData.playlists = searchData.SongData.playlists.splice(0, slicing)
+      if (searchData.SongData.videos) searchData.SongData.videos = searchData.SongData.videos.splice(0, slicing)
     }
     console.log(result.data.result);
   }
