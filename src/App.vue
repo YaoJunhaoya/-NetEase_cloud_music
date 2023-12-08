@@ -33,7 +33,7 @@ onBeforeUnmount(() => {
 
 <style lang="less" >
 .app {
-  background-color: #dddada4d;
+  background-color: #eeeeee96;
 }
 .router-view-app {
   padding-bottom: 130px;

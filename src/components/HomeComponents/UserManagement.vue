@@ -312,7 +312,7 @@ async function getUserSubcount() {
 async function getUserLevel() {
   const { data: a } = await reqUserLevel();
   userProperty.getUserLevelInformation = a.data;
-  console.log("获取用户等级信息", a);
+  // console.log("获取用户等级信息", a);
 }
 // 获取用户关注列表
 async function getUserFollows(uid) {

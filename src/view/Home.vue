@@ -28,8 +28,8 @@ const userStore = useUserStore();
 async function getUserAccount() {
   const { data: a } = await reqUserLogState();
   const { data: b } = await reqUserAccount();
-  console.log("登录状态",a.data);
-  console.log("获取账号信息",b);
+  // console.log("登录状态",a.data);
+  // console.log("获取账号信息",b);
   // 设置用户ID
   userStore.userUserUidToLocal(a.data.account.id);
   // 账户信息
