@@ -10,9 +10,7 @@
     <!-- 栏目 -->
     <div class="lanmu">
       <div @click="toRankingList()" class="lanmu-title">音乐排行榜</div>
-      <div @click="toRankingList()" class="lanmu-title">音乐排行榜</div>
       <div>歌手馆</div>
-      <div @click="toPersonalCenter()" class="lanmu-title">我的音乐</div>
       <div @click="toPersonalCenter()" class="lanmu-title">我的音乐</div>
     </div>
 
