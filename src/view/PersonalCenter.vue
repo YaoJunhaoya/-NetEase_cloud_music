@@ -2,14 +2,27 @@
   <div class="PersonalCenter">
     <!-- 左边目标栏 -->
     <div class="PersonalCenter-left">
-      <div class="left-div" @click="toPage('home')">个人中心</div>
-      <div class="left-div" @click="toPage('recently_played')">最近播放</div>
-      <div class="left-div" @click="toPage('my_like')">我的喜欢</div>
-      <div class="left-div" @click="toPage('my_songList')">我的歌单</div>
-      <div class="left-div" @click="toPage('cloud_disk')">云盘</div>
-      <div class="left-div" @click="toPage('purchase_song')">已购单曲</div>
-      <div class="left-div" @click="toPage('my_good_friend')">我的好友</div>
-      <div class="left-div" @click="toPage('moment')">动态</div>
+      <div
+        class="PersonalCenter-left-box"
+        v-for="(item, index) in domYangShi"
+        :key="index"
+      >
+        <div class="box-title">{{ item.title }}</div>
+        <div
+          class="left-div"
+          :class="{
+            checked: `/personal_center/${item.toRouter[index2]}` == sonRouter,
+          }"
+          v-for="(item2, index2) in item.name"
+          :key="index2"
+          @click="toPage(`${item.toRouter[index2]}`)"
+        >
+          <svg class="icon" aria-hidden="true" style="font-size: 25px">
+            <use :xlink:href="`#${item.icon[index2]}`"></use>
+          </svg>
+          <span class="div-name">{{ item2 }}</span>
+        </div>
+      </div>
     </div>
     <div class="PersonalCenter-left2"></div>
     <div>
@@ -19,17 +32,77 @@
 </template>
     
 <script setup  >
-import {useRouter} from "vue-router"
+import { reactive, ref, onMounted, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 // 路由
-const router =useRouter()
+const router = useRouter();
+const route = useRoute();
 
-function toPage (pageName){
+// dom样式
+const domYangShi = reactive({
+  // 个人中心
+  grzx: {
+    title: "个人中心",
+    toRouter: ["home"],
+    name: ["个人中心"],
+    icon: ["icon-gerenzhongxin1"],
+  },
+  // 联系
+  lx: {
+    title: "联系",
+    toRouter: ["my_good_friend", "moment"],
+    name: ["我的好友", "动态"],
+    icon: ["icon-yaoqinghaoyou", "icon-iconfontzhizuobiaozhunbduan36"],
+  },
+  // 我的音乐
+  wdyy: {
+    title: "我的音乐",
+    toRouter: [
+      "recently_played",
+      "my_like",
+      "my_songList",
+      "cloud_disk",
+      "purchase_song",
+    ],
+    name: ["最近播放", "我的喜欢", "我的歌单", "云盘", "已购单曲"],
+    icon: [
+      "icon-a-shijianzuijin",
+      "icon-aixin",
+      "icon-liebiao",
+      "icon-yunpan",
+      "icon-goumai1",
+    ],
+  },
+});
+
+function toPage(pageName) {
   router.push({
-    path:`/personal_center/${pageName}`
-  })
+    path: `/personal_center/${pageName}`,
+  });
 }
 
+// 当前选中的子路由
+let sonRouter = ref("");
+// 设置当前的子路由是哪个
+function setSonRouter(path) {
+  if (path == "/personal_center") {
+    sonRouter.value = "/personal_center/home";
+  } else {
+    sonRouter.value = path;
+  }
+}
+
+watch(
+  () => route.path,
+  (newValue, oldValue) => {
+    setSonRouter(newValue);
+  }
+);
+
+onMounted(() => {
+  setSonRouter(route.path);
+});
 </script>
     
 <style lang="less" scoped>
@@ -45,18 +118,45 @@ function toPage (pageName){
     position: fixed;
     top: 72px;
     left: 0px;
-    .left-div {
-      width: calc(100% - 10px);
-      height: 40px;
-      background-color: rgb(233, 233, 233);
-      margin: 10px 5px;
-      font-size: 18px;
-      font-weight: 600;
-      text-align: center;
-      line-height: 40px;
-      border-radius: 20px;
-      box-shadow: 2px 2px 6px #817979;
-      cursor: pointer;
+    padding-top: 30px;
+    .PersonalCenter-left-box {
+      width: 100%;
+      .box-title {
+        font-size: 15px;
+        color: #999;
+        border-bottom: 3px solid #333;
+        margin: 20px 10px;
+      }
+      .left-div {
+        width: calc(100% - 20px);
+        height: 50px;
+        background-color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 50px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        cursor: pointer;
+        padding-left: 10px;
+        margin: 10px 5px;
+        &:hover {
+          border-radius: 10px;
+          background-color: #e2e2e2;
+        }
+        .div-name {
+          margin-left: 20px;
+        }
+      }
+      .checked {
+        background-color: #e2e2e2;
+        border-radius: 10px;
+      }
+    }
+    .grzx-box {
+      margin-top: 20px;
     }
   }
   .PersonalCenter-left2 {

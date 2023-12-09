@@ -16,7 +16,7 @@
       <!-- 三个内容轮播--->
       <div class="content">
         <!-- 左边内容 -->
-        <div class="content-side content-div">
+        <div class="content-div">
           <RanKingCarouselItem
             v-if="myFirstFour[dataIndex.leftIndex]"
             :item="myFirstFour[dataIndex.leftIndex]"
@@ -24,7 +24,7 @@
           <div v-else>空</div>
         </div>
         <!-- 中间内容 -->
-        <div class="content-main content-div">
+        <div class="content-div">
           <RanKingCarouselItem
             v-if="myFirstFour[dataIndex.middleIndex]"
             :item="myFirstFour[dataIndex.middleIndex]"
@@ -32,7 +32,7 @@
           <div v-else>空</div>
         </div>
         <!-- 右边内容 -->
-        <div class="content-side content-div">
+        <div class="content-div">
           <RanKingCarouselItem
             v-if="myFirstFour[dataIndex.rightIndex]"
             :item="myFirstFour[dataIndex.rightIndex]"
@@ -69,8 +69,8 @@ const store = useSongStore();
 
 // 路由跳转
 const router = useRouter();
-function toRankingList(){
-  router.push("/rankinglist")
+function toRankingList() {
+  router.push("/rankinglist");
 }
 
 let myFirstFour = store.allRankingListFirstFour;
@@ -102,8 +102,12 @@ onMounted(async () => {
 <style lang="less" scoped>
 .wai {
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   .wai-to {
     height: 30px;
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -118,7 +122,6 @@ onMounted(async () => {
     justify-content: space-between;
     margin-top: 10px;
     height: calc(100% - 30px);
-    width: 1100px;
     .changeButton {
       width: 40px;
       height: 70px;
@@ -135,8 +138,9 @@ onMounted(async () => {
     }
     .content {
       height: 100%;
-      width: 1100px;
       display: flex;
+      flex-direction: row;
+      justify-content: space-around;
       // 所有排行榜
       .content-div {
         display: flex;
@@ -145,13 +149,6 @@ onMounted(async () => {
         box-shadow: 0px 0px 6px black;
         margin: 0px 5px;
         border-radius: 10px;
-      }
-      // 两边的排行榜
-      .content-side {
-        width: 300px;
-      }
-      // 中间的排行榜
-      .content-main {
         width: 400px;
       }
     }
