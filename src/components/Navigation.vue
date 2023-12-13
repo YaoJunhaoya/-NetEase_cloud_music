@@ -121,6 +121,9 @@ function userLog() {
 function toRankingList() {
   router.push("/rankinglist");
 }
+function toPersonalCenter() {
+  router.push("/personal_center/home");
+}
 
 // 历史记录
 let SearchHistory = reactive({

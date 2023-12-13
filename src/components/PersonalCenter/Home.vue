@@ -57,7 +57,23 @@
       </div>
     </div>
     <!-- 下半部分 -->
-    <div>我是下半部分</div>
+    <div class="grzx-home-xia">
+      <!-- 自己的动态内容 -->
+      <div class="grzx-home-xia-box">
+        <div class="title">我的动态</div>
+        <!-- 动态所有内容 -->
+        <div class="xia-box-content" v-if="user.UserEvent?.events?.length > 0">
+          <!-- 动态中的每一篇内容 -->
+          <DynamicContent
+            v-for="(item, index) in user.UserEvent?.events"
+            :key="index"
+            :data="item"
+          ></DynamicContent>
+        </div>
+        <!-- 如果没有动态 -->
+        <div v-else class="kong">暂时没有动态</div>
+      </div>
+    </div>
   </div>
 </template>
     
@@ -69,7 +85,9 @@ import {
   reqUserLevel,
   reqUserFollows,
   reqUserFolloweds,
+  reqUserEvent,
 } from "../../axios/user";
+import DynamicContent from "./Components/DynamicContent.vue";
 
 // 仓库
 const userStore = useUserStore();
@@ -85,6 +103,8 @@ const user = reactive({
   UserFollows: {},
   // 用户粉丝列表
   UserFolloweds: {},
+  // 自己的动态内容
+  UserEvent: {},
 });
 
 // 网络获取
@@ -92,25 +112,32 @@ const user = reactive({
 async function getVipInfo() {
   const { data: a } = await reqVipInfo(user.myProfile.userId);
   user.userViLevel = a.data;
-  console.log("获取vip信息", a.data);
+  // console.log("获取vip信息", a.data);
 }
 // 获取用户等级信息
 async function getUserLevel() {
   const { data: a } = await reqUserLevel();
   user.userLevel = a.data;
-  console.log("获取用户等级信息", a.data);
+  // console.log("获取用户等级信息", a.data);
 }
 // 获取用户关注列表
 async function getUserFollows() {
   const { data: a } = await reqUserFollows(user.myProfile.userId);
   user.UserFollows = a;
-  console.log("获取用户关注列表", a);
+  // console.log("获取用户关注列表", a);
 }
 // 获取用户粉丝列表
 async function getUserFolloweds() {
   const { data: a } = await reqUserFolloweds(user.myProfile.userId);
   user.UserFolloweds = a;
-  console.log("获取用户粉丝列表", a);
+  // console.log("获取用户粉丝列表", a);
+}
+
+// 获取用户动态
+async function getUserEvent() {
+  const { data: a } = await reqUserEvent(user.myProfile.userId, 30, -1);
+  user.UserEvent = a;
+  // console.log("获取用户动态", a);
 }
 
 // 一开始就要获取到数据
@@ -119,6 +146,7 @@ async function startGetData() {
   await getUserLevel();
   await getUserFollows();
   await getUserFolloweds();
+  await getUserEvent();
 }
 onMounted(async () => {
   user.myAccount = userStore.myAccount;
@@ -218,6 +246,36 @@ onMounted(async () => {
             font-size: 20px;
           }
         }
+      }
+    }
+  }
+  .grzx-home-xia {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    .grzx-home-xia-box {
+      width: calc(100% - 20px);
+      padding: 5px 10px;
+      min-height: 100px;
+      .title {
+        font-size: 15px;
+        color: #ff7272;
+        width: 100%;
+        border-bottom: 2px solid #ff7272;
+        padding-bottom: 2px;
+      }
+      .xia-box-content {
+        width: 100%;
+        min-height: 100px;
+
+      }
+      .kong {
+        width: 100%;
+        min-height: 100px;
+        text-align: center;
+        line-height: 100px;
+        font-size: 30px;
+        font-weight: 600;
       }
     }
   }

@@ -49,6 +49,8 @@ export const reqUserFolloweds = (uid, limit = 30, offset = 0) => requests({ url:
 export const reqVipInfo = (uid) => requests({ url: `/vip/info?uid=${uid}`, method: 'get' });
 // 获取 VIP 信息(app端)
 export const reqVipInfoV2 = (uid) => requests({ url: `/vip/info/v2?uid=${uid}`, method: 'get' });
+// 获取用户动态
+export const reqUserEvent = (uid, limit = 30, lasttime = -1) => requests({ url: `/user/event?uid=${uid}&limit=${limit}&lasttime=${lasttime}`, method: 'get' });
 
 
 
