@@ -4,7 +4,7 @@
     <div class="user-data">
       <div class="user-data-l">
         <!-- 头像 -->
-        <img class="user-img" :src="props.data.user.avatarUrl" alt="" />
+        <img class="user-img" v-lazy="props.data.user.avatarUrl" alt="" />
         <!-- 姓名 -->
         <span class="user-name">{{ props.data.user.nickname }}</span>
       </div>
@@ -23,7 +23,7 @@
         <img
           v-for="(item, index) in props.data.pics"
           :key="index"
-          :src="item.pcSquareUrl"
+          v-lazy="item.pcSquareUrl"
           alt=""
         />
       </div>
@@ -33,7 +33,7 @@
         <div class="music-l">
           <img
             class="music-l-img"
-            :src="props.data?.json2?.song?.album?.blurPicUrl"
+            v-lazy="props.data?.json2?.song?.album?.blurPicUrl"
             alt=""
           />
         </div>

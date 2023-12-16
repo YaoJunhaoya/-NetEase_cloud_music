@@ -5,7 +5,7 @@
     <div class="waiwei-ni">
       <!-- 图片 -->
       <div class="waiwei-ni-img" @click="toRanking(props.item.id)">
-        <img :src="props.item.coverImgUrl" alt="" />
+        <img v-lazy="props.item.coverImgUrl" alt="" />
       </div>
       <!-- 名称 -->
       <div class="waiwei-ni-name">
