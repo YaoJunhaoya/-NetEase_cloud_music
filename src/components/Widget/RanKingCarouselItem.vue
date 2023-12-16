@@ -5,7 +5,7 @@
     <div class="waiwei-ni">
       <!-- 图片 -->
       <div class="waiwei-ni-img" @click="toRanking(props.item.id)">
-        <img :src="props.item.coverImgUrl" alt="" />
+        <img v-lazy="props.item.coverImgUrl" alt="" />
       </div>
       <!-- 名称 -->
       <div class="waiwei-ni-name">
@@ -15,10 +15,9 @@
     <!-- 歌曲列表 -->
     <div class="waiwei-list">
       <div
-        class="waiwei-list-each"
         v-for="(axx, index) in tenSongs.songDetails"
         :key="index"
-        :class="`waiwei-list-each-${index + 1}`"
+        :class="`waiwei-list-each-${index + 1} waiwei-list-each`"
       >
         <!-- 排名 -->
         <div class="waiwei-list-each-index">
@@ -224,7 +223,6 @@ onMounted(async () => {
       margin: 4px 5px;
       padding: 0 3px;
       border-radius: 8px;
-      box-shadow: 2px 2px 5px rgb(104, 104, 104);
       .waiwei-list-each-index {
         font-size: 15px;
         width: 10%;

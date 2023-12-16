@@ -4,7 +4,7 @@
       <div class="comment-item-user">
         <!-- 评论的用户头像 -->
         <div class="comment-item-user-img">
-          <img :src="item.avatarUrl" alt="" />
+          <img v-lazy="item.avatarUrl" alt="" />
         </div>
         <!-- 评论的用户名字 -->
         <div class="comment-item-user-name">{{ item.nickname }}</div>

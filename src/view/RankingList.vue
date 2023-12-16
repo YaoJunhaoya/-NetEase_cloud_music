@@ -37,7 +37,7 @@
       <div class="content-up">
         <!-- 图片 -->
         <div class="content-up-img">
-          <img :src="activateRankingsData.playlist.coverImgUrl" />
+          <img v-lazy="activateRankingsData.playlist.coverImgUrl" />
         </div>
         <!-- 信息 -->
         <div class="content-up-information">
@@ -150,7 +150,7 @@ onMounted(async () => {
   flex-direction: row;
   justify-content: center;
   .classification {
-    width: 300px;
+    width: 15vw;
     height: calc(100vh - 250px);
     padding: 10px 5px;
     margin: 10px;

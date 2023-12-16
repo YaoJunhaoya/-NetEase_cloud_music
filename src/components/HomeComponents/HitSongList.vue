@@ -14,7 +14,7 @@
     <div class="allGedan">
       <div class="gedan" v-for="(item, index) in songList.CompetitiveSongList" :key="index"
         @click="toSongListDetails(item)">
-        <img :src="item.coverImgUrl" alt="" />
+        <img v-lazy="item.coverImgUrl" alt="" />
         <span>{{ item.name }}</span>
       </div>
       <div v-if="songList.CompetitiveSongList.length == 0" class="zanwuneirong">

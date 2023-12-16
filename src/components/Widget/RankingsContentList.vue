@@ -15,7 +15,7 @@
       </div>
       <!-- 图片 -->
       <div class="RankingsContentList-item-divimg">
-        <img :src="item.al.picUrl" alt="" />
+        <img v-lazy="item.al.picUrl" alt="" />
       </div>
       <!-- 歌曲名称 -->
       <div class="RankingsContentList-item-songName">{{ item.name }}</div>

@@ -1,7 +1,9 @@
 <template>
   <div class="RankingsListItem-main" :class="{ activate: itemProps.activate }">
     <!-- 图片 -->
-    <div class="main-img"><img :src="itemProps.item.coverImgUrl" alt="" /></div>
+    <div class="main-img">
+      <img v-lazy="itemProps.item.coverImgUrl" alt="" />
+    </div>
     <div class="main-youbian">
       <!-- 名称 -->
       <div class="main-name">{{ itemProps.item.name }}</div>
@@ -10,8 +12,8 @@
     </div>
   </div>
 </template>
-    
-<script setup >
+
+<script setup>
 import { ref, defineProps, computed } from "vue";
 
 const itemProps = defineProps({
@@ -47,19 +49,19 @@ let updateTime = computed(() => {
   return formattedDate;
 });
 </script>
-    
-<style  lang="less" scoped>
+
+<style lang="less" scoped>
 .RankingsListItem-main {
   width: calc(100% - 20px); //280px
-  height: 50px;
+  min-height: 50px;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+  flex-wrap: wrap;
   margin: 10px 5px;
   padding: 5px;
   box-shadow: 0 0 5px black;
-
   .main-img {
     width: 50px;
     img {
