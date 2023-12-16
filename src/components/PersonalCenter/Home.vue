@@ -3,7 +3,7 @@
     <!--上半部分 -->
     <div class="grzx-home-shang">
       <!-- 图片 -->
-      <div class="grzx-home-img">
+      <div class="grzx-home-img"  v-viewer>
         <img :src="user.myProfile.avatarUrl" alt="" />
       </div>
       <!--资料 -->

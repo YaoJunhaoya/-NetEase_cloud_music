@@ -19,38 +19,53 @@
         v-html="props.data.json2?.msg.replace(/\n/g, '<br/>')"
       ></div>
       <!-- 图片 -->
-      <div class="DynamicContent-img">
-        <img
+      <div class="DynamicContent-img" v-viewer>
+        <viewer
+          class="div-img"
           v-for="(item, index) in props.data.pics"
           :key="index"
-          v-lazy="item.pcSquareUrl"
-          alt=""
-        />
+        >
+          <img v-lazy="item.originUrl" alt="" />
+        </viewer>
       </div>
       <!-- 音乐 -->
       <div class="DynamicContent-music" v-if="props.data?.json2?.song">
-        <!-- 左边 -->
-        <div class="music-l">
-          <img
-            class="music-l-img"
-            v-lazy="props.data?.json2?.song?.album?.blurPicUrl"
-            alt=""
-          />
-        </div>
-        <!-- 右边 -->
-        <div class="music-r">
-          <!-- 歌曲名称 -->
-          <div class="music-song">
-            {{ props.data?.json2?.song?.album?.name }}
-          </div>
-          <!-- 歌手 -->
+        <div class="kaozuo">
+          <!-- 左边 -->
           <div
-            class="music-singer"
-            v-for="(item, index) in props.data?.json2?.song?.artists"
-            :key="index"
+            class="music-l"
+            @click="toSongDetails(props.data?.json2?.song?.id)"
           >
-            {{ item.name }}
+            <img
+              class="music-l-img"
+              v-lazy="props.data?.json2?.song?.album?.blurPicUrl"
+              alt=""
+            />
           </div>
+          <!-- 右边 -->
+          <div
+            class="music-r"
+            @click="toSongDetails(props.data?.json2?.song?.id)"
+          >
+            <!-- 歌曲名称 -->
+            <div class="music-song">
+              {{ props.data?.json2?.song?.album?.name }}
+            </div>
+            <!-- 歌手 -->
+            <div
+              class="music-singer"
+              v-for="(item, index) in props.data?.json2?.song?.artists"
+              :key="index"
+            >
+              {{ item.name }}
+            </div>
+          </div>
+        </div>
+        <!-- 播放按钮 -->
+        <div class="icon-bofnag-div">
+          <svg class="icon my-icon" aria-hidden="true" @click="playSong(props.data?.json2?.song?.id)">
+            <use xlink:href="#icon-bofang"></use>
+          </svg>
         </div>
       </div>
       <!-- 设置 -->
@@ -81,10 +96,18 @@
     </div>
   </div>
 </template>
-    
-<script setup  >
+
+<script setup>
 import { ref, defineProps, onMounted, reactive } from "vue";
 import changeTime from "../../../plugins/Time";
+import { useRouter } from "vue-router";
+import useCounterStore from "../../../pinia/counter"
+import emitter from "../../../plugins/Bus";
+
+// Pinia仓库
+const counterStore = useCounterStore();
+
+
 const props = defineProps({
   data: {
     type: Object,
@@ -107,12 +130,52 @@ const domButtons = reactive({
   },
 });
 
+// 路由
+const router = useRouter();
+
+// 跳转歌曲详情
+function toSongDetails(id) {
+  if (id) {
+    router.push({
+      path: "/songdetails/" + id,
+    });
+  }
+}
+
+// 切换播放器音乐id
+function playSong(songId) {
+  // console.log(songParticulars.songId);
+  counterStore.PlayerSongIdToLocal(songId);
+  getSongList(songId);
+  emitter.emit("SongDetailsPlay");
+}
+// 获取歌单id，把歌单添加到播放器
+function getSongList(id) {
+  // 获取本地PlayerSongList的数据
+  let arr = ref(counterStore.playerSongList);
+
+  // 判断里面有没有这个歌曲id了
+  if (!arr.value.includes(id)) {
+    // 获取列表 第一项是歌曲就添加歌曲 不是歌曲就变成歌曲
+    if (arr.value[0] != "歌曲") {
+      arr.value = [];
+      arr.value.push("歌曲");
+      arr.value.push(id);
+    } else {
+      arr.value.push(id);
+    }
+  }
+
+  // 上传到本地
+  counterStore.PlayerSongList(arr.value);
+}
+
 onMounted(() => {
   props.data.json2 = JSON.parse(props.data.json);
   console.log(props.data);
 });
 </script>
-    
+
 <style lang="less" scoped>
 .qianbu {
   padding-top: 0.1px;
@@ -154,10 +217,25 @@ onMounted(() => {
     }
     .DynamicContent-img {
       width: 510px;
-      img {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      .div-img {
         height: 150px;
-        border-radius: 10px;
+        width: 150px;
         margin: 3px 10px;
+        overflow: hidden;
+        background-color: #d6d6d6a8;
+        text-align: center;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        img {
+          height: 100%;
+          width: 100%;
+          border-radius: 10px;
+          object-fit: contain;
+        }
       }
     }
     .DynamicContent-music {
@@ -165,29 +243,46 @@ onMounted(() => {
       height: 70px;
       border-radius: 10px;
       box-shadow: 2px 2px 4px 1px #999;
+      margin-top: 20px;
       display: flex;
       flex-direction: row;
-      align-items: flex-start;
-      justify-content: flex-start;
-      margin: 10px 0;
-      .music-l {
-        .music-l-img {
-          width: 70px;
-          border-radius: 10px;
+      justify-content: space-between;
+      .kaozuo {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: flex-start;
+        .music-l {
+          cursor: pointer;
+          .music-l-img {
+            width: 70px;
+            border-radius: 10px;
+          }
+        }
+        .music-r {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          margin-left: 20px;
+          cursor: pointer;
+          .music-song {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: 600;
+          }
+          .music-singer {
+            font-size: 14px;
+          }
         }
       }
-      .music-r {
+      .icon-bofnag-div {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        margin-left: 20px;
-        .music-song {
-          margin-top: 10px;
-          font-size: 20px;
-          font-weight: 600;
-        }
-        .music-singer {
-          font-size: 14px;
+        flex-direction: row;
+        align-items: center;
+        margin-right: 20px;
+        .my-icon{
+          font-size: 40px;
+          cursor: pointer;
         }
       }
     }
@@ -197,7 +292,7 @@ onMounted(() => {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      margin-top: 10px;
+      margin-top: 20px;
       .caozuo {
         display: flex;
         flex-direction: row;
