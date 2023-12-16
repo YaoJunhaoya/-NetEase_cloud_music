@@ -141,7 +141,7 @@ const router = createRouter({
             component: () => import("../view/MV.vue"),
             props: true
         },
-        ,
+
         {
             // 专辑页面
             path: '/collection/:id',
@@ -149,12 +149,18 @@ const router = createRouter({
             component: () => import("../view/Collection.vue"),
             props: true
         },
-        ,
         {
             // 搜索页面
             path: '/search',
             name: "Search",
             component: () => import("../view/Search.vue"),
+            props: true
+        },
+        {
+            // 搜索页面
+            path: '/VideoDetail/:Vid',
+            name: "VideoDetail",
+            component: () => import("../view/VideoDetail.vue"),
             props: true
         },
 

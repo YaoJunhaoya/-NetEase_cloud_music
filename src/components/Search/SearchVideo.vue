@@ -4,7 +4,7 @@
     <!-- MV -->
     <div class="big">
       <div class="allGedan">
-        <div class="gedan" v-for="video in searchData.SongData.videos" :key="video.id">
+        <div class="gedan" v-for="video in searchData.SongData.videos" :key="video.vid">
           <img :src="video.coverUrl" />
           <span>{{ video.title }}</span>
           <span class="formattedTime">{{ formattedTime(video.durationms) }}</span>
@@ -12,7 +12,7 @@
             <svg class="playTimeIcon" aria-hidden="true">
               <use xlink:href="#icon-redu"></use>
             </svg>{{ getHeat(video.playTime) }}</span>
-          <a class="play-button">
+          <a class="play-button" @click="toVideoDetails(video.vid)">
             <svg class="icon " aria-hidden="true">
               <use xlink:href="#icon-playCircle"></use>
             </svg>
@@ -27,8 +27,10 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, toRef } from 'vue'
 import { formattedTime } from '../../utils/TimeDate'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const props = defineProps({
   searchData: Object,
   pagination: Object
@@ -47,6 +49,13 @@ function getHeat(playTime) {
   let result = (playTime / 10000).toFixed(1);
   if (result.split('.')[1] == '0') return `${Math.floor(result)}万`
   return `${result}万`
+}
+// 跳转详细页面
+function toVideoDetails(id) {
+  router.push({
+    name: 'VideoDetail',
+    params: { Vid: id }
+  })
 }
 </script>
 <style lang="less" scoped>
