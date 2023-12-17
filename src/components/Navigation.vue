@@ -11,6 +11,7 @@
     <div class="lanmu">
       <div @click="toRankingList()" class="lanmu-title">音乐排行榜</div>
       <div>歌手馆</div>
+      <div @click="toMoment()" class="lanmu-title">动态</div>
       <div @click="toPersonalCenter()" class="lanmu-title">我的音乐</div>
     </div>
 
@@ -123,6 +124,9 @@ function toRankingList() {
 }
 function toPersonalCenter() {
   router.push("/personal_center/home");
+}
+function toMoment(){
+  router.push("/personal_center/moment");
 }
 
 // 历史记录

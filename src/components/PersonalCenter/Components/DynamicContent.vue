@@ -52,18 +52,20 @@
               {{ props.data?.json2?.song?.album?.name }}
             </div>
             <!-- 歌手 -->
-            <div
-              class="music-singer"
-              v-for="(item, index) in props.data?.json2?.song?.artists"
-              :key="index"
-            >
-              {{ item.name }}
+            <div class="music-singer">
+              <span
+                v-for="(item, index) in props.data?.json2?.song?.artists"
+                :key="index" >{{ item.name }}  </span>
             </div>
           </div>
         </div>
         <!-- 播放按钮 -->
         <div class="icon-bofnag-div">
-          <svg class="icon my-icon" aria-hidden="true" @click="playSong(props.data?.json2?.song?.id)">
+          <svg
+            class="icon my-icon"
+            aria-hidden="true"
+            @click="PlaySong(props.data?.json2?.song?.id)"
+          >
             <use xlink:href="#icon-bofang"></use>
           </svg>
         </div>
@@ -89,7 +91,7 @@
           </div>
           <!-- ip地址 -->
           <div class="xiangqing-box">
-            IP {{ props.data?.ipLocation?.location }}
+            IP {{ props.data?.ipLocation?.location || "未知" }}
           </div>
         </div>
       </div>
@@ -101,12 +103,12 @@
 import { ref, defineProps, onMounted, reactive } from "vue";
 import changeTime from "../../../plugins/Time";
 import { useRouter } from "vue-router";
-import useCounterStore from "../../../pinia/counter"
+import useCounterStore from "../../../pinia/counter";
 import emitter from "../../../plugins/Bus";
+import PlaySong from "../../../plugins/method/PlaySong";
 
 // Pinia仓库
 const counterStore = useCounterStore();
-
 
 const props = defineProps({
   data: {
@@ -142,37 +144,9 @@ function toSongDetails(id) {
   }
 }
 
-// 切换播放器音乐id
-function playSong(songId) {
-  // console.log(songParticulars.songId);
-  counterStore.PlayerSongIdToLocal(songId);
-  getSongList(songId);
-  emitter.emit("SongDetailsPlay");
-}
-// 获取歌单id，把歌单添加到播放器
-function getSongList(id) {
-  // 获取本地PlayerSongList的数据
-  let arr = ref(counterStore.playerSongList);
-
-  // 判断里面有没有这个歌曲id了
-  if (!arr.value.includes(id)) {
-    // 获取列表 第一项是歌曲就添加歌曲 不是歌曲就变成歌曲
-    if (arr.value[0] != "歌曲") {
-      arr.value = [];
-      arr.value.push("歌曲");
-      arr.value.push(id);
-    } else {
-      arr.value.push(id);
-    }
-  }
-
-  // 上传到本地
-  counterStore.PlayerSongList(arr.value);
-}
-
 onMounted(() => {
   props.data.json2 = JSON.parse(props.data.json);
-  console.log(props.data);
+  // console.log(props.data);
 });
 </script>
 
@@ -269,9 +243,20 @@ onMounted(() => {
             margin-top: 10px;
             font-size: 20px;
             font-weight: 600;
+            white-space: nowrap; /* 禁止自动换行 */
+            overflow: hidden; /* 隐藏超出部分 */
+            text-overflow: ellipsis; /* 当内容溢出容器时显示省略号 */
+            width: 180px;
           }
           .music-singer {
             font-size: 14px;
+            white-space: nowrap; /* 禁止自动换行 */
+            overflow: hidden; /* 隐藏超出部分 */
+            text-overflow: ellipsis; /* 当内容溢出容器时显示省略号 */
+            width: 200px;
+            span{
+              margin-right: 5px;
+            }
           }
         }
       }
@@ -280,7 +265,7 @@ onMounted(() => {
         flex-direction: row;
         align-items: center;
         margin-right: 20px;
-        .my-icon{
+        .my-icon {
           font-size: 40px;
           cursor: pointer;
         }

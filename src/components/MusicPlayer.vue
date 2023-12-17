@@ -4,13 +4,24 @@
     <!-- 隐藏和显示 -->
     <div class="show" @click="changeShengjiang" style="cursor: pointer"></div>
     <!-- 播放器 -->
-    <audio controls :src="mp3" class="my-audio" style="display: none" @ended="audioEnded()" @play="audioPlay()"
-      @pause="audioPause()"></audio>
+    <audio
+      controls
+      :src="mp3"
+      class="my-audio"
+      style="display: none"
+      @ended="audioEnded()"
+      @play="audioPlay()"
+      @pause="audioPause()"
+    ></audio>
 
     <!-- 播放器显示页面 -->
     <div class="myBofnagqi-bofangqianniu">
       <!-- 歌曲名称和图片 -->
-      <div class="myBofnagqi-bofangqianniu-gequ" @click="toSongDetails" style="cursor: pointer">
+      <div
+        class="myBofnagqi-bofangqianniu-gequ"
+        @click="toSongDetails"
+        style="cursor: pointer"
+      >
         <img :class="{ xuanzhuan: !pd }" :src="musicParticulars.songImg" />
         <div class="name-vip">
           <span class="vip">{{ isVip(musicParticulars.fee) }}</span>
@@ -23,7 +34,12 @@
           <div class="myBofnagqi-bofangqianniu-wai">
             <div class="myBofnagqi-bofangqianniu-nei">
               <!-- 上一首 -->
-              <div type="primary" plain @click="playerChangeSong(-1)" style="cursor: pointer">
+              <div
+                type="primary"
+                plain
+                @click="playerChangeSong(-1)"
+                style="cursor: pointer"
+              >
                 <svg class="icon" aria-hidden="true" style="font-size: 30px">
                   <use xlink:href="#icon-ziyuanldpi"></use>
                 </svg>
@@ -31,11 +47,18 @@
               <!-- 播放或者暂停 -->
               <div @click="BofangOrZantingSong" style="cursor: pointer">
                 <svg class="icon" aria-hidden="true" style="font-size: 35px">
-                  <use :xlink:href="pd ? '#icon-bofang1' : '#icon-zanting2'"></use>
+                  <use
+                    :xlink:href="pd ? '#icon-bofang1' : '#icon-zanting2'"
+                  ></use>
                 </svg>
               </div>
               <!-- 下一首 -->
-              <div type="primary" plain @click="playerChangeSong(1)" style="cursor: pointer">
+              <div
+                type="primary"
+                plain
+                @click="playerChangeSong(1)"
+                style="cursor: pointer"
+              >
                 <svg class="icon" aria-hidden="true" style="font-size: 30px">
                   <use xlink:href="#icon-ziyuanldpi1"></use>
                 </svg>
@@ -50,21 +73,36 @@
                 </svg>
               </el-button>
               <!-- 循环，随机 -->
-              <el-button type="primary" circle class="bofangType" @click="changePlayType()">
+              <el-button
+                type="primary"
+                circle
+                class="bofangType"
+                @click="changePlayType()"
+              >
                 <svg class="icon bofangType-icon" aria-hidden="true">
                   <use :xlink:href="PlaybackMode.arr[PlaybackMode.index]"></use>
                 </svg>
               </el-button>
               <div class="yingliang" @mouseleave="volumeShow = false">
                 <!-- 音量大小 -->
-                <el-button type="primary" circle @mouseover.stop="volumeShow = true">
+                <el-button
+                  type="primary"
+                  circle
+                  @mouseover.stop="volumeShow = true"
+                >
                   <svg class="icon" aria-hidden="true" style="font-size: 18px">
                     <use xlink:href="#icon-shengyin"></use>
                   </svg>
                 </el-button>
 
                 <div class="tanchu" v-show="volumeShow">
-                  <input type="range" min="0" :max="100" v-model="bofnagqiVolume.current" @click="setVolume()" />
+                  <input
+                    type="range"
+                    min="0"
+                    :max="100"
+                    v-model="bofnagqiVolume.current"
+                    @click="setVolume()"
+                  />
                   <div>
                     <span>{{ bofnagqiVolume.current }}</span>
                     <span>100</span>
@@ -79,15 +117,32 @@
           </div>
           <!-- 查看播放列表 -->
           <div class="myBofnagqi-bofangqianniu-bflb" style="cursor: pointer">
-            <svg class="icon" aria-hidden="true" style="font-size: 30px" @click="drawer = true">
+            <svg
+              class="icon"
+              aria-hidden="true"
+              style="font-size: 30px"
+              @click="drawer = true"
+            >
               <use xlink:href="#icon-jichu_gengduo"></use>
             </svg>
 
-            <el-drawer v-model="drawer" title="I am the title" :with-header="false" append-to-body>
+            <el-drawer
+              v-model="drawer"
+              title="I am the title"
+              :with-header="false"
+              append-to-body
+            >
               <div>
-                <div v-for="(item, index) in playerSongList.list.slice(1)" :key="index">
+                <div
+                  v-for="(item, index) in playerSongList.list.slice(1)"
+                  :key="index"
+                >
                   <!-- <span>{{ item.name }}+{{ index }}</span> -->
-                  <PlayerSongList :playerSongList="item" :ranking="index + 1" :activate="playerSongList.i == index + 1">
+                  <PlayerSongList
+                    :playerSongList="item"
+                    :ranking="index + 1"
+                    :activate="playerSongList.i == index + 1"
+                  >
                   </PlayerSongList>
                 </div>
               </div>
@@ -97,8 +152,17 @@
 
         <!-- 进度条 -->
         <div class="myBofnagqi-jdt">
-          <input class="jdt" type="range" style="cursor: pointer" v-model="rangeValue.time" min="0"
-            :max="rangeValue.maxValue" @click="setSongTime()" @mousedown="anxia()" @mouseup="setSongTime()" />
+          <input
+            class="jdt"
+            type="range"
+            style="cursor: pointer"
+            v-model="rangeValue.time"
+            min="0"
+            :max="rangeValue.maxValue"
+            @click="setSongTime()"
+            @mousedown="anxia()"
+            @mouseup="setSongTime()"
+          />
           <div class="myBofnagqi-jdt-data">
             <span>{{ formatSecondsToTime(rangeValue.time) }}</span>
             <span>{{ formatSecondsToTime(rangeValue.maxValue) }}</span>
@@ -443,8 +507,8 @@ function timeStringToSeconds(timeString) {
 //
 //
 emitter.on("SongDetailsPlay", () => {
-  // console.log("播放器的SongDetailsPlay");
   myAudio.value.pause();
+  
   setTimeout(() => {
     // console.log("播放了");
     myAudio.value.play();
@@ -455,7 +519,7 @@ emitter.on("SongDetailsPlay", () => {
 watch(
   () => counterStore.lastPlayerSongId,
   (newValue, oldValue) => {
-    // console.log("播放器的音乐id变了");
+    console.log("播放器的音乐id变了");
     // 播放器暂停
     myAudio.value.pause();
     // 播放按钮改变
@@ -709,7 +773,8 @@ onMounted(async () => {
         }
 
         .myBofnagqi-bofangqianniu-bflb {
-          .icon {}
+          .icon {
+          }
         }
       }
 

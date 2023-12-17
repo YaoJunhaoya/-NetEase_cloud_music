@@ -47,11 +47,11 @@
         <div class="suozaidi">
           <div class="suozaidi-box">
             <span>所在地: </span>
-            <span>{{ "浙江省 - 台州市" }}</span>
+            <span>{{ "未知" }}</span>
           </div>
           <div class="suozaidi-box">
             <span>年龄: </span>
-            <span>{{ "00后" }}</span>
+            <span>{{Time(user?.myProfile?.birthday).charAt(2)}}0后</span>
           </div>
         </div>
       </div>
@@ -88,6 +88,7 @@ import {
   reqUserEvent,
 } from "../../axios/user";
 import DynamicContent from "./Components/DynamicContent.vue";
+import Time from '../../plugins/Time'
 
 // 仓库
 const userStore = useUserStore();
