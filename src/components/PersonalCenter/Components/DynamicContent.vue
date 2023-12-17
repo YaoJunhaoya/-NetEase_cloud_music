@@ -152,6 +152,7 @@ onMounted(() => {
 
 <style lang="less" scoped>
 .qianbu {
+  width: calc(100vw - 240px);
   padding-top: 0.1px;
   margin: 10px 0;
   border-bottom: 1px solid #c9c9c9;
