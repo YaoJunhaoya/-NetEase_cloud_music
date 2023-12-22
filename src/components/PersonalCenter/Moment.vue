@@ -18,13 +18,22 @@
         朋友
       </div>
     </div>
-    <div>
-      <DynamicContent
-        v-for="(item, index) in AorB ? friend.MomentArr : recommend.MomentArr"
-        :key="index"
-        :data="item"
-      ></DynamicContent>
-      <button @click="TypeData()">加载更多</button>
+    <!-- n内容 -->
+    <div class="neirong">
+      <div
+        v-if="(AorB ? friend.MomentArr : recommend.MomentArr).length <= 0"
+        class="jiazai"
+      >
+        <span>正在加载中</span>
+      </div>
+      <div v-else>
+        <DynamicContent
+          v-for="(item, index) in AorB ? friend.MomentArr : recommend.MomentArr"
+          :key="index"
+          :data="item"
+        ></DynamicContent>
+        <button @click="TypeData()">加载更多</button>
+      </div>
     </div>
   </div>
 </template>
@@ -62,7 +71,10 @@ async function TypeData() {
     // 获取随机的10个用户id
     let tuijianUserId = await RandomUserId(10);
     // 获取每个用户的动态
-    recommend.MomentArr = [...recommend.MomentArr,...await AllUserMoment(tuijianUserId)];
+    recommend.MomentArr = [
+      ...recommend.MomentArr,
+      ...(await AllUserMoment(tuijianUserId)),
+    ];
   } else {
     console.log("朋友");
     // 获取关注的好友的数据
@@ -112,6 +124,16 @@ onMounted(async () => {
     }
     .activate {
       background-color: #999;
+    }
+  }
+  .neirong {
+    width: 100%;
+    .jiazai {
+      height: 400px;
+      font-size: 50px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 400px;
     }
   }
 }
